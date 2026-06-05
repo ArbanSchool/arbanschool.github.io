@@ -8,7 +8,7 @@
   },
   "calculator": {
     "title": "Рассчитать стоимость",
-    "price_individual_40": 800,
+    "price_individual_40": 9999,
     "price_pair_40": 600,
     "price_group_40": 400,
     "price_individual_60": 1200,
