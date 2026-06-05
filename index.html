@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="html-title">Загрузка...</title>
+    <style>
+        /* Базовые переменные и настройки */
+        :root {
+            --purple: #8A2BE2;
+            --purple-dark: #5A189A;
+            --yellow: #FFD600;
+            --yellow-dark: #FFB700;
+            --text-dark: #222;
+            --text-light: #FFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* ПЛАВНЫЙ СКРОЛЛИНГ И ПРИТЯГИВАНИЕ БЛОКОВ */
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+        }
+
+        body {
+            background-color: #F4F4F9;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Анимации */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Навигация (Правая панель на ПК) */
+        .sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background-color: rgba(45, 10, 80, 0.95);
+            padding-top: 20px;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            transition: transform 0.4s ease;
+            z-index: 100;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 30px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            border-left: 5px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: var(--purple);
+            border-left: 5px solid var(--yellow);
+            color: var(--yellow);
+            padding-left: 40px;
+        }
+
+        /* Бургер-меню */
+        .burger {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 101;
+            cursor: pointer;
+            background: var(--purple);
+            padding: 12px;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: none;
+        }
+
+        /* Сделаем бургер фиолетовым/желтым в зависимости от страницы */
+        .burger.alt-color {
+            background: var(--yellow);
+        }
+        .burger.alt-color div {
+            background-color: var(--purple-dark);
+        }
+
+        .burger div {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-light);
+            margin: 5px;
+            transition: 0.3s;
+        }
+
+        /* ВЕРТИКАЛЬНЫЕ БЛОКИ НА ВЕСЬ ЭКРАН */
+        .section-block {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            scroll-snap-align: start;
+            position: relative;
+        }
+
+        /* Блок 1: Шапка (Теперь ЖЁЛТАЯ по запросу) */
+        #welcome-section {
+            background: var(--yellow);
+            color: var(--text-dark);
+            text-align: center;
+        }
+
+        /* УВЕЛИЧЕННОЕ КРУГЛОЕ ЛОГО */
+        .logo-container {
+            width: 220px;
+            height: 220px;
+            background-color: var(--purple);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 6rem;
+            font-weight: 900;
+            color: var(--text-light);
+            margin-bottom: 25px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+            animation: scaleIn 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+        }
+
+        .main-title {
+            font-size: 3.8rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            animation: fadeInUp 0.8s ease-out;
+            color: var(--purple-dark);
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out;
+            color: #333;
+        }
+
+        /* Блок 2: Калькулятор (Теперь ФИОЛЕТОВЫЙ для чередования) */
+        #calculator-section {
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+            color: var(--text-light);
+        }
+
+        /* Блок 3: О нас (Новый ЖЁЛТЫЙ блок) */
+        #about-section {
+            background-color: var(--yellow);
+            color: var(--text-dark);
+        }
+
+        /* Блок 4: Контакты (ФИОЛЕТОВЫЙ блок) */
+        #contacts-section {
+            background: linear-gradient(135deg, var(--purple-dark), #3d0066);
+            color: var(--text-light);
+        }
+
+        /* КАРТОЧКИ */
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            color: var(--text-dark);
+        }
+
+        #calculator-section .card {
+            background: #ffffff;
+            border-bottom: 8px solid var(--yellow);
+        }
+
+        #about-section .card {
+            background: #ffffff;
+            border-bottom: 8px solid var(--purple);
+        }
+
+        #contacts-section .card {
+            background: #ffffff;
+            border-bottom: 8px solid var(--yellow);
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card h2 {
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            text-align: center;
+            color: var(--purple-dark);
+        }
+
+        #calculator-section .card h2 {
+            color: var(--purple-dark);
+        }
+
+        /* Текст в блоке О нас */
+        .about-text {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: #444;
+            text-align: justify;
+        }
+
+        /* Элементы формы */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        /* СТИЛИЗАЦИЯ СЕЛЕКТОРОВ */
+        .select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        select {
+            width: 100%;
+            padding: 15px 45px 15px 18px;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            color: #333;
+            outline: none;
+            background-color: #F8FAFC;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        select:focus {
+            border-color: var(--purple);
+            background-color: #FFF;
+            box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.15);
+        }
+
+        .select-wrapper::after {
+            content: "";
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--purple);
+            pointer-events: none;
+            transition: transform 0.3s ease;
+        }
+
+        .select-wrapper:focus-within::after {
+            transform: translateY(-75%) rotate(180deg);
+        }
+
+        button.calc-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--purple);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 14px rgba(138, 43, 226, 0.3);
+        }
+
+        button.calc-btn:hover {
+            background-color: var(--purple-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+        }
+
+        #result {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: var(--purple-dark);
+            min-height: 38px;
+        }
+
+        /* Контактная информация */
+        .contact-info {
+            text-align: center;
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+
+        .contact-info p {
+            margin-bottom: 20px;
+        }
+
+        .contact-info span {
+            color: var(--purple);
+            font-weight: 700;
+            font-size: 1.35rem;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 992px) {
+            .sidebar {
+                padding-top: 80px;
+                transform: translateX(100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .burger {
+                display: block;
+            }
+
+            .main-title {
+                font-size: 2.6rem;
+            }
+
+            .logo-container {
+                width: 160px;
+                height: 160px;
+                font-size: 4.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Кнопка бургер-меню (для мобильных) -->
+    <button class="burger" id="burger" onclick="toggleMenu()">
+        <div></div>
+        <div></div>
+        <div></div>
+    </button>
+
+    <!-- Панель быстрой навигации -->
+    <nav class="sidebar" id="sidebar">
+        <a href="#welcome-section" id="nav-welcome">Главная</a>
+        <a href="#calculator-section" id="nav-calc">Калькулятор</a>
+        <a href="#about-section" id="nav-about">О нас</a>
+        <a href="#contacts-section" id="nav-contacts">Контакты</a>
+    </nav>
+
+    <!-- БЛОК 1: Шапка (Желтая) -->
+    <header class="section-block" id="welcome-section">
+        <div class="logo-container" id="logo-box">
+            <!-- Сюда динамически загрузится картинка или буква -->
+            <span id="logo-text">A</span>
+        </div>
+        <h1 class="main-title" id="welcome-title">Загрузка...</h1>
+        <p class="subtitle" id="welcome-subtitle">Пожалуйста, подождите...</p>
+    </header>
+
+    <!-- БЛОК 2: Калькулятор (Фиолетовый) -->
+    <section class="section-block" id="calculator-section">
+        <div class="card reveal">
+            <h2 id="calc-title">Рассчитать стоимость</h2>
+            
+            <div class="form-group">
+                <label for="duration">Длительность урока:</label>
+                <div class="select-wrapper">
+                    <select id="duration">
+                        <option value="40">40 минут</option>
+                        <option value="60">60 минут</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="format">Формат обучения:</label>
+                <div class="select-wrapper">
+                    <select id="format">
+                        <option value="individual">Индивидуально</option>
+                        <option value="pair">В паре</option>
+                        <option value="group">В группе</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="calc-btn" onclick="calculatePrice()">Узнать цену</button>
+
+            <div id="result"></div>
+        </div>
+    </section>
+
+    <!-- БЛОК 3: О нас (Новый Жёлтый Блок) -->
+    <section class="section-block" id="about-section">
+        <div class="card reveal">
+            <h2 id="about-title">О нашей школе</h2>
+            <div class="about-text" id="about-content">
+                Загрузка описания...
+            </div>
+        </div>
+    </section>
+
+    <!-- БЛОК 4: Контакты (Фиолетовый) -->
+    <section class="section-block" id="contacts-section">
+        <div class="card reveal">
+            <h2 id="contacts-title">Ждём вас на занятиях</h2>
+            <div class="contact-info">
+                <p>📍 Адрес нашей школы:<br><span id="contact-address">Загрузка...</span></p>
+                <p>📞 Связаться с нами:<br><span id="contact-phone">Загрузка...</span></p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Хранилище для конфига (чтобы калькулятор мог брать цены)
+        let siteConfig = {};
+
+        // Загрузка динамических данных из JSON
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('site-config.json')
+                .then(res => {
+                    if (!res.ok) throw new Error('Файл настроек не найден');
+                    return res.json();
+                })
+                .then(data => {
+                    siteConfig = data;
+                    applyConfig();
+                })
+                .catch(err => {
+                    console.error("Ошибка при получении конфигурации:", err);
+                    // Локальный фолбек на случай отсутствия файла при прямой локальной работе
+                    document.getElementById('welcome-title').innerText = "Arban School";
+                    document.getElementById('welcome-subtitle').innerText = "Не удалось загрузить site-config.json";
+                });
+        });
+
+        function applyConfig() {
+            // Заголовок вкладки в браузере
+            document.title = siteConfig.site_title || "Arban School";
+            document.getElementById('html-title').innerText = siteConfig.site_title || "Arban School";
+
+            // Логотип (Изображение или буква)
+            const logoBox = document.getElementById('logo-box');
+            if (siteConfig.logo_url && siteConfig.logo_url.trim() !== "") {
+                logoBox.innerHTML = `<img src="${siteConfig.logo_url}" alt="Логотип">`;
+            } else {
+                logoBox.innerHTML = `<span id="logo-text">${siteConfig.logo_fallback_text || 'A'}</span>`;
+            }
+
+            // Блок приветствия
+            document.getElementById('welcome-title').innerText = siteConfig.welcome.title;
+            document.getElementById('welcome-subtitle').innerText = siteConfig.welcome.subtitle;
+
+            // Калькулятор
+            document.getElementById('calc-title').innerText = siteConfig.calculator.title;
+
+            // Блок О нас
+            document.getElementById('about-title').innerText = siteConfig.about.title;
+            document.getElementById('about-content').innerText = siteConfig.about.text;
+
+            // Блок контактов
+            document.getElementById('contacts-title').innerText = siteConfig.contacts.title;
+            document.getElementById('contact-address').innerText = siteConfig.contacts.address;
+            document.getElementById('contact-phone').innerText = siteConfig.contacts.phone;
+
+            // Навигация
+            document.getElementById('nav-welcome').innerText = siteConfig.welcome.title;
+            document.getElementById('nav-calc').innerText = siteConfig.calculator.title;
+            document.getElementById('nav-about').innerText = siteConfig.about.title;
+            document.getElementById('nav-contacts').innerText = siteConfig.contacts.title;
+        }
+
+        // Управление бургер-меню
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('sidebar').classList.remove('active');
+            });
+        });
+
+        // Умное изменение цвета бургера в зависимости от текущего скролла
+        window.addEventListener('scroll', () => {
+            const burger = document.getElementById('burger');
+            const scrollY = window.scrollY;
+            const h = window.innerHeight;
+
+            // Определение активного экрана по высоте скролла
+            // Блок 1 (0-h): Желтый -> бургер должен быть фиолетовым
+            // Блок 2 (h-2h): Фиолетовый -> бургер должен быть желтым (alt-color)
+            // Блок 3 (2h-3h): Желтый -> бургер фиолетовый
+            // Блок 4 (3h+): Фиолетовый -> бургер желтый (alt-color)
+            if ((scrollY >= h * 0.5 && scrollY < h * 1.5) || (scrollY >= h * 2.5)) {
+                burger.classList.add('alt-color');
+            } else {
+                burger.classList.remove('alt-color');
+            }
+        });
+
+        // Логика калькулятора, завязанная на JSON-конфиг
+        function calculatePrice() {
+            const duration = document.getElementById('duration').value;
+            const format = document.getElementById('format').value;
+            const resultDiv = document.getElementById('result');
+            
+            let price = 0;
+            let suffix = " ₽ / урок";
+
+            if (!siteConfig.calculator) {
+                resultDiv.innerText = "Стоимость загружается...";
+                return;
+            }
+
+            // Получаем цену по ключу из JSON
+            const key = `price_${format}_${duration}`;
+            price = siteConfig.calculator[key] || 0;
+
+            if (format === "pair" || format === "group") {
+                suffix = " ₽ / урок (с человека)";
+            }
+
+            resultDiv.style.opacity = 0;
+            setTimeout(() => {
+                resultDiv.innerText = `Стоимость: ${price}${suffix}`;
+                resultDiv.style.transition = "opacity 0.4s ease";
+                resultDiv.style.opacity = 1;
+            }, 150);
+        }
+
+        // Появление карточек при попадании в область видимости
+        document.addEventListener("DOMContentLoaded", () => {
+            const reveals = document.querySelectorAll(".reveal");
+
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px"
+            };
+
+            const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    
+                    entry.target.classList.add("visible");
+                    observer.unobserve(entry.target);
+                });
+            }, revealOptions);
+
+            reveals.forEach(reveal => {
+                revealOnScroll.observe(reveal);
+            });
+        });
+    </script>
+</body>
+</html>
