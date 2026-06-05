@@ -144,7 +144,6 @@
             font-weight: bold;
         }
 
-        /* Кнопка авторизации и сохранения */
         .token-card {
             background: #EEF2F6;
             border-radius: 12px;
@@ -171,12 +170,7 @@
 
         .save-btn:hover {
             background: var(--purple-dark);
-            transform: translateY(-1s);
             box-shadow: 0 8px 20px rgba(138, 43, 226, 0.3);
-        }
-
-        .save-btn:active {
-            transform: translateY(1px);
         }
 
         #status-message {
@@ -212,49 +206,43 @@
     <div class="container">
         <header>
             <h1>Управление контентом Arban School</h1>
-            <p>Здесь вы можете редактировать заголовки, тексты, контакты и тарифы калькулятора</p>
+            <p>Редактирование заголовков, текстов, контактов и тарифов без изменения кода</p>
         </header>
 
-        <!-- БЛОК АВТОРИЗАЦИИ ЧЕРЕЗ GITHUB -->
         <div class="token-card">
             <div class="field-group">
                 <label for="gh-token">Ключ доступа к GitHub (Personal Access Token):</label>
                 <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="current-password">
-                <p style="font-size: 0.8rem; color: #6B7280; margin-top: 5px;">
-                    Ключ используется только в вашем браузере для отправки изменений на сайт.
-                </p>
             </div>
             <div class="field-group row">
                 <div>
-                    <label for="gh-owner">Имя пользователя на GitHub:</label>
-                    <input type="text" id="gh-owner" placeholder="например, ivan-school">
+                    <label for="gh-owner">Логин на GitHub:</label>
+                    <input type="text" id="gh-owner" placeholder="Например: ivan-school">
                 </div>
                 <div>
-                    <label for="gh-repo">Название репозитория:</label>
-                    <input type="text" id="gh-repo" placeholder="например, ivan-school.github.io">
+                    <label for="gh-repo">Репозиторий:</label>
+                    <input type="text" id="gh-repo" placeholder="Например: ivan-school.github.io">
                 </div>
             </div>
         </div>
 
-        <!-- ОСНОВНЫЕ НАСТРОЙКИ САЙТА -->
         <div class="section-title">🌐 Общие настройки</div>
         <div class="field-group">
             <label for="site-title">Название вкладки сайта (Title):</label>
-            <input type="text" id="site-title" placeholder="Arban School - Школа английского языка">
+            <input type="text" id="site-title">
         </div>
         
         <div class="field-group row">
             <div>
-                <label for="logo-url">Ссылка на картинку логотипа (оставьте пустой для буквы):</label>
-                <input type="text" id="logo-url" placeholder="images/logo.png">
+                <label for="logo-url">Путь к картинке логотипа (оставьте пустым для буквы):</label>
+                <input type="text" id="logo-url" placeholder="Например: logo.png">
             </div>
             <div>
-                <label for="logo-fallback-text">Текстовая заглушка логотипа (если нет картинки):</label>
-                <input type="text" id="logo-fallback-text" placeholder="A" maxlength="3">
+                <label for="logo-fallback-text">Буква-заглушка логотипа:</label>
+                <input type="text" id="logo-fallback-text" maxlength="3">
             </div>
         </div>
 
-        <!-- ПЕРВЫЙ ЭКРАН -->
         <div class="section-title">👋 Первый экран (Приветствие)</div>
         <div class="field-group">
             <label for="welcome-title">Главный заголовок:</label>
@@ -265,76 +253,61 @@
             <input type="text" id="welcome-subtitle">
         </div>
 
-        <!-- ТРЕТИЙ ЭКРАН (О НАС) -->
         <div class="section-title">📖 Третий экран (О нас)</div>
         <div class="field-group">
             <label for="about-title">Заголовок страницы:</label>
             <input type="text" id="about-title">
         </div>
         <div class="field-group">
-            <label for="about-text">Текст о школе:</label>
+            <label for="about-text">Текст описания:</label>
             <textarea id="about-text"></textarea>
         </div>
 
-        <!-- КАЛЬКУЛЯТОР СТОИМОСТИ -->
-        <div class="section-title">🧮 Прайс-лист калькулятора цен</div>
+        <div class="section-title">🧮 Прайс-лист калькулятора</div>
         <div class="field-group">
             <label for="calc-title">Заголовок калькулятора:</label>
             <input type="text" id="calc-title">
         </div>
 
-        <label style="margin-top: 10px;">Цены для уроков длительностью 40 минут:</label>
+        <label style="margin-top: 10px;">Уроки по 40 минут:</label>
         <div class="price-grid" style="margin-bottom: 20px;">
             <div class="price-item">
                 <label for="p-ind-40">Индивидуально</label>
-                <div class="price-input-wrapper">
-                    <input type="text" id="p-ind-40">
-                </div>
+                <div class="price-input-wrapper"><input type="text" id="p-ind-40"></div>
             </div>
             <div class="price-item">
                 <label for="p-pair-40">В паре</label>
-                <div class="price-input-wrapper">
-                    <input type="text" id="p-pair-40">
-                </div>
+                <div class="price-input-wrapper"><input type="text" id="p-pair-40"></div>
             </div>
             <div class="price-item">
                 <label for="p-group-40">В группе</label>
-                <div class="price-input-wrapper">
-                    <input type="text" id="p-group-40">
-                </div>
+                <div class="price-input-wrapper"><input type="text" id="p-group-40"></div>
             </div>
         </div>
 
-        <label>Цены для уроков длительностью 60 минут:</label>
+        <label>Уроки по 60 минут:</label>
         <div class="price-grid">
             <div class="price-item">
                 <label for="p-ind-60">Индивидуально</label>
-                <div class="price-input-wrapper">
-                    <input type="text" id="p-ind-60">
-                </div>
+                <div class="price-input-wrapper"><input type="text" id="p-ind-60"></div>
             </div>
             <div class="price-item">
                 <label for="p-pair-60">В паре</label>
-                <div class="price-input-wrapper">
-                    <input type="text" id="p-pair-60">
-                </div>
+                <div class="price-input-wrapper"><input type="text" id="p-pair-60"></div>
             </div>
             <div class="price-item">
                 <label for="p-group-60">В группе</label>
-                <div class="price-input-wrapper">
-                    <input type="text" id="p-group-60">
-                </div>
+                <div class="price-input-wrapper"><input type="text" id="p-group-60"></div>
             </div>
         </div>
 
-        <!-- ЧЕТВЕРТЫЙ ЭКРАН (КОНТАКТЫ) -->
         <div class="section-title">📞 Контакты</div>
         <div class="field-group">
-            <label for="contacts-title">Заголовок секции контактов:</label>
+            <label for="contacts-title">Заголовок секции:</label>
             <input type="text" id="contacts-title">
         </div>
         <div class="field-group">
-            <label for="contact-address">Физический адрес:</label>
+            <label for="contact-address">Адрес:</label>
             <input type="text" id="contact-address">
         </div>
         <div class="field-group">
@@ -342,30 +315,23 @@
             <input type="text" id="contact-phone">
         </div>
 
-        <!-- Статус операции -->
         <div id="status-message"></div>
-
-        <!-- Кнопка сохранения -->
         <button class="save-btn" onclick="saveConfig()">Сохранить изменения</button>
     </div>
 
     <script>
         const CONFIG_FILE = 'site-config.json';
 
-        // При загрузке админки пытаемся прочитать текущие данные из site-config.json в том же репозитории
         document.addEventListener("DOMContentLoaded", () => {
-            // Попробуем угадать репозиторий по URL страницы админки
-            const pathParts = window.location.pathname.split('/');
             const hostname = window.location.hostname;
+            const pathParts = window.location.pathname.split('/');
             
             if (hostname.includes('.github.io')) {
                 document.getElementById('gh-owner').value = hostname.split('.')[0];
-                // Если сайт лежит в корневом домене, имя репозитория совпадает с хостом, иначе это папка
                 const repoName = pathParts[1] && pathParts[1] !== "" ? pathParts[1] : hostname;
                 document.getElementById('gh-repo').value = repoName;
             }
 
-            // Пытаемся получить сохраненные данные авторизации из localStorage (для удобства администратора)
             if (localStorage.getItem('gh_token')) document.getElementById('gh-token').value = localStorage.getItem('gh_token');
             if (localStorage.getItem('gh_owner')) document.getElementById('gh-owner').value = localStorage.getItem('gh_owner');
             if (localStorage.getItem('gh_repo')) document.getElementById('gh-repo').value = localStorage.getItem('gh_repo');
@@ -373,12 +339,9 @@
             fetch(CONFIG_FILE)
                 .then(res => res.json())
                 .then(data => fillForm(data))
-                .catch(err => {
-                    console.log("Данные конфигурации еще не созданы или не загружены.", err);
-                });
+                .catch(err => console.log("Файл настроек ещё не создан на сервере", err));
         });
 
-        // Заполнение полей формы из JSON
         function fillForm(data) {
             document.getElementById('site-title').value = data.site_title || "";
             document.getElementById('logo-url').value = data.logo_url || "";
@@ -388,12 +351,10 @@
                 document.getElementById('welcome-title').value = data.welcome.title || "";
                 document.getElementById('welcome-subtitle').value = data.welcome.subtitle || "";
             }
-
             if (data.about) {
                 document.getElementById('about-title').value = data.about.title || "";
                 document.getElementById('about-text').value = data.about.text || "";
             }
-
             if (data.calculator) {
                 document.getElementById('calc-title').value = data.calculator.title || "";
                 document.getElementById('p-ind-40').value = data.calculator.price_individual_40 || 0;
@@ -403,7 +364,6 @@
                 document.getElementById('p-pair-60').value = data.calculator.price_pair_60 || 0;
                 document.getElementById('p-group-60').value = data.calculator.price_group_60 || 0;
             }
-
             if (data.contacts) {
                 document.getElementById('contacts-title').value = data.contacts.title || "";
                 document.getElementById('contact-address').value = data.contacts.address || "";
@@ -411,26 +371,22 @@
             }
         }
 
-        // Сохранение изменений через API GitHub
         async function saveConfig() {
             const token = document.getElementById('gh-token').value.trim();
             const owner = document.getElementById('gh-owner').value.trim();
             const repo = document.getElementById('gh-repo').value.trim();
-            const statusEl = document.getElementById('status-message');
 
             if (!token || !owner || !repo) {
-                showStatus('Пожалуйста, заполните все поля авторизации (токен, имя пользователя и репозиторий)!', 'error');
+                showStatus('Заполните токен, имя пользователя и имя репозитория вверху!', 'error');
                 return;
             }
 
-            // Запоминаем реквизиты в браузере (кроме токена, токен сохраняем по желанию)
             localStorage.setItem('gh_token', token);
             localStorage.setItem('gh_owner', owner);
             localStorage.setItem('gh_repo', repo);
 
-            showStatus('Связываемся с GitHub API...', 'loading');
+            showStatus('Отправка коммита на GitHub...', 'loading');
 
-            // Формируем новый объект настроек из значений полей формы
             const updatedConfig = {
                 site_title: document.getElementById('site-title').value,
                 logo_url: document.getElementById('logo-url').value,
@@ -462,7 +418,6 @@
             const url = `https://api.github.com/repos/${owner}/${repo}/contents/${CONFIG_FILE}`;
 
             try {
-                // Шаг 1: Получаем хэш-сумму (sha) существующего файла конфигурации
                 const getRes = await fetch(url, {
                     headers: { 'Authorization': `token ${token}` }
                 });
@@ -471,32 +426,21 @@
                 if (getRes.ok) {
                     const fileData = await getRes.json();
                     sha = fileData.sha;
-                } else if (getRes.status !== 404) {
-                    const errInfo = await getRes.json();
-                    showStatus(`Ошибка при чтении файла: ${errInfo.message}`, 'error');
-                    return;
                 }
 
-                // Шаг 2: Кодируем новый JSON в формат Base64 с поддержкой кириллицы (UTF-8)
                 const jsonStr = JSON.stringify(updatedConfig, null, 2);
                 const utf8Bytes = new TextEncoder().encode(jsonStr);
-                // Преобразование байтового массива в строку base64
                 let binString = "";
                 for (let i = 0; i < utf8Bytes.length; i++) {
                     binString += String.fromCharCode(utf8Bytes[i]);
                 }
                 const base64Content = btoa(binString);
 
-                // Шаг 3: Отправляем коммит на GitHub
                 const bodyPayload = {
-                    message: "Админ-панель: обновление контента сайта (site-config.json)",
+                    message: "Админ-панель: обновление контента (site-config.json)",
                     content: base64Content
                 };
-
-                // Если файл существовал, добавляем SHA, чтобы перезаписать его
-                if (sha) {
-                    bodyPayload.sha = sha;
-                }
+                if (sha) bodyPayload.sha = sha;
 
                 const putRes = await fetch(url, {
                     method: 'PUT',
@@ -508,22 +452,28 @@
                 });
 
                 if (putRes.ok) {
-                    showStatus('🎉 Успешно сохранено! Изменения применятся на сайте в течение минуты.', 'success');
+                    showStatus('🎉 Успешно сохранено! Изменения отобразятся на основном сайте в течение минуты.', 'success');
                 } else {
                     const putErr = await putRes.json();
-                    showStatus(`Ошибка записи на GitHub: ${putErr.message}`, 'error');
+                    showStatus(`Ошибка GitHub API: ${putErr.message}`, 'error');
                 }
 
             } catch (err) {
                 console.error(err);
-                showStatus('Сетевая ошибка при работе с API. Убедитесь в стабильности интернета.', 'error');
+                showStatus('Сетевая ошибка при запросе к репозиторию.', 'error');
             }
         }
 
         function showStatus(text, type) {
             const el = document.getElementById('status-message');
             el.innerText = text;
-            el.className = ''; // сброс стилей
+            el.className = '';
             el.style.display = 'block';
 
-            if (type === 'success') 
+            if (type === 'success') el.classList.add('status-success');
+            else if (type === 'error') el.classList.add('status-error');
+            else if (type === 'loading') el.classList.add('status-loading');
+        }
+    </script>
+</body>
+</html>
