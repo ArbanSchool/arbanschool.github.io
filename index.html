@@ -21,7 +21,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* ПРИМАГНИЧИВАНИЕ СТРАНИЦ (Работает везде, включая мобильные) */
+        /* ПРИМАГНИЧИВАНИЕ СТРАНИЦ */
         html {
             scroll-behavior: smooth;
             scroll-snap-type: y mandatory;
@@ -109,7 +109,7 @@
             position: relative;
         }
 
-        /* ЭКРАН 1: Приветствие — ЖЁЛТЫЙ */
+        /* ЭКРАН 1: Приветствие */
         #welcome-section {
             background-color: var(--yellow);
             color: var(--text-dark);
@@ -121,47 +121,49 @@
             color: var(--yellow);
         }
 
-        /* ЭКРАН 2: О нас (Карточки) — ФИОЛЕТОВЫЙ */
+        /* ЭКРАН 2: О нас (Карточки) */
         #about-section {
             background: linear-gradient(135deg, var(--purple), var(--purple-dark));
             color: var(--text-light);
         }
 
         #about-section h2 {
-            font-size: 2.5rem;
+            font-size: 3rem; /* Сделали заголовок секции чуть массивнее на ПК */
             color: var(--yellow);
-            margin-bottom: 35px;
+            margin-bottom: 45px;
             text-align: center;
+            font-weight: 800;
         }
 
-        /* ЭКРАН 3: Калькулятор — ЖЁЛТЫЙ */
+        /* ЭКРАН 3: Калькулятор */
         #calculator-section {
             background-color: var(--yellow);
             color: var(--text-dark);
         }
 
-        /* ЭКРАН 4: Контакты — ФИОЛЕТОВЫЙ */
+        /* ЭКРАН 4: Контакты */
         #contacts-section {
             background: linear-gradient(135deg, var(--purple-dark), #3d0066);
             color: var(--text-light);
         }
 
-        #contacts-section h2 {
-            color: var(--yellow);
+        /* ИСПРАВЛЕНО: Жёлтый на белом заменен на красивый фиолетовый */
+        #contacts-section .card h2 {
+            color: var(--purple-dark);
         }
 
-        /* СТИЛИ ДЛЯ ЛОГОТИПА */
+        /* ЗАМЕТНО УВЕЛИЧЕННЫЙ ЛОГОТИП НА ПК */
         .logo-container {
-            width: 220px;
-            height: 220px;
+            width: 280px;
+            height: 280px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 6rem;
+            font-size: 8rem;
             font-weight: 900;
-            margin-bottom: 25px;
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+            margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
             animation: scaleIn 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow: hidden;
         }
@@ -173,15 +175,15 @@
         }
 
         .main-title {
-            font-size: 3.8rem;
+            font-size: 4.2rem;
             font-weight: 800;
             letter-spacing: 2px;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             animation: fadeInUp 0.8s ease-out;
         }
 
         .subtitle {
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             opacity: 0.9;
             animation: fadeInUp 1s ease-out;
         }
@@ -190,29 +192,69 @@
         .cards-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
+            gap: 30px;
             width: 100%;
-            max-width: 1050px;
+            max-width: 1200px; /* Расширили контейнер на ПК */
             padding: 10px;
         }
 
-        /* УЛУЧШЕННЫЕ КАРТОЧКИ С ЭФФЕКТОМ ВЫДЕЛЕНИЯ И ПРИПОДНИМАНИЯ */
+        /* УВЕЛИЧЕННЫЕ КАРТОЧКИ ДЛЯ ПК */
         .about-card {
             background: white;
-            border-radius: 20px;
-            padding: 35px 30px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            border-radius: 24px;
+            padding: 45px 35px; /* Больше внутренних отступов */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
             border: 3px solid transparent;
-            /* Важно: transform указываем явно в исходном состоянии */
             transform: translateY(0); 
             transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.35s ease, border-color 0.25s ease;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             opacity: 0;
         }
 
-        /* Анимация появления из IntersectionObserver (переписываем только opacity, чтобы не ломать transform) */
+        .about-card:hover,
+        .about-card:active {
+            transform: translateY(-18px) !important; /* Приподнимаются еще выше и ощутимее */
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4) !important;
+            border-color: var(--yellow) !important;
+            cursor: pointer;
+        }
+
+        .about-card h3 {
+            font-size: 1.6rem; /* Крупнее заголовок карточки */
+            color: var(--purple-dark);
+            font-weight: 700;
+        }
+
+        .about-card p {
+            font-size: 1.1rem; /* Крупнее текст описания */
+            color: #333;
+            line-height: 1.7;
+        }
+
+        /* БЕЛЫЕ КАРТЫ (Калькулятор и Контакты) */
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 45px;
+            width: 100%;
+            max-width: 580px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        #calculator-section .card {
+            border-bottom: 8px solid var(--purple);
+        }
+
+        #contacts-section .card {
+            color: var(--text-dark);
+            border-bottom: 8px solid var(--purple-dark);
+        }
+
+        /* Анимации появления */
         .card.visible {
             opacity: 1;
             transform: translateY(0);
@@ -221,66 +263,15 @@
         
         .about-card.visible {
             opacity: 1;
-            /* transform оставляем под контроль ховера, убирая конфликт анимаций */
             transition: opacity 0.8s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.35s ease, border-color 0.25s ease;
         }
 
-        /* Эффект приподнимания при наведении мыши (ПК) и при удержании пальца (Мобильные) */
-        .about-card:hover,
-        .about-card:active {
-            transform: translateY(-15px) !important; /* !important исключит любые конфликты со скриптами */
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35) !important;
-            border-color: var(--yellow) !important;
-            cursor: pointer;
-        }
-
-        .about-card h3 {
-            font-size: 1.4rem;
-            color: var(--purple-dark);
-            font-weight: 700;
-        }
-
-        .about-card p {
-            font-size: 1rem;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        /* СТАНДАРТНЫЕ БЕЛЫЕ КАРТЫ ДЛЯ КАЛЬКУЛЯТОРА И КОНТАКТОВ */
-        .card {
-            background: white;
-            border-radius: 24px;
-            padding: 40px;
-            width: 100%;
-            max-width: 550px;
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
-            opacity: 0;
-            transform: translateY(40px);
-        }
-
-        #calculator-section .card {
-            background: #ffffff;
-            border-bottom: 8px solid var(--purple);
-        }
-
-        #contacts-section .card {
-            background: #ffffff;
-            color: var(--text-dark);
-            border-bottom: 8px solid var(--yellow);
-        }
-
-        /* Анимации появления */
-        .card.visible, .about-card.visible {
-            opacity: 1;
-            transform: translateY(0);
-            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
         .card h2 {
-            font-size: 2.2rem;
-            margin-bottom: 30px;
+            font-size: 2.4rem;
+            margin-bottom: 35px;
             text-align: center;
             color: var(--purple-dark);
+            font-weight: 700;
         }
 
         /* Элементы форм */
@@ -290,11 +281,13 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-weight: 600;
             color: #444;
+            font-size: 1.05rem;
         }
 
+        /* КРАСИВЫЙ КАСТОМНЫЙ СТИЛЬ ДЛЯ SELECT */
         .select-wrapper {
             position: relative;
             width: 100%;
@@ -302,60 +295,78 @@
 
         select {
             width: 100%;
-            padding: 15px 45px 15px 18px;
+            padding: 16px 50px 16px 20px;
             border: 2px solid #E2E8F0;
-            border-radius: 12px;
-            font-size: 1.05rem;
+            border-radius: 14px;
+            font-size: 1.1rem;
             color: #333;
             outline: none;
             background-color: #F8FAFC;
             cursor: pointer;
-            appearance: none;
-            transition: all 0.3s ease;
+            appearance: none; /* Прячем дефолтную стрелочку Chrome/Safari */
+            -moz-appearance: none; /* Прячем дефолтную стрелочку Firefox */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        select:hover {
+            border-color: #CBD5E1;
+            background-color: #FFF;
         }
 
         select:focus {
             border-color: var(--purple);
             background-color: #FFF;
-            box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.15);
+            box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.15), inset 0 2px 4px rgba(0,0,0,0.01);
         }
 
+        /* Красивый кастомный маркер-стрелочка */
         .select-wrapper::after {
             content: "";
             position: absolute;
-            right: 20px;
+            right: 22px;
             top: 50%;
-            transform: translateY(-50%);
-            border: 6px solid transparent;
-            border-top-color: var(--purple);
+            margin-top: -3px;
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid var(--purple);
+            border-bottom: 2px solid var(--purple);
+            transform: rotate(45deg);
             pointer-events: none;
+            transition: transform 0.3s ease;
+        }
+
+        /* Эффект переворота стрелочки при фокусе на селекте */
+        .select-wrapper:focus-within::after {
+            transform: rotate(-135deg);
+            margin-top: 2px;
         }
 
         button.calc-btn {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             background-color: var(--purple);
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 1.2rem;
+            border-radius: 14px;
+            font-size: 1.25rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 10px;
-            box-shadow: 0 4px 14px rgba(138, 43, 226, 0.3);
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
         }
 
         button.calc-btn:hover {
             background-color: var(--purple-dark);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+            box-shadow: 0 8px 22px rgba(138, 43, 226, 0.4);
         }
 
         #result {
             margin-top: 25px;
             text-align: center;
-            font-size: 1.6rem;
+            font-size: 1.7rem;
             font-weight: bold;
             color: var(--purple-dark);
             min-height: 38px;
@@ -363,26 +374,25 @@
 
         .contact-info {
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             line-height: 1.8;
         }
 
         .contact-info p {
             margin-bottom: 20px;
+            color: #444;
         }
 
         .contact-info span {
-            color: var(--purple);
+            color: var(--purple-dark);
             font-weight: 700;
-            font-size: 1.35rem;
+            font-size: 1.4rem;
         }
 
-        /* Мобильная адаптация */
+        /* Мобильная адаптация (Тут возвращаем компактные размеры) */
         @media (max-width: 992px) {
-            /* scroll-snap-type УДАЛЕН отсюда, чтобы примагничивание работало стабильно и на смартфонах */
-            
             .section-block {
-                height: 100vh; /* Возвращаем строго по высоте экрана смартфона */
+                height: 100vh;
                 padding: 40px 20px;
             }
 
@@ -399,25 +409,56 @@
                 display: block;
             }
 
+            /* Возвращаем компактный заголовок и лого на мобилках */
             .main-title {
                 font-size: 2.4rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
             }
 
             .logo-container {
                 width: 140px;
                 height: 140px;
                 font-size: 3.8rem;
+                margin-bottom: 20px;
             }
 
+            #about-section h2 {
+                font-size: 2rem;
+                margin-bottom: 25px;
+            }
+
+            /* Возвращаем компактные карточки на мобильных */
             .cards-container {
                 grid-template-columns: 1fr;
                 gap: 15px;
-                max-height: 70vh; /* Позволяет карточкам аккуратно помещаться в экран мобильного */
-                overflow-y: auto;  /* Если контента слишком много — внутри блока появится незаметный скролл */
+                max-height: 70vh;
+                overflow-y: auto;
             }
 
             .about-card {
-                padding: 20px;
+                padding: 22px 20px;
+                gap: 10px;
+            }
+
+            .about-card h3 {
+                font-size: 1.25rem;
+            }
+
+            .about-card p {
+                font-size: 0.95rem;
+                line-height: 1.5;
+            }
+            
+            .card {
+                padding: 30px 25px;
+            }
+            
+            .card h2 {
+                font-size: 1.8rem;
+                margin-bottom: 25px;
             }
         }
     </style>
