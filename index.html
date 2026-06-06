@@ -12,7 +12,6 @@
             --yellow-dark: #FFB700;
             --text-dark: #222;
             --text-light: #FFF;
-            --bg-gray: #F4F4F9;
         }
 
         * {
@@ -22,14 +21,14 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* ПРИМАГНИЧИВАНИЕ СТРАНИЦ НАМЕРТВО */
+        /* ПРИМАГНИЧИВАНИЕ СТРАНИЦ */
         html {
             scroll-behavior: smooth;
             scroll-snap-type: y mandatory;
         }
 
         body {
-            background-color: #F4F4F9;
+            background-color: var(--yellow);
             color: var(--text-dark);
             overflow-x: hidden;
         }
@@ -82,7 +81,7 @@
             right: 20px;
             z-index: 101;
             cursor: pointer;
-            background: var(--yellow);
+            background: var(--purple);
             padding: 12px;
             border-radius: 5px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -92,7 +91,7 @@
         .burger div {
             width: 25px;
             height: 3px;
-            background-color: var(--purple-dark);
+            background-color: var(--yellow);
             margin: 5px;
             transition: 0.3s;
         }
@@ -110,26 +109,61 @@
             position: relative;
         }
 
-        /* Блок 1: Приветствие */
+        /* ЧЕРЕДОВАНИЕ ЦВЕТОВ ЗАДНЕГО ФОНА */
+
+        /* ЭКРАН 1: Приветствие — ЖЁЛТЫЙ */
         #welcome-section {
-            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
-            color: var(--text-light);
+            background-color: var(--yellow);
+            color: var(--text-dark);
             text-align: center;
         }
 
+        #welcome-section .logo-container {
+            background-color: var(--purple-dark);
+            color: var(--yellow);
+        }
+
+        /* ЭКРАН 2: О нас (Карточки) — ФИОЛЕТОВЫЙ */
+        #about-section {
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+            color: var(--text-light);
+        }
+
+        #about-section h2 {
+            font-size: 2.5rem;
+            color: var(--yellow);
+            margin-bottom: 35px;
+            text-align: center;
+        }
+
+        /* ЭКРАН 3: Калькулятор — ЖЁЛТЫЙ */
+        #calculator-section {
+            background-color: var(--yellow);
+            color: var(--text-dark);
+        }
+
+        /* ЭКРАН 4: Контакты — ФИОЛЕТОВЫЙ */
+        #contacts-section {
+            background: linear-gradient(135deg, var(--purple-dark), #3d0066);
+            color: var(--text-light);
+        }
+
+        #contacts-section h2 {
+            color: var(--yellow);
+        }
+
+        /* СТИЛИ ДЛЯ ЛОГОТИПА */
         .logo-container {
             width: 220px;
             height: 220px;
-            background-color: var(--yellow);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 6rem;
             font-weight: 900;
-            color: var(--purple-dark);
             margin-bottom: 25px;
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
             animation: scaleIn 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow: hidden;
         }
@@ -154,25 +188,7 @@
             animation: fadeInUp 1s ease-out;
         }
 
-        /* Блок 2: Калькулятор */
-        #calculator-section {
-            background-color: var(--yellow);
-            color: var(--text-dark);
-        }
-
-        /* Блок 3: Карточки О Нас */
-        #about-section {
-            background-color: var(--bg-gray);
-            color: var(--text-dark);
-        }
-
-        #about-section h2 {
-            font-size: 2.5rem;
-            color: var(--purple-dark);
-            margin-bottom: 35px;
-            text-align: center;
-        }
-
+        /* НАСТРОЙКА СЕТКИ КАРТОЧЕК */
         .cards-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -182,12 +198,12 @@
             padding: 10px;
         }
 
-        /* КАРТОЧКИ С ЭФФЕКТОМ ПРИПОДНИМАНИЯ */
+        /* КАРТОЧКИ "О НАС" НА ФИОЛЕТОВОМ ФОНЕ */
         .about-card {
             background: white;
             border-radius: 20px;
             padding: 35px 30px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
             border: 2px solid transparent;
             transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease, border-color 0.3s ease;
             display: flex;
@@ -199,8 +215,8 @@
 
         .about-card:hover {
             transform: translateY(-12px);
-            box-shadow: 0 20px 40px rgba(138, 43, 226, 0.15);
-            border-color: var(--purple);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--yellow);
         }
 
         .about-card h3 {
@@ -211,17 +227,11 @@
 
         .about-card p {
             font-size: 1rem;
-            color: #444;
+            color: #333;
             line-height: 1.6;
         }
 
-        /* Блок 4: Контакты */
-        #contacts-section {
-            background: linear-gradient(135deg, var(--purple-dark), #3d0066);
-            color: var(--text-light);
-        }
-
-        /* ОБЩИЕ СТИЛИ ДЛЯ СТАНДАРТНЫХ КАРТОЧЕК КАЛЬКУЛЯТОРА И КОНТАКТОВ */
+        /* СТАНДАРТНЫЕ БЕЛЫЕ КАРТЫ ДЛЯ КАЛЬКУЛЯТОРА И КОНТАКТОВ */
         .card {
             background: white;
             border-radius: 24px;
@@ -244,7 +254,7 @@
             border-bottom: 8px solid var(--yellow);
         }
 
-        /* Классы анимации при прокрутке */
+        /* Анимации появления */
         .card.visible, .about-card.visible {
             opacity: 1;
             transform: translateY(0);
@@ -258,6 +268,7 @@
             color: var(--purple-dark);
         }
 
+        /* Элементы форм */
         .form-group {
             margin-bottom: 25px;
         }
@@ -351,10 +362,10 @@
             font-size: 1.35rem;
         }
 
-        /* Адаптивность под мобилки */
+        /* Мобильная адаптация */
         @media (max-width: 992px) {
             html {
-                scroll-snap-type: none; /* Выключаем прилипание только на смартфонах */
+                scroll-snap-type: none;
             }
 
             .section-block {
@@ -400,21 +411,30 @@
         <div></div>
     </button>
 
+    <!-- Обновленный порядок ссылок в меню -->
     <nav class="sidebar" id="sidebar">
         <a href="#welcome-section">Главная</a>
-        <a href="#calculator-section">Калькулятор цен</a>
         <a href="#about-section">О нас</a>
+        <a href="#calculator-section">Калькулятор цен</a>
         <a href="#contacts-section">Контакты</a>
     </nav>
 
-    <!-- БЛОК 1 -->
+    <!-- ЭКРАН 1: ПРИВЕТСТВИЕ (ЖЁЛТЫЙ) -->
     <header class="section-block" id="welcome-section">
         <div class="logo-container" id="logo-block">A</div>
         <h1 class="main-title" id="welcome-title">Arban School</h1>
         <p class="subtitle" id="welcome-subtitle">Эффективный английский для больших целей</p>
     </header>
 
-    <!-- БЛОК 2 -->
+    <!-- ЭКРАН 2: О НАС / КАРТОЧКИ (ФИОЛЕТОВЫЙ) -->
+    <section class="section-block" id="about-section">
+        <h2 id="about-title">О нас</h2>
+        <div class="cards-container" id="cards-container">
+            <!-- Сюда прилетят 3 карточки -->
+        </div>
+    </section>
+
+    <!-- ЭКРАН 3: КАЛЬКУЛЯТОР (ЖЁЛТЫЙ) -->
     <section class="section-block" id="calculator-section">
         <div class="card reveal-card">
             <h2 id="calc-title">Рассчитать стоимость</h2>
@@ -442,15 +462,7 @@
         </div>
     </section>
 
-    <!-- БЛОК 3: ТРИ КАРТОЧКИ -->
-    <section class="section-block" id="about-section">
-        <h2 id="about-title">О нас</h2>
-        <div class="cards-container" id="cards-container">
-            <!-- Карточки рендерятся тут -->
-        </div>
-    </section>
-
-    <!-- БЛОК 4 -->
+    <!-- ЭКРАН 4: КОНТАКТЫ (ФИОЛЕТОВЫЙ) -->
     <section class="section-block" id="contacts-section">
         <div class="card reveal-card">
             <h2 id="contacts-title">Ждём вас на занятиях</h2>
@@ -520,7 +532,6 @@
                 pricePrices = data.calculator;
             }
 
-            // Рендеринг карточек "О нас" из JSON
             if (data.about) {
                 document.getElementById('about-title').innerText = data.about.title || "О нас";
                 const container = document.getElementById('cards-container');
@@ -535,7 +546,7 @@
                         <p>${card.text || 'Описание...'}</p>
                     `;
                     container.appendChild(cardHtml);
-                    revealObserver.observe(cardHtml); // Вешаем анимацию на каждую карточку отдельно
+                    revealObserver.observe(cardHtml);
                 });
             }
 
@@ -545,7 +556,6 @@
                 document.getElementById('contact-phone').innerText = data.contacts.phone || "";
             }
 
-            // Запускаем отслеживание для обычных карточек
             document.querySelectorAll('.reveal-card').forEach(c => revealObserver.observe(c));
         }
 
