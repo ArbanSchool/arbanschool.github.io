@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arban School - Школа английского языка</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <style>
         :root {
             --purple: #8A2BE2;
@@ -44,6 +46,75 @@
         }
 
         /* Навигация */
+
+        .choices {
+        width: 100%;
+        margin-bottom: 0; /* Сбрасываем дефолтные отступы библиотеки */
+        }
+
+        .choices__inner {
+        background-color: #F8FAFC !important;
+        border: 2px solid #E2E8F0 !important;
+        border-radius: 14px !important;
+        padding: 14px 20px !important;
+        font-size: 1.1rem !important;
+        color: #333 !important;
+        min-height: auto !important;
+        transition: all 0.3s ease;
+    }
+    
+    /* Изменение стиля при фокусе/открытии списка */
+    .choices.is-focused .choices__inner,
+    .choices.is-open .choices__inner {
+        border-color: var(--purple) !important;
+        background-color: #FFF !important;
+        box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.15) !important;
+    }
+
+    /* Выпадающий список (выползающее меню) */
+    .choices__list--dropdown {
+        border: 2px solid var(--purple) !important;
+        border-radius: 14px !important;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
+        overflow: hidden;
+        margin-top: 5px;
+        z-index: 100 !important;
+    }
+
+    /* Элементы списка (активный, наведение) */
+    .choices__list--dropdown .choices__item--focusable:hover {
+        background-color: rgba(138, 43, 226, 0.08) !important;
+        color: var(--purple-dark) !important;
+    }
+
+    /* Подсветка уже выбранного пункта в выпадающем меню */
+    .choices__list--dropdown .choices__item.is-selected {
+        background-color: var(--purple) !important;
+        color: white !important;
+    }
+
+/* Кастомная стрелочка Choices.js (меняем на наш фиолетовый уголок) */
+    .choices[data-type="select-one"]::after {
+        border: none !important; /* Уничтожаем стандартный треугольник */
+        content: "" !important;
+        position: absolute !important;
+        right: 22px !important;
+        top: 50% !important;
+        margin-top: -5px !important;
+        width: 8px !important;
+        height: 8px !important;
+        border-right: 2px solid var(--purple) !important;
+        border-bottom: 2px solid var(--purple) !important;
+        transform: rotate(45deg) !important;
+        transition: transform 0.3s ease, margin-top 0.3s ease !important;
+    }
+
+    /* Поворот стрелочки при открытии списка */
+    .choices.is-open[data-type="select-one"]::after {
+        transform: rotate(-135deg) !important;
+        margin-top: 1px !important;
+    }
+        
         .sidebar {
             position: fixed;
             right: 0;
@@ -546,6 +617,18 @@
             document.getElementById('sidebar').classList.toggle('active');
         }
 
+        document.addEventListener("DOMContentLoaded", () => {
+        // Находим все элементы select на странице
+        const elements = document.querySelectorAll('select');
+    
+        elements.forEach(element => {
+            new Choices(element, {
+                searchEnabled: false, // Отключаем поиск (он не нужен для выбора из 2-3 пунктов)
+                itemSelectText: '',   // Убираем дефолтный текст "Press to select" при наведении
+                shouldSort: false     // Отключаем автоматическую сортировку по алфавиту, чтобы порядок остался как в HTML
+            });
+        });
+        
         document.querySelectorAll('.sidebar a').forEach(link => {
             link.addEventListener('click', () => {
                 document.getElementById('sidebar').classList.remove('active');
