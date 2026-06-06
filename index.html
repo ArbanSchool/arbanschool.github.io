@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arban School - Школа английского языка</title>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
     <style>
         :root {
             --purple: #8A2BE2;
@@ -46,75 +48,6 @@
         }
 
         /* Навигация */
-
-        .choices {
-        width: 100%;
-        margin-bottom: 0; /* Сбрасываем дефолтные отступы библиотеки */
-        }
-
-        .choices__inner {
-        background-color: #F8FAFC !important;
-        border: 2px solid #E2E8F0 !important;
-        border-radius: 14px !important;
-        padding: 14px 20px !important;
-        font-size: 1.1rem !important;
-        color: #333 !important;
-        min-height: auto !important;
-        transition: all 0.3s ease;
-    }
-    
-    /* Изменение стиля при фокусе/открытии списка */
-    .choices.is-focused .choices__inner,
-    .choices.is-open .choices__inner {
-        border-color: var(--purple) !important;
-        background-color: #FFF !important;
-        box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.15) !important;
-    }
-
-    /* Выпадающий список (выползающее меню) */
-    .choices__list--dropdown {
-        border: 2px solid var(--purple) !important;
-        border-radius: 14px !important;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
-        overflow: hidden;
-        margin-top: 5px;
-        z-index: 100 !important;
-    }
-
-    /* Элементы списка (активный, наведение) */
-    .choices__list--dropdown .choices__item--focusable:hover {
-        background-color: rgba(138, 43, 226, 0.08) !important;
-        color: var(--purple-dark) !important;
-    }
-
-    /* Подсветка уже выбранного пункта в выпадающем меню */
-    .choices__list--dropdown .choices__item.is-selected {
-        background-color: var(--purple) !important;
-        color: white !important;
-    }
-
-/* Кастомная стрелочка Choices.js (меняем на наш фиолетовый уголок) */
-    .choices[data-type="select-one"]::after {
-        border: none !important; /* Уничтожаем стандартный треугольник */
-        content: "" !important;
-        position: absolute !important;
-        right: 22px !important;
-        top: 50% !important;
-        margin-top: -5px !important;
-        width: 8px !important;
-        height: 8px !important;
-        border-right: 2px solid var(--purple) !important;
-        border-bottom: 2px solid var(--purple) !important;
-        transform: rotate(45deg) !important;
-        transition: transform 0.3s ease, margin-top 0.3s ease !important;
-    }
-
-    /* Поворот стрелочки при открытии списка */
-    .choices.is-open[data-type="select-one"]::after {
-        transform: rotate(-135deg) !important;
-        margin-top: 1px !important;
-    }
-        
         .sidebar {
             position: fixed;
             right: 0;
@@ -199,7 +132,7 @@
         }
 
         #about-section h2 {
-            font-size: 3rem; /* Сделали заголовок секции чуть массивнее на ПК */
+            font-size: 3rem;
             color: var(--yellow);
             margin-bottom: 45px;
             text-align: center;
@@ -218,12 +151,12 @@
             color: var(--text-light);
         }
 
-        /* ИСПРАВЛЕНО: Жёлтый на белом заменен на красивый фиолетовый */
+        /* Фиолетовый заголовок на белой плашке контактов */
         #contacts-section .card h2 {
             color: var(--purple-dark);
         }
 
-        /* ЗАМЕТНО УВЕЛИЧЕННЫЙ ЛОГОТИП НА ПК */
+        /* БОЛЬШОЙ ЛОГОТИП НА ПК */
         .logo-container {
             width: 280px;
             height: 280px;
@@ -259,21 +192,21 @@
             animation: fadeInUp 1s ease-out;
         }
 
-        /* НАСТРОЙКА СЕТКИ КАРТОЧЕК */
+        /* СЕТКА КАРТОЧЕК */
         .cards-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 30px;
             width: 100%;
-            max-width: 1200px; /* Расширили контейнер на ПК */
+            max-width: 1200px;
             padding: 10px;
         }
 
-        /* УВЕЛИЧЕННЫЕ КАРТОЧКИ ДЛЯ ПК */
+        /* КАРТОЧКИ «О НАC» НА ПК */
         .about-card {
             background: white;
             border-radius: 24px;
-            padding: 45px 35px; /* Больше внутренних отступов */
+            padding: 45px 35px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
             border: 3px solid transparent;
             transform: translateY(0); 
@@ -286,25 +219,25 @@
 
         .about-card:hover,
         .about-card:active {
-            transform: translateY(-18px) !important; /* Приподнимаются еще выше и ощутимее */
+            transform: translateY(-18px) !important;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4) !important;
             border-color: var(--yellow) !important;
             cursor: pointer;
         }
 
         .about-card h3 {
-            font-size: 1.6rem; /* Крупнее заголовок карточки */
+            font-size: 1.6rem;
             color: var(--purple-dark);
             font-weight: 700;
         }
 
         .about-card p {
-            font-size: 1.1rem; /* Крупнее текст описания */
+            font-size: 1.1rem;
             color: #333;
             line-height: 1.7;
         }
 
-        /* БЕЛЫЕ КАРТЫ (Калькулятор и Контакты) */
+        /* БЕЛЫЕ КАРТЫ-КОНТЕЙНЕРЫ */
         .card {
             background: white;
             border-radius: 28px;
@@ -325,7 +258,7 @@
             border-bottom: 8px solid var(--purple-dark);
         }
 
-        /* Анимации появления */
+        /* Анимации появления элементов */
         .card.visible {
             opacity: 1;
             transform: translateY(0);
@@ -345,7 +278,6 @@
             font-weight: 700;
         }
 
-        /* Элементы форм */
         .form-group {
             margin-bottom: 25px;
         }
@@ -358,70 +290,82 @@
             font-size: 1.05rem;
         }
 
-        /* КРАСИВЫЙ КАСТОМНЫЙ СТИЛЬ ДЛЯ SELECT */
-        .select-wrapper {
-            position: relative;
+
+        /* ==========================================================================
+           СТИЛИЗАЦИЯ БИБЛИОТЕКИ CHOICES.JS (ФИРМЕННЫЙ СТИЛЬ ШКОЛЫ)
+           ========================================================================== */
+        
+        .choices {
             width: 100%;
-            background: transparent;
+            margin-bottom: 0;
         }
 
-        select {
-            width: 100%;
-            padding: 16px 50px 16px 20px !important; /* Принудительный отступ справа, чтобы текст не перекрывал стрелочку */
+        /* Поле выбора в закрытом состоянии */
+        .choices__inner {
+            background-color: #F8FAFC !important;
             border: 2px solid #E2E8F0 !important;
             border-radius: 14px !important;
+            padding: 12px 20px !important;
             font-size: 1.1rem !important;
             color: #333 !important;
-            outline: none !important;
-            background-color: #F8FAFC !important;
-            cursor: pointer;
-            
-            /* ЖЕСТКИЙ СБРОС СТАНДАРТНОГО СТИЛЯ ДЛЯ ВСЕХ БРАУЗЕРОВ */
-            -webkit-appearance: none !important;  /* Chrome, Safari, Opera, Новые Edge */
-            -moz-appearance: none !important;     /* Firefox */
-            appearance: none !important;          /* Стандарт */
-            
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important;
+            min-height: auto !important;
+            transition: all 0.3s ease;
         }
 
-        select::-ms-expand {
-            display: none !important;
-        }
-
-        select:hover {
-            border-color: #CBD5E1 !important;
-            background-color: #FFF !important;
-        }
-
-        select:focus {
+        /* Состояние фокуса или открытия выпадающего списка */
+        .choices.is-focused .choices__inner,
+        .choices.is-open .choices__inner {
             border-color: var(--purple) !important;
             background-color: #FFF !important;
-            box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.15), inset 0 2px 4px rgba(0,0,0,0.01) !important;
+            box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.15) !important;
         }
 
-        /* Наша кастомная стрелочка-уголок */
-        .select-wrapper::after {
+        /* Сам выпадающий список (контейнер с опциями) */
+        .choices__list--dropdown {
+            border: 2px solid var(--purple) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
+            overflow: hidden;
+            margin-top: 5px;
+            background: white !important;
+            z-index: 100 !important;
+        }
+
+        /* Элементы выпадающего списка при наведении */
+        .choices__list--dropdown .choices__item--focusable:hover {
+            background-color: rgba(138, 43, 226, 0.08) !important;
+            color: var(--purple-dark) !important;
+        }
+
+        /* Стиль уже выбранного элемента внутри открытого списка */
+        .choices__list--dropdown .choices__item.is-selected {
+            background-color: var(--purple) !important;
+            color: white !important;
+        }
+
+        /* Наша кастомная стрелочка-уголок взамен стандартного треугольника */
+        .choices[data-type="select-one"]::after {
+            border: none !important;
             content: "" !important;
             position: absolute !important;
             right: 22px !important;
             top: 50% !important;
-            margin-top: -5px !important; /* Выравнивание по центру */
+            margin-top: -5px !important;
             width: 8px !important;
             height: 8px !important;
             border-right: 2px solid var(--purple) !important;
             border-bottom: 2px solid var(--purple) !important;
             transform: rotate(45deg) !important;
-            pointer-events: none !important;
             transition: transform 0.3s ease, margin-top 0.3s ease !important;
-            z-index: 2 !important;
         }
 
-        /* Эффект переворота стрелочки при клике */
-        .select-wrapper:focus-within::after {
+        /* Изящный разворот стрелочки при открытии меню */
+        .choices.is-open[data-type="select-one"]::after {
             transform: rotate(-135deg) !important;
-            margin-top: 0px !important;
+            margin-top: 1px !important;
         }
+        /* ========================================================================== */
+
 
         button.calc-btn {
             width: 100%;
@@ -470,7 +414,7 @@
             font-size: 1.4rem;
         }
 
-        /* Мобильная адаптация (Тут возвращаем компактные размеры) */
+        /* Мобильная адаптация */
         @media (max-width: 992px) {
             .section-block {
                 height: 100vh;
@@ -490,7 +434,6 @@
                 display: block;
             }
 
-            /* Возвращаем компактный заголовок и лого на мобилках */
             .main-title {
                 font-size: 2.4rem;
             }
@@ -511,7 +454,6 @@
                 margin-bottom: 25px;
             }
 
-            /* Возвращаем компактные карточки на мобильных */
             .cards-container {
                 grid-template-columns: 1fr;
                 gap: 15px;
@@ -576,22 +518,18 @@
             <h2 id="calc-title">Рассчитать стоимость</h2>
             <div class="form-group">
                 <label for="duration">Длительность урока:</label>
-                <div class="select-wrapper">
-                    <select id="duration">
-                        <option value="40">40 минут</option>
-                        <option value="60">60 минут</option>
-                    </select>
-                </div>
+                <select id="duration">
+                    <option value="40">40 минут</option>
+                    <option value="60">60 минут</option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="format">Формат обучения:</label>
-                <div class="select-wrapper">
-                    <select id="format">
-                        <option value="individual">Индивидуально</option>
-                        <option value="pair">В паре</option>
-                        <option value="group">В группе</option>
-                    </select>
-                </div>
+                <select id="format">
+                    <option value="individual">Индивидуально</option>
+                    <option value="pair">В паре</option>
+                    <option value="group">В группе</option>
+                </select>
             </div>
             <button class="calc-btn" onclick="calculatePrice()">Узнать цену</button>
             <div id="result"></div>
@@ -617,18 +555,6 @@
             document.getElementById('sidebar').classList.toggle('active');
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
-        // Находим все элементы select на странице
-        const elements = document.querySelectorAll('select');
-    
-        elements.forEach(element => {
-            new Choices(element, {
-                searchEnabled: false, // Отключаем поиск (он не нужен для выбора из 2-3 пунктов)
-                itemSelectText: '',   // Убираем дефолтный текст "Press to select" при наведении
-                shouldSort: false     // Отключаем автоматическую сортировку по алфавиту, чтобы порядок остался как в HTML
-            });
-        });
-        
         document.querySelectorAll('.sidebar a').forEach(link => {
             link.addEventListener('click', () => {
                 document.getElementById('sidebar').classList.remove('active');
@@ -636,6 +562,17 @@
         });
 
         document.addEventListener("DOMContentLoaded", () => {
+            // Инициализация библиотеки Choices.js для красивых селектов
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                new Choices(select, {
+                    searchEnabled: false, // Без строки поиска
+                    itemSelectText: '',   // Без лишнего текста подсказок
+                    shouldSort: false     // Сохраняем оригинальный порядок опций из HTML
+                });
+            });
+
+            // Загрузка динамического конфига
             fetch(`${CONFIG_FILE}?v=${Date.now()}`)
                 .then(res => {
                     if (!res.ok) throw new Error('Конфиг не найден');
