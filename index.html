@@ -21,7 +21,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* ПРИМАГНИЧИВАНИЕ СТРАНИЦ */
+        /* ПРИМАГНИЧИВАНИЕ СТРАНИЦ (Работает везде, включая мобильные) */
         html {
             scroll-behavior: smooth;
             scroll-snap-type: y mandatory;
@@ -108,8 +108,6 @@
             scroll-snap-align: start;
             position: relative;
         }
-
-        /* ЧЕРЕДОВАНИЕ ЦВЕТОВ ЗАДНЕГО ФОНА */
 
         /* ЭКРАН 1: Приветствие — ЖЁЛТЫЙ */
         #welcome-section {
@@ -198,14 +196,14 @@
             padding: 10px;
         }
 
-        /* КАРТОЧКИ "О НАС" НА ФИОЛЕТОВОМ ФОНЕ */
+        /* УЛУЧШЕННЫЕ КАРТОЧКИ С ЭФФЕКТОМ ВЫДЕЛЕНИЯ И ПРИПОДНИМАНИЯ */
         .about-card {
             background: white;
             border-radius: 20px;
             padding: 35px 30px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            border: 2px solid transparent;
-            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            border: 3px solid transparent; /* Изначально прозрачная рамка в 3px, чтобы верстка не дергалась при наведении */
+            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.35s ease, border-color 0.25s ease;
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -213,10 +211,11 @@
             transform: translateY(30px);
         }
 
+        /* Акцентный Hover-эффект */
         .about-card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            border-color: var(--yellow);
+            transform: translateY(-15px); /* Карточка приподнимается выше */
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35); /* Тень становится глубже */
+            border-color: var(--yellow); /* Рамка становится толстой и жёлтой */
         }
 
         .about-card h3 {
@@ -364,14 +363,11 @@
 
         /* Мобильная адаптация */
         @media (max-width: 992px) {
-            html {
-                scroll-snap-type: none;
-            }
-
+            /* scroll-snap-type УДАЛЕН отсюда, чтобы примагничивание работало стабильно и на смартфонах */
+            
             .section-block {
-                height: auto;
-                min-height: 100vh;
-                padding: 60px 20px;
+                height: 100vh; /* Возвращаем строго по высоте экрана смартфона */
+                padding: 40px 20px;
             }
 
             .sidebar {
@@ -388,17 +384,24 @@
             }
 
             .main-title {
-                font-size: 2.6rem;
+                font-size: 2.4rem;
             }
 
             .logo-container {
-                width: 160px;
-                height: 160px;
-                font-size: 4.5rem;
+                width: 140px;
+                height: 140px;
+                font-size: 3.8rem;
             }
 
             .cards-container {
                 grid-template-columns: 1fr;
+                gap: 15px;
+                max-height: 70vh; /* Позволяет карточкам аккуратно помещаться в экран мобильного */
+                overflow-y: auto;  /* Если контента слишком много — внутри блока появится незаметный скролл */
+            }
+
+            .about-card {
+                padding: 20px;
             }
         }
     </style>
@@ -411,7 +414,6 @@
         <div></div>
     </button>
 
-    <!-- Обновленный порядок ссылок в меню -->
     <nav class="sidebar" id="sidebar">
         <a href="#welcome-section">Главная</a>
         <a href="#about-section">О нас</a>
@@ -419,22 +421,18 @@
         <a href="#contacts-section">Контакты</a>
     </nav>
 
-    <!-- ЭКРАН 1: ПРИВЕТСТВИЕ (ЖЁЛТЫЙ) -->
     <header class="section-block" id="welcome-section">
         <div class="logo-container" id="logo-block">A</div>
         <h1 class="main-title" id="welcome-title">Arban School</h1>
         <p class="subtitle" id="welcome-subtitle">Эффективный английский для больших целей</p>
     </header>
 
-    <!-- ЭКРАН 2: О НАС / КАРТОЧКИ (ФИОЛЕТОВЫЙ) -->
     <section class="section-block" id="about-section">
         <h2 id="about-title">О нас</h2>
         <div class="cards-container" id="cards-container">
-            <!-- Сюда прилетят 3 карточки -->
-        </div>
+            </div>
     </section>
 
-    <!-- ЭКРАН 3: КАЛЬКУЛЯТОР (ЖЁЛТЫЙ) -->
     <section class="section-block" id="calculator-section">
         <div class="card reveal-card">
             <h2 id="calc-title">Рассчитать стоимость</h2>
@@ -462,7 +460,6 @@
         </div>
     </section>
 
-    <!-- ЭКРАН 4: КОНТАКТЫ (ФИОЛЕТОВЫЙ) -->
     <section class="section-block" id="contacts-section">
         <div class="card reveal-card">
             <h2 id="contacts-title">Ждём вас на занятиях</h2>
@@ -509,7 +506,7 @@
                         observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.12 });
+            }, { threshold: 0.1 });
         }
 
         function applyConfig(data) {
