@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arban School - Школа английского языка</title>
+    <style>
+        :root {
+            --purple: #8A2BE2;
+            --purple-dark: #5A189A;
+            --yellow: #FFD600;
+            --yellow-dark: #FFB700;
+            --text-dark: #222;
+            --text-light: #FFF;
+            --bg-gray: #F4F4F9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* ПРИМАГНИЧИВАНИЕ СТРАНИЦ НАМЕРТВО */
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+        }
+
+        body {
+            background-color: #F4F4F9;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Навигация */
+        .sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background-color: rgba(45, 10, 80, 0.95);
+            padding-top: 20px;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            transition: transform 0.4s ease;
+            z-index: 100;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 30px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            border-left: 5px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: var(--purple);
+            border-left: 5px solid var(--yellow);
+            color: var(--yellow);
+            padding-left: 40px;
+        }
+
+        .burger {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 101;
+            cursor: pointer;
+            background: var(--yellow);
+            padding: 12px;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: none;
+        }
+
+        .burger div {
+            width: 25px;
+            height: 3px;
+            background-color: var(--purple-dark);
+            margin: 5px;
+            transition: 0.3s;
+        }
+
+        /* СЕКЦИИ НА ВЕСЬ ЭКРАН */
+        .section-block {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            scroll-snap-align: start;
+            position: relative;
+        }
+
+        /* Блок 1: Приветствие */
+        #welcome-section {
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .logo-container {
+            width: 220px;
+            height: 220px;
+            background-color: var(--yellow);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 6rem;
+            font-weight: 900;
+            color: var(--purple-dark);
+            margin-bottom: 25px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+            animation: scaleIn 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+        }
+
+        .main-title {
+            font-size: 3.8rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        /* Блок 2: Калькулятор */
+        #calculator-section {
+            background-color: var(--yellow);
+            color: var(--text-dark);
+        }
+
+        /* Блок 3: Карточки О Нас */
+        #about-section {
+            background-color: var(--bg-gray);
+            color: var(--text-dark);
+        }
+
+        #about-section h2 {
+            font-size: 2.5rem;
+            color: var(--purple-dark);
+            margin-bottom: 35px;
+            text-align: center;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            width: 100%;
+            max-width: 1050px;
+            padding: 10px;
+        }
+
+        /* КАРТОЧКИ С ЭФФЕКТОМ ПРИПОДНИМАНИЯ */
+        .about-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+            border: 2px solid transparent;
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .about-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(138, 43, 226, 0.15);
+            border-color: var(--purple);
+        }
+
+        .about-card h3 {
+            font-size: 1.4rem;
+            color: var(--purple-dark);
+            font-weight: 700;
+        }
+
+        .about-card p {
+            font-size: 1rem;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        /* Блок 4: Контакты */
+        #contacts-section {
+            background: linear-gradient(135deg, var(--purple-dark), #3d0066);
+            color: var(--text-light);
+        }
+
+        /* ОБЩИЕ СТИЛИ ДЛЯ СТАНДАРТНЫХ КАРТОЧЕК КАЛЬКУЛЯТОРА И КОНТАКТОВ */
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        #calculator-section .card {
+            background: #ffffff;
+            border-bottom: 8px solid var(--purple);
+        }
+
+        #contacts-section .card {
+            background: #ffffff;
+            color: var(--text-dark);
+            border-bottom: 8px solid var(--yellow);
+        }
+
+        /* Классы анимации при прокрутке */
+        .card.visible, .about-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .card h2 {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            color: var(--purple-dark);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        select {
+            width: 100%;
+            padding: 15px 45px 15px 18px;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            color: #333;
+            outline: none;
+            background-color: #F8FAFC;
+            cursor: pointer;
+            appearance: none;
+            transition: all 0.3s ease;
+        }
+
+        select:focus {
+            border-color: var(--purple);
+            background-color: #FFF;
+            box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.15);
+        }
+
+        .select-wrapper::after {
+            content: "";
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--purple);
+            pointer-events: none;
+        }
+
+        button.calc-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--purple);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 14px rgba(138, 43, 226, 0.3);
+        }
+
+        button.calc-btn:hover {
+            background-color: var(--purple-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+        }
+
+        #result {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: var(--purple-dark);
+            min-height: 38px;
+        }
+
+        .contact-info {
+            text-align: center;
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+
+        .contact-info p {
+            margin-bottom: 20px;
+        }
+
+        .contact-info span {
+            color: var(--purple);
+            font-weight: 700;
+            font-size: 1.35rem;
+        }
+
+        /* Адаптивность под мобилки */
+        @media (max-width: 992px) {
+            html {
+                scroll-snap-type: none; /* Выключаем прилипание только на смартфонах */
+            }
+
+            .section-block {
+                height: auto;
+                min-height: 100vh;
+                padding: 60px 20px;
+            }
+
+            .sidebar {
+                padding-top: 80px;
+                transform: translateX(100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .burger {
+                display: block;
+            }
+
+            .main-title {
+                font-size: 2.6rem;
+            }
+
+            .logo-container {
+                width: 160px;
+                height: 160px;
+                font-size: 4.5rem;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="burger" id="burger" onclick="toggleMenu()">
+        <div></div>
+        <div></div>
+        <div></div>
+    </button>
+
+    <nav class="sidebar" id="sidebar">
+        <a href="#welcome-section">Главная</a>
+        <a href="#calculator-section">Калькулятор цен</a>
+        <a href="#about-section">О нас</a>
+        <a href="#contacts-section">Контакты</a>
+    </nav>
+
+    <!-- БЛОК 1 -->
+    <header class="section-block" id="welcome-section">
+        <div class="logo-container" id="logo-block">A</div>
+        <h1 class="main-title" id="welcome-title">Arban School</h1>
+        <p class="subtitle" id="welcome-subtitle">Эффективный английский для больших целей</p>
+    </header>
+
+    <!-- БЛОК 2 -->
+    <section class="section-block" id="calculator-section">
+        <div class="card reveal-card">
+            <h2 id="calc-title">Рассчитать стоимость</h2>
+            <div class="form-group">
+                <label for="duration">Длительность урока:</label>
+                <div class="select-wrapper">
+                    <select id="duration">
+                        <option value="40">40 минут</option>
+                        <option value="60">60 минут</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="format">Формат обучения:</label>
+                <div class="select-wrapper">
+                    <select id="format">
+                        <option value="individual">Индивидуально</option>
+                        <option value="pair">В паре</option>
+                        <option value="group">В группе</option>
+                    </select>
+                </div>
+            </div>
+            <button class="calc-btn" onclick="calculatePrice()">Узнать цену</button>
+            <div id="result"></div>
+        </div>
+    </section>
+
+    <!-- БЛОК 3: ТРИ КАРТОЧКИ -->
+    <section class="section-block" id="about-section">
+        <h2 id="about-title">О нас</h2>
+        <div class="cards-container" id="cards-container">
+            <!-- Карточки рендерятся тут -->
+        </div>
+    </section>
+
+    <!-- БЛОК 4 -->
+    <section class="section-block" id="contacts-section">
+        <div class="card reveal-card">
+            <h2 id="contacts-title">Ждём вас на занятиях</h2>
+            <div class="contact-info">
+                <p>📍 Адрес нашей школы:<br><span id="contact-address">ул. Английская, д. 10, офис 404</span></p>
+                <p>📞 Связаться с нами:<br><span id="contact-phone">+7 (999) 123-45-67</span></p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const CONFIG_FILE = 'site-config.json';
+        let pricePrices = {}; 
+        const revealObserver = createObserver();
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('sidebar').classList.remove('active');
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch(`${CONFIG_FILE}?v=${Date.now()}`)
+                .then(res => {
+                    if (!res.ok) throw new Error('Конфиг не найден');
+                    return res.json();
+                })
+                .then(data => applyConfig(data))
+                .catch(err => {
+                    console.warn("Загружены дефолтные настройки:", err);
+                    applyDefaultConfig();
+                });
+        });
+
+        function createObserver() {
+            return new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+        }
+
+        function applyConfig(data) {
+            if (data.site_title) document.title = data.site_title;
+            
+            const logoBlock = document.getElementById('logo-block');
+            if (data.logo_url && data.logo_url.trim() !== "") {
+                logoBlock.innerHTML = `<img src="${data.logo_url}" alt="Логотип">`;
+            } else {
+                logoBlock.innerText = data.logo_fallback_text || "A";
+            }
+
+            if (data.welcome) {
+                document.getElementById('welcome-title').innerText = data.welcome.title || "Arban School";
+                document.getElementById('welcome-subtitle').innerText = data.welcome.subtitle || "";
+            }
+
+            if (data.calculator) {
+                document.getElementById('calc-title').innerText = data.calculator.title || "Рассчитать стоимость";
+                pricePrices = data.calculator;
+            }
+
+            // Рендеринг карточек "О нас" из JSON
+            if (data.about) {
+                document.getElementById('about-title').innerText = data.about.title || "О нас";
+                const container = document.getElementById('cards-container');
+                container.innerHTML = "";
+
+                const cards = data.about.cards || [];
+                cards.forEach(card => {
+                    const cardHtml = document.createElement('div');
+                    cardHtml.className = 'about-card';
+                    cardHtml.innerHTML = `
+                        <h3>${card.title || 'Заголовок'}</h3>
+                        <p>${card.text || 'Описание...'}</p>
+                    `;
+                    container.appendChild(cardHtml);
+                    revealObserver.observe(cardHtml); // Вешаем анимацию на каждую карточку отдельно
+                });
+            }
+
+            if (data.contacts) {
+                document.getElementById('contacts-title').innerText = data.contacts.title || "Ждём вас на занятиях";
+                document.getElementById('contact-address').innerText = data.contacts.address || "";
+                document.getElementById('contact-phone').innerText = data.contacts.phone || "";
+            }
+
+            // Запускаем отслеживание для обычных карточек
+            document.querySelectorAll('.reveal-card').forEach(c => revealObserver.observe(c));
+        }
+
+        function applyDefaultConfig() {
+            pricePrices = {
+                price_individual_40: 800, price_pair_40: 600, price_group_40: 400,
+                price_individual_60: 1200, price_pair_60: 900, price_group_60: 600
+            };
+
+            const container = document.getElementById('cards-container');
+            container.innerHTML = `
+                <div class="about-card">
+                    <h3>Высокое качество</h3>
+                    <p>Индивидуальный подход к каждому ученику, современные материалы и методики обучения.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Опытные педагоги</h3>
+                    <p>Наши преподаватели помогут преодолеть языковой барьер быстро, легко и без стресса.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Гибкий график</h3>
+                    <p>Подбираем удобное время для занятий индивидуально, в парах или уютных мини-группах.</p>
+                </div>
+            `;
+            
+            document.querySelectorAll('.about-card, .reveal-card').forEach(c => revealObserver.observe(c));
+        }
+
+        function calculatePrice() {
+            const duration = document.getElementById('duration').value;
+            const format = document.getElementById('format').value;
+            const resultDiv = document.getElementById('result');
+            
+            let price = 0;
+            let suffix = " ₽ / урок";
+
+            if (duration === "40") {
+                if (format === "individual") price = pricePrices.price_individual_40 || 800;
+                else if (format === "pair") { price = pricePrices.price_pair_40 || 600; suffix += " (с человека)"; }
+                else if (format === "group") { price = pricePrices.price_group_40 || 400; suffix += " (с человека)"; }
+            } else if (duration === "60") {
+                if (format === "individual") price = pricePrices.price_individual_60 || 1200;
+                else if (format === "pair") { price = pricePrices.price_pair_60 || 900; suffix += " (с человека)"; }
+                else if (format === "group") { price = pricePrices.price_group_60 || 600; suffix += " (с человека)"; }
+            }
+
+            resultDiv.style.opacity = 0;
+            setTimeout(() => {
+                resultDiv.innerText = "Стоимость: " + price + suffix;
+                resultDiv.style.transition = "opacity 0.4s ease";
+                resultDiv.style.opacity = 1;
+            }, 150);
+        }
+    </script>
+</body>
+</html>
