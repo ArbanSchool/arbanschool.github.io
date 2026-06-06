@@ -106,15 +106,31 @@
 
         textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 80px;
             font-size: 0.95rem;
             line-height: 1.5;
         }
 
+        /* Стили для блоков карточек в админке */
+        .admin-card-block {
+            background: #F9FAFB;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .admin-card-block h4 {
+            color: var(--purple-dark);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 5px;
+        }
+
         .price-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
             background: #F9FAFB;
             padding: 15px;
             border-radius: 12px;
@@ -133,7 +149,7 @@
         }
 
         .price-input-wrapper input {
-            padding-right: 35px;
+            padding-right: 30px;
         }
 
         .price-input-wrapper::after {
@@ -206,7 +222,7 @@
     <div class="container">
         <header>
             <h1>Управление контентом Arban School</h1>
-            <p>Редактирование заголовков, текстов, контактов и тарифов без изменения кода</p>
+            <p>Редактирование заголовков, карточек, контактов и тарифов</p>
         </header>
 
         <div class="token-card">
@@ -217,11 +233,11 @@
             <div class="field-group row">
                 <div>
                     <label for="gh-owner">Логин на GitHub:</label>
-                    <input type="text" id="gh-owner" placeholder="Например: ivan-school">
+                    <input type="text" id="gh-owner" placeholder="Логин">
                 </div>
                 <div>
                     <label for="gh-repo">Репозиторий:</label>
-                    <input type="text" id="gh-repo" placeholder="Например: ivan-school.github.io">
+                    <input type="text" id="gh-repo" placeholder="Репозиторий">
                 </div>
             </div>
         </div>
@@ -234,11 +250,11 @@
         
         <div class="field-group row">
             <div>
-                <label for="logo-url">Путь к картинке логотипа (оставьте пустым для буквы):</label>
-                <input type="text" id="logo-url" placeholder="Например: logo.png">
+                <label for="logo-url">Путь к логотипу (ссылка или имя файла):</label>
+                <input type="text" id="logo-url" placeholder="logo.png">
             </div>
             <div>
-                <label for="logo-fallback-text">Буква-заглушка логотипа:</label>
+                <label for="logo-fallback-text">Буква логотипа (если нет картинки):</label>
                 <input type="text" id="logo-fallback-text" maxlength="3">
             </div>
         </div>
@@ -253,23 +269,13 @@
             <input type="text" id="welcome-subtitle">
         </div>
 
-        <div class="section-title">📖 Третий экран (О нас)</div>
-        <div class="field-group">
-            <label for="about-title">Заголовок страницы:</label>
-            <input type="text" id="about-title">
-        </div>
-        <div class="field-group">
-            <label for="about-text">Текст описания:</label>
-            <textarea id="about-text"></textarea>
-        </div>
-
         <div class="section-title">🧮 Прайс-лист калькулятора</div>
         <div class="field-group">
             <label for="calc-title">Заголовок калькулятора:</label>
             <input type="text" id="calc-title">
         </div>
 
-        <label style="margin-top: 10px;">Уроки по 40 минут:</label>
+        <label style="margin-top: 10px; display:block;">Уроки по 40 минут:</label>
         <div class="price-grid" style="margin-bottom: 20px;">
             <div class="price-item">
                 <label for="p-ind-40">Индивидуально</label>
@@ -285,7 +291,7 @@
             </div>
         </div>
 
-        <label>Уроки по 60 минут:</label>
+        <label style="display:block;">Уроки по 60 минут:</label>
         <div class="price-grid">
             <div class="price-item">
                 <label for="p-ind-60">Индивидуально</label>
@@ -298,6 +304,48 @@
             <div class="price-item">
                 <label for="p-group-60">В группе</label>
                 <div class="price-input-wrapper"><input type="text" id="p-group-60"></div>
+            </div>
+        </div>
+
+        <div class="section-title">📖 Третий экран (О нас — 3 карточки)</div>
+        <div class="field-group">
+            <label for="about-title">Главный заголовок секции:</label>
+            <input type="text" id="about-title">
+        </div>
+
+        <div class="admin-card-block">
+            <h4>Карточка №1</h4>
+            <div class="field-group">
+                <label for="c1-title">Заголовок карточки:</label>
+                <input type="text" id="c1-title">
+            </div>
+            <div class="field-group">
+                <label for="c1-text">Текст карточки:</label>
+                <textarea id="c1-text"></textarea>
+            </div>
+        </div>
+
+        <div class="admin-card-block">
+            <h4>Карточка №2</h4>
+            <div class="field-group">
+                <label for="c2-title">Заголовок карточки:</label>
+                <input type="text" id="c2-title">
+            </div>
+            <div class="field-group">
+                <label for="c2-text">Текст карточки:</label>
+                <textarea id="c2-text"></textarea>
+            </div>
+        </div>
+
+        <div class="admin-card-block">
+            <h4>Карточка №3</h4>
+            <div class="field-group">
+                <label for="c3-title">Заголовок карточки:</label>
+                <input type="text" id="c3-title">
+            </div>
+            <div class="field-group">
+                <label for="c3-text">Текст карточки:</label>
+                <textarea id="c3-text"></textarea>
             </div>
         </div>
 
@@ -336,10 +384,10 @@
             if (localStorage.getItem('gh_owner')) document.getElementById('gh-owner').value = localStorage.getItem('gh_owner');
             if (localStorage.getItem('gh_repo')) document.getElementById('gh-repo').value = localStorage.getItem('gh_repo');
 
-            fetch(CONFIG_FILE)
+            fetch(`${CONFIG_FILE}?v=${Date.now()}`)
                 .then(res => res.json())
                 .then(data => fillForm(data))
-                .catch(err => console.log("Файл настроек ещё не создан на сервере", err));
+                .catch(err => console.log("Файл настроек считывается с сервера", err));
         });
 
         function fillForm(data) {
@@ -351,10 +399,6 @@
                 document.getElementById('welcome-title').value = data.welcome.title || "";
                 document.getElementById('welcome-subtitle').value = data.welcome.subtitle || "";
             }
-            if (data.about) {
-                document.getElementById('about-title').value = data.about.title || "";
-                document.getElementById('about-text').value = data.about.text || "";
-            }
             if (data.calculator) {
                 document.getElementById('calc-title').value = data.calculator.title || "";
                 document.getElementById('p-ind-40').value = data.calculator.price_individual_40 || 0;
@@ -364,6 +408,26 @@
                 document.getElementById('p-pair-60').value = data.calculator.price_pair_60 || 0;
                 document.getElementById('p-group-60').value = data.calculator.price_group_60 || 0;
             }
+            
+            // Заполнение карточек "О нас"
+            if (data.about) {
+                document.getElementById('about-title').value = data.about.title || "О нас";
+                const cards = data.about.cards || [];
+                
+                if (cards[0]) {
+                    document.getElementById('c1-title').value = cards[0].title || "";
+                    document.getElementById('c1-text').value = cards[0].text || "";
+                }
+                if (cards[1]) {
+                    document.getElementById('c2-title').value = cards[1].title || "";
+                    document.getElementById('c2-text').value = cards[1].text || "";
+                }
+                if (cards[2]) {
+                    document.getElementById('c3-title').value = cards[2].title || "";
+                    document.getElementById('c3-text').value = cards[2].text || "";
+                }
+            }
+
             if (data.contacts) {
                 document.getElementById('contacts-title').value = data.contacts.title || "";
                 document.getElementById('contact-address').value = data.contacts.address || "";
@@ -387,6 +451,22 @@
 
             showStatus('Отправка коммита на GitHub...', 'loading');
 
+            // Сборка массива карточек из полей ввода
+            const cardsArray = [
+                {
+                    title: document.getElementById('c1-title').value,
+                    text: document.getElementById('c1-text').value
+                },
+                {
+                    title: document.getElementById('c2-title').value,
+                    text: document.getElementById('c2-text').value
+                },
+                {
+                    title: document.getElementById('c3-title').value,
+                    text: document.getElementById('c3-text').value
+                }
+            ];
+
             const updatedConfig = {
                 site_title: document.getElementById('site-title').value,
                 logo_url: document.getElementById('logo-url').value,
@@ -406,7 +486,7 @@
                 },
                 about: {
                     title: document.getElementById('about-title').value,
-                    text: document.getElementById('about-text').value
+                    cards: cardsArray // Заменяем старую строку массивом
                 },
                 contacts: {
                     title: document.getElementById('contacts-title').value,
@@ -437,7 +517,7 @@
                 const base64Content = btoa(binString);
 
                 const bodyPayload = {
-                    message: "Админ-панель: обновление контента (site-config.json)",
+                    message: "Админ-панель: переход структуры блока О нас на 3 карточки",
                     content: base64Content
                 };
                 if (sha) bodyPayload.sha = sha;
@@ -452,7 +532,7 @@
                 });
 
                 if (putRes.ok) {
-                    showStatus('🎉 Успешно сохранено! Изменения отобразятся на основном сайте в течение минуты.', 'success');
+                    showStatus('🎉 Успешно сохранено! Карточки появятся на основном сайте в течение минуты.', 'success');
                 } else {
                     const putErr = await putRes.json();
                     showStatus(`Ошибка GitHub API: ${putErr.message}`, 'error');
