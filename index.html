@@ -202,20 +202,36 @@
             border-radius: 20px;
             padding: 35px 30px;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-            border: 3px solid transparent; /* Изначально прозрачная рамка в 3px, чтобы верстка не дергалась при наведении */
+            border: 3px solid transparent;
+            /* Важно: transform указываем явно в исходном состоянии */
+            transform: translateY(0); 
             transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.35s ease, border-color 0.25s ease;
             display: flex;
             flex-direction: column;
             gap: 15px;
             opacity: 0;
-            transform: translateY(30px);
         }
 
-        /* Акцентный Hover-эффект */
-        .about-card:hover {
-            transform: translateY(-15px); /* Карточка приподнимается выше */
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35); /* Тень становится глубже */
-            border-color: var(--yellow); /* Рамка становится толстой и жёлтой */
+        /* Анимация появления из IntersectionObserver (переписываем только opacity, чтобы не ломать transform) */
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        .about-card.visible {
+            opacity: 1;
+            /* transform оставляем под контроль ховера, убирая конфликт анимаций */
+            transition: opacity 0.8s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.35s ease, border-color 0.25s ease;
+        }
+
+        /* Эффект приподнимания при наведении мыши (ПК) и при удержании пальца (Мобильные) */
+        .about-card:hover,
+        .about-card:active {
+            transform: translateY(-15px) !important; /* !important исключит любые конфликты со скриптами */
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35) !important;
+            border-color: var(--yellow) !important;
+            cursor: pointer;
         }
 
         .about-card h3 {
