@@ -291,9 +291,7 @@
         }
 
 
-        /* ==========================================================================
-           СТИЛИЗАЦИЯ БИБЛИОТЕКИ CHOICES.JS (ФИРМЕННЫЙ СТИЛЬ ШКОЛЫ)
-           ========================================================================== */
+
         
         .choices {
             width: 100%;
@@ -464,6 +462,14 @@
             .about-card {
                 padding: 22px 20px;
                 gap: 10px;
+            }
+
+            /* НАШЕ ИСПРАВЛЕНИЕ ДЛЯ СМАРТФОНОВ */
+            .about-card:hover,
+            .about-card:active {
+                transform: translateY(-4px) !important;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
+                border-color: var(--yellow) !important;
             }
 
             .about-card h3 {
