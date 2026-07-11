@@ -451,7 +451,6 @@
 
             showStatus('Отправка коммита на GitHub...', 'loading');
 
-            // Сборка массива карточек из полей ввода
             const cardsArray = [
                 {
                     title: document.getElementById('c1-title').value,
@@ -467,6 +466,7 @@
                 }
             ];
 
+            // ЗАЩИТА ОТ ДУРАКА: Валидируем числовые инпуты цен, уберегая структуру от NaN
             const updatedConfig = {
                 site_title: document.getElementById('site-title').value,
                 logo_url: document.getElementById('logo-url').value,
@@ -477,16 +477,16 @@
                 },
                 calculator: {
                     title: document.getElementById('calc-title').value,
-                    price_individual_40: Number(document.getElementById('p-ind-40').value),
-                    price_pair_40: Number(document.getElementById('p-pair-40').value),
-                    price_group_40: Number(document.getElementById('p-group-40').value),
-                    price_individual_60: Number(document.getElementById('p-ind-60').value),
-                    price_pair_60: Number(document.getElementById('p-pair-60').value),
-                    price_group_60: Number(document.getElementById('p-group-60').value)
+                    price_individual_40: Number(document.getElementById('p-ind-40').value) || 0,
+                    price_pair_40: Number(document.getElementById('p-pair-40').value) || 0,
+                    price_group_40: Number(document.getElementById('p-group-40').value) || 0,
+                    price_individual_60: Number(document.getElementById('p-ind-60').value) || 0,
+                    price_pair_60: Number(document.getElementById('p-pair-60').value) || 0,
+                    price_group_60: Number(document.getElementById('p-group-60').value) || 0
                 },
                 about: {
                     title: document.getElementById('about-title').value,
-                    cards: cardsArray // Заменяем старую строку массивом
+                    cards: cardsArray
                 },
                 contacts: {
                     title: document.getElementById('contacts-title').value,
@@ -517,7 +517,7 @@
                 const base64Content = btoa(binString);
 
                 const bodyPayload = {
-                    message: "Админ-панель: переход структуры блока О нас на 3 карточки",
+                    message: "Админ-панель: обновление конфигурации сайта и защита полей цен",
                     content: base64Content
                 };
                 if (sha) bodyPayload.sha = sha;
