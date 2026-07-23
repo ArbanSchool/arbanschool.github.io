@@ -146,176 +146,147 @@
 
         /* КОНТЕЙНЕР ДЛЯ АНИМАЦИИ КНИГ */
         .welcome-books-container {
-            position: absolute;
-            bottom: -10px;
-            right: 0;
-            width: 13vw;
-            min-width: 140px;
-            max-width: 220px;
-            aspect-ratio: 240 / 180;
-            pointer-events: none;
-            z-index: 10;
-        }
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 25vw;
+    min-width: 280px;
+    max-width: 480px;
+    pointer-events: none;
+    z-index: 10;
+    overflow: visible !important;
+}
 
-        .welcome-books-container svg {
-            width: 100%;
-            height: 100%;
-        }
+.welcome-books-container svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible !important;
+}
 
-        .book {
-            fill: var(--book-fill);
-            stroke: var(--book-stroke);
-            stroke-width: 5;
-            stroke-linejoin: round;
-            opacity: 0;
-            transition: fill 0.3s ease, stroke 0.3s ease;
-        }
+.book {
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    /* Исключаем любые наложения полупрозрачности */
+    opacity: 1 !important; 
+    will-change: transform;
+    transform-box: fill-box;
+}
 
-        .book-details {
-            stroke: var(--book-stroke);
-            stroke-width: 3;
-            fill: none;
-            transition: stroke 0.3s ease;
-        }
+/* Привязка точек трансформации для корректного вращения вокруг своего центра */
+.book1 {
+    transform-origin: center;
+    animation: dropUltraSharp1 0.75s linear forwards;
+    animation-delay: 0.05s;
+}
 
-        .book-frame-outer {
-            stroke: var(--book-stroke);
-            stroke-width: 1.25;
-            fill: none;
-            transition: stroke 0.3s ease;
-        }
+.book2 {
+    transform-origin: center;
+    animation: dropUltraSharp2 0.75s linear forwards;
+    animation-delay: 0.35s;
+}
 
-        .book-frame-inner {
-            stroke: var(--book-stroke);
-            stroke-width: 0.75;
-            stroke-dasharray: 2 2;
-            fill: none;
-            transition: stroke 0.3s ease;
-        }
+.book3 {
+    transform-origin: center;
+    animation: dropUltraSharp3 0.75s linear forwards;
+    animation-delay: 0.65s;
+}
 
-        /* НАСТРОЙКА ДИНАМИЧНОГО ПОЛЁТА С НАКЛОНАМИ И ФИНАЛЬНЫМ ВЫРАВНИВАНИЕМ */
-        /* Задаем жесткие сплошные цвета без полупрозрачностей и градиентов */
-        .book {
-            stroke-linejoin: round;
-            fill-opacity: 1;
-            stroke-opacity: 1;
-            opacity: 0;
-        }
+/* --- КНИГА 1 (НИЖНЯЯ) --- */
+@keyframes dropUltraSharp1 {
+    0% {
+        /* Старт далеко за пределами верхнего края экрана */
+        transform: translate(-30px, -1200px) rotate(-35deg);
+        animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5); /* Экстремальное ускорение вниз */
+    }
+    /* Первый жёсткий удар о «пол» */
+    35% {
+        transform: translate(0px, 0px) rotate(-12deg);
+        animation-timing-function: cubic-bezier(0, 0.7, 0.1, 1); /* Мгновенный отскок вверх */
+    }
+    /* Пик первого отскока */
+    52% {
+        transform: translate(0px, -45px) rotate(6deg);
+        animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+    }
+    /* Второй удар */
+    68% {
+        transform: translate(0px, 0px) rotate(-3deg);
+        animation-timing-function: cubic-bezier(0, 0.7, 0.1, 1);
+    }
+    /* Затухающий микро-отскок */
+    82% {
+        transform: translate(0px, -10px) rotate(1deg);
+        animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+    }
+    /* Полное выравнивание на нижней границе */
+    100% {
+        transform: translate(0px, 0px) rotate(0deg);
+    }
+}
 
-        /* НАСТРОЙКА РЕЗКОГО ПАДЕНИЯ СВЕРХУ С МГНОВЕННЫМ ОТСКОКОМ */
-        .book1 {
-            transform-origin: 200px 350px;
-            animation: dropSharp1 0.75s linear forwards;
-            animation-delay: 0.05s;
-        }
+/* --- КНИГА 2 (СРЕДНЯЯ) --- */
+@keyframes dropUltraSharp2 {
+    0% {
+        transform: translate(40px, -1200px) rotate(40deg);
+        animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+    }
+    /* Удар о первую книгу */
+    35% {
+        transform: translate(0px, 0px) rotate(14deg);
+        animation-timing-function: cubic-bezier(0, 0.7, 0.1, 1);
+    }
+    /* Первый отскок */
+    52% {
+        transform: translate(0px, -40px) rotate(-7deg);
+        animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+    }
+    /* Второй удар */
+    68% {
+        transform: translate(0px, 0px) rotate(3deg);
+        animation-timing-function: cubic-bezier(0, 0.7, 0.1, 1);
+    }
+    /* Микро-отскок */
+    82% {
+        transform: translate(0px, -8px) rotate(-1deg);
+        animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+    }
+    /* Финальная ровная укладка */
+    100% {
+        transform: translate(0px, 0px) rotate(0deg);
+    }
+}
 
-        .book2 {
-            transform-origin: 215px 310px;
-            animation: dropSharp2 0.75s linear forwards;
-            animation-delay: 0.35s;
-        }
-
-        .book3 {
-            transform-origin: 190px 270px;
-            animation: dropSharp3 0.75s linear forwards;
-            animation-delay: 0.65s;
-        }
-
-        /* Первая книга */
-        @keyframes dropSharp1 {
-            0% {
-                transform: translate(-15px, -500px) rotate(-22deg);
-                opacity: 0;
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 1); /* Очень резкий разгон вниз */
-            }
-            2% { 
-                opacity: 1; /* Проявляется сразу у верха экрана, а не в воздухе */
-            }
-            35% {
-                transform: translate(0px, 0px) rotate(-7deg); /* Жесткий удар о землю */
-                animation-timing-function: cubic-bezier(0, 0, 0.2, 1); /* Мгновенный упругий отскок */
-            }
-            50% {
-                transform: translate(0px, -28px) rotate(3deg); /* Вылет на пик отскока */
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 1);
-            }
-            68% {
-                transform: translate(0px, 0px) rotate(-1.5deg); /* Второй удар */
-                animation-timing-function: cubic-bezier(0, 0, 0.3, 1);
-            }
-            82% {
-                transform: translate(0px, -6px) rotate(0.5deg); /* Микро-микро отскок */
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 1);
-            }
-            100% {
-                transform: translate(0px, 0px) rotate(0deg); /* Мгновенная фиксация в 0deg */
-                opacity: 1;
-            }
-        }
-
-        /* Вторая книга */
-        @keyframes dropSharp2 {
-            0% {
-                transform: translate(20px, -500px) rotate(25deg);
-                opacity: 0;
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 1);
-            }
-            2% { 
-                opacity: 1; 
-            }
-            35% {
-                transform: translate(0px, 0px) rotate(9deg);
-                animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-            }
-            50% {
-                transform: translate(0px, -24px) rotate(-4deg);
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 1);
-            }
-            68% {
-                transform: translate(0px, 0px) rotate(2deg);
-                animation-timing-function: cubic-bezier(0, 0, 0.3, 1);
-            }
-            82% {
-                transform: translate(0px, -5px) rotate(-0.5deg);
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 1);
-            }
-            100% {
-                transform: translate(0px, 0px) rotate(0deg);
-                opacity: 1;
-            }
-        }
-
-        /* Третья книга */
-        @keyframes dropSharp3 {
-            0% {
-                transform: translate(-15px, -500px) rotate(-18deg);
-                opacity: 0;
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 1);
-            }
-            2% { 
-                opacity: 1; 
-            }
-            35% {
-                transform: translate(0px, 0px) rotate(-6deg);
-                animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-            }
-            50% {
-                transform: translate(0px, -20px) rotate(2.5deg);
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 1);
-            }
-            68% {
-                transform: translate(0px, 0px) rotate(-1deg);
-                animation-timing-function: cubic-bezier(0, 0, 0.3, 1);
-            }
-            82% {
-                transform: translate(0px, -4px) rotate(0.3deg);
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 1);
-            }
-            100% {
-                transform: translate(0px, 0px) rotate(0deg);
-                opacity: 1;
-            }
-        }
+/* --- КНИГА 3 (ВЕРХНЯЯ) --- */
+@keyframes dropUltraSharp3 {
+    0% {
+        transform: translate(-35px, -1200px) rotate(-30deg);
+        animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+    }
+    /* Удар о вторую книгу */
+    35% {
+        transform: translate(0px, 0px) rotate(-10deg);
+        animation-timing-function: cubic-bezier(0, 0.7, 0.1, 1);
+    }
+    /* Первый отскок */
+    52% {
+        transform: translate(0px, -35px) rotate(5deg);
+        animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+    }
+    /* Второй удар */
+    68% {
+        transform: translate(0px, 0px) rotate(-2deg);
+        animation-timing-function: cubic-bezier(0, 0.7, 0.1, 1);
+    }
+    /* Микро-отскок */
+    82% {
+        transform: translate(0px, -6px) rotate(0.8deg);
+        animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+    }
+    /* Идеальная фиксация на вершине стопки */
+    100% {
+        transform: translate(0px, 0px) rotate(0deg);
+    }
+}
         
         /* ЭКРАН 2: О нас */
         #about-section {
