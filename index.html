@@ -16,6 +16,8 @@
             --yellow-dark: #FFB700;
             --text-dark: #222;
             --text-light: #FFF;
+            --book-fill: #FFD600;
+            --book-stroke: #8A2BE2;
         }
 
         * {
@@ -142,14 +144,14 @@
             color: var(--yellow);
         }
 
-        /* КОНТЕЙНЕР ДЛЯ АНИМАЦИИ КНИГ (Прижат к нижнему правому углу) */
+        /* КОНТЕЙНЕР ДЛЯ АНИМАЦИИ КНИГ */
         .welcome-books-container {
             position: absolute;
-            bottom: -6px;
+            bottom: -10px;
             right: 0;
-            width: 17vw;
-            min-width: 170px;
-            max-width: 270px;
+            width: 13vw;
+            min-width: 140px;
+            max-width: 220px;
             aspect-ratio: 240 / 180;
             pointer-events: none;
             z-index: 10;
@@ -161,30 +163,34 @@
         }
 
         .book {
-            fill: var(--yellow);
-            stroke: #8A2BE2;
+            fill: var(--book-fill);
+            stroke: var(--book-stroke);
             stroke-width: 5;
             stroke-linejoin: round;
             opacity: 0;
+            transition: fill 0.3s ease, stroke 0.3s ease;
         }
 
         .book-details {
-            stroke: #8A2BE2;
+            stroke: var(--book-stroke);
             stroke-width: 3;
             fill: none;
+            transition: stroke 0.3s ease;
         }
 
         .book-frame-outer {
-            stroke: #8A2BE2;
+            stroke: var(--book-stroke);
             stroke-width: 1.25;
             fill: none;
+            transition: stroke 0.3s ease;
         }
 
         .book-frame-inner {
-            stroke: #8A2BE2;
+            stroke: var(--book-stroke);
             stroke-width: 0.75;
             stroke-dasharray: 2 2;
             fill: none;
+            transition: stroke 0.3s ease;
         }
 
         .book1 {
@@ -207,65 +213,7 @@
 
         @keyframes dropSharp1 {
             0% {
-                transform: translate(-30px, -600px) rotate(-10deg);
-                opacity: 0;
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            10% { opacity: 1; }
-            40% {
-                transform: translate(8px, 0px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
-            }
-            55% {
-                transform: translate(8px, -20px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            70% {
-                transform: translate(8px, 0px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
-            }
-            82% {
-                transform: translate(8px, -4px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            100% {
-                transform: translate(8px, 0px) rotate(0deg);
-                opacity: 1;
-            }
-        }
-
-        @keyframes dropSharp2 {
-            0% {
-                transform: translate(30px, -600px) rotate(10deg);
-                opacity: 0;
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            10% { opacity: 1; }
-            40% {
-                transform: translate(-10px, 0px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
-            }
-            55% {
-                transform: translate(-10px, -20px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            70% {
-                transform: translate(-10px, 0px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
-            }
-            82% {
-                transform: translate(-10px, -4px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            100% {
-                transform: translate(-10px, 0px) rotate(0deg);
-                opacity: 1;
-            }
-        }
-
-        @keyframes dropSharp3 {
-            0% {
-                transform: translate(-20px, -600px) rotate(-8deg);
+                transform: translate(-10px, -600px) rotate(0deg);
                 opacity: 0;
                 animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
@@ -288,6 +236,64 @@
             }
             100% {
                 transform: translate(6px, 0px) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes dropSharp2 {
+            0% {
+                transform: translate(10px, -600px) rotate(0deg);
+                opacity: 0;
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
+            }
+            10% { opacity: 1; }
+            40% {
+                transform: translate(-7px, 0px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
+            }
+            55% {
+                transform: translate(-7px, -20px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
+            }
+            70% {
+                transform: translate(-7px, 0px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
+            }
+            82% {
+                transform: translate(-7px, -4px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
+            }
+            100% {
+                transform: translate(-7px, 0px) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes dropSharp3 {
+            0% {
+                transform: translate(-10px, -600px) rotate(0deg);
+                opacity: 0;
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
+            }
+            10% { opacity: 1; }
+            40% {
+                transform: translate(4px, 0px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
+            }
+            55% {
+                transform: translate(4px, -20px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
+            }
+            70% {
+                transform: translate(4px, 0px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
+            }
+            82% {
+                transform: translate(4px, -4px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
+            }
+            100% {
+                transform: translate(4px, 0px) rotate(0deg);
                 opacity: 1;
             }
         }
@@ -586,10 +592,10 @@
             }
 
             .welcome-books-container {
-                width: 32vw;  
-                min-width: 150px;
+                width: 25vw;  
+                min-width: 120px;
                 height: auto;
-                bottom: -5px;
+                bottom: -8px;
                 right: 0;
             }
 
@@ -792,6 +798,11 @@
                 logoBlock.innerText = data.logo_fallback_text || "A";
             }
 
+            if (data.books) {
+                if (data.books.fill_color) document.documentElement.style.setProperty('--book-fill', data.books.fill_color);
+                if (data.books.stroke_color) document.documentElement.style.setProperty('--book-stroke', data.books.stroke_color);
+            }
+
             if (data.welcome) {
                 document.getElementById('welcome-title').innerText = data.welcome.title || "Arban School";
                 document.getElementById('welcome-subtitle').innerText = data.welcome.subtitle || "";
@@ -830,6 +841,9 @@
         }
 
         function applyDefaultConfig() {
+            document.documentElement.style.setProperty('--book-fill', '#FFD600');
+            document.documentElement.style.setProperty('--book-stroke', '#8A2BE2');
+
             pricePrices = {
                 price_individual_40: 800, price_pair_40: 600, price_group_40: 400,
                 price_individual_60: 1200, price_pair_60: 900, price_group_60: 600
