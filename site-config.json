@@ -2,6 +2,10 @@
   "site_title": "Arban School - Школа английского языка",
   "logo_url": "",
   "logo_fallback_text": "A",
+  "books": {
+    "fill_color": "#FFD600",
+    "stroke_color": "#ac9e02"
+  },
   "welcome": {
     "title": "Arban School",
     "subtitle": "Эффективный английский для больших целей"
@@ -36,9 +40,5 @@
     "title": "Ждём вас на занятиях",
     "address": "ул. Английская, д. 10, офис 404",
     "phone": "+7 (999) 123-45-67"
-  },
-  "books": {
-    "stroke_color": "#8A2BE2",
-    "fill_color": "#FFFFFF"
   }
 }
