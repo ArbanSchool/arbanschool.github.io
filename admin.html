@@ -111,7 +111,6 @@
             line-height: 1.5;
         }
 
-        /* Стили для блоков карточек в админке */
         .admin-card-block {
             background: #F9FAFB;
             border: 1px solid var(--border);
@@ -168,6 +167,22 @@
             border: 1px dashed var(--purple);
         }
 
+        .color-picker-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-picker-wrapper input[type="color"] {
+            width: 46px;
+            height: 42px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            background: #FFF;
+            padding: 2px;
+        }
+
         .save-btn {
             display: block;
             width: 100%;
@@ -222,7 +237,7 @@
     <div class="container">
         <header>
             <h1>Управление контентом Arban School</h1>
-            <p>Редактирование заголовков, карточек, контактов и тарифов</p>
+            <p>Редактирование заголовков, карточек, контактов, оформлений и тарифов</p>
         </header>
 
         <div class="token-card">
@@ -233,11 +248,11 @@
             <div class="field-group row">
                 <div>
                     <label for="gh-owner">Логин на GitHub:</label>
-                    <input type="text" id="gh-owner" placeholder="Логин">
+                    <input type="text" id="gh-owner" placeholder="ArbanSchool">
                 </div>
                 <div>
                     <label for="gh-repo">Репозиторий:</label>
-                    <input type="text" id="gh-repo" placeholder="Репозиторий">
+                    <input type="text" id="gh-repo" placeholder="arbanschool.github.io">
                 </div>
             </div>
         </div>
@@ -256,6 +271,24 @@
             <div>
                 <label for="logo-fallback-text">Буква логотипа (если нет картинки):</label>
                 <input type="text" id="logo-fallback-text" maxlength="3">
+            </div>
+        </div>
+
+        <div class="section-title">📚 Настройки оформления книг</div>
+        <div class="field-group row">
+            <div>
+                <label for="book-fill-color">Цвет заливки книг:</label>
+                <div class="color-picker-wrapper">
+                    <input type="color" id="book-fill-picker" onchange="document.getElementById('book-fill-color').value = this.value">
+                    <input type="text" id="book-fill-color" placeholder="#FFD600" onchange="document.getElementById('book-fill-picker').value = this.value">
+                </div>
+            </div>
+            <div>
+                <label for="book-stroke-color">Цвет контура книг:</label>
+                <div class="color-picker-wrapper">
+                    <input type="color" id="book-stroke-picker" onchange="document.getElementById('book-stroke-color').value = this.value">
+                    <input type="text" id="book-stroke-color" placeholder="#8A2BE2" onchange="document.getElementById('book-stroke-picker').value = this.value">
+                </div>
             </div>
         </div>
 
@@ -352,6 +385,229 @@
         <div class="section-title">📞 Контакты</div>
         <div class="field-group">
             <label for="contacts-title">Заголовок секции:</label>
+            <input type="text" id="contacts-title">
+        </div>
+        <div class="field-group">
+            <label for="contact-address">Адрес:</label>
+            <input type="text" id="contact-address">
+        </div>
+        <div class="field-group">
+            <label for="contact-phone">Телефон:</label>
+            <input type="text" id="contact-phone">
+        </div>
+
+        <div id="status-message"></div>
+        <button class="save-btn" onclick="saveConfig()">Сохранить изменения</button>
+    </div>
+
+    <script>
+        const CONFIG_FILE = 'site-config.json';
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Подставляем дефолтные значение ArbanSchool и arbanschool.github.io
+            document.getElementById('gh-owner').value = localStorage.getItem('gh_owner') || "ArbanSchool";
+            document.getElementById('gh-repo').value = localStorage.getItem('gh_repo') || "arbanschool.github.io";
+
+            const hostname = window.location.hostname;
+            const pathParts = window.location.pathname.split('/');
+            
+            if (hostname.includes('.github.io')) {
+                document.getElementById('gh-owner').value = hostname.split('.')[0];
+                const repoName = pathParts[1] && pathParts[1] !== "" ? pathParts[1] : hostname;
+                document.getElementById('gh-repo').value = repoName;
+            }
+
+            if (localStorage.getItem('gh_token')) document.getElementById('gh-token').value = localStorage.getItem('gh_token');
+
+            fetch(`${CONFIG_FILE}?v=${Date.now()}`)
+                .then(res => res.json())
+                .then(data => fillForm(data))
+                .catch(err => console.log("Файл настроек считывается с сервера", err));
+        });
+
+        function fillForm(data) {
+            document.getElementById('site-title').value = data.site_title || "";
+            document.getElementById('logo-url').value = data.logo_url || "";
+            document.getElementById('logo-fallback-text').value = data.logo_fallback_text || "A";
+
+            if (data.books) {
+                const fill = data.books.fill_color || "#FFD600";
+                const stroke = data.books.stroke_color || "#8A2BE2";
+                document.getElementById('book-fill-color').value = fill;
+                document.getElementById('book-fill-picker').value = fill;
+                document.getElementById('book-stroke-color').value = stroke;
+                document.getElementById('book-stroke-picker').value = stroke;
+            } else {
+                document.getElementById('book-fill-color').value = "#FFD600";
+                document.getElementById('book-fill-picker').value = "#FFD600";
+                document.getElementById('book-stroke-color').value = "#8A2BE2";
+                document.getElementById('book-stroke-picker').value = "#8A2BE2";
+            }
+
+            if (data.welcome) {
+                document.getElementById('welcome-title').value = data.welcome.title || "";
+                document.getElementById('welcome-subtitle').value = data.welcome.subtitle || "";
+            }
+            if (data.calculator) {
+                document.getElementById('calc-title').value = data.calculator.title || "";
+                document.getElementById('p-ind-40').value = data.calculator.price_individual_40 || 0;
+                document.getElementById('p-pair-40').value = data.calculator.price_pair_40 || 0;
+                document.getElementById('p-group-40').value = data.calculator.price_group_40 || 0;
+                document.getElementById('p-ind-60').value = data.calculator.price_individual_60 || 0;
+                document.getElementById('p-pair-60').value = data.calculator.price_pair_60 || 0;
+                document.getElementById('p-group-60').value = data.calculator.price_group_60 || 0;
+            }
+            
+            if (data.about) {
+                document.getElementById('about-title').value = data.about.title || "О нас";
+                const cards = data.about.cards || [];
+                
+                if (cards[0]) {
+                    document.getElementById('c1-title').value = cards[0].title || "";
+                    document.getElementById('c1-text').value = cards[0].text || "";
+                }
+                if (cards[1]) {
+                    document.getElementById('c2-title').value = cards[1].title || "";
+                    document.getElementById('c2-text').value = cards[1].text || "";
+                }
+                if (cards[2]) {
+                    document.getElementById('c3-title').value = cards[2].title || "";
+                    document.getElementById('c3-text').value = cards[2].text || "";
+                }
+            }
+
+            if (data.contacts) {
+                document.getElementById('contacts-title').value = data.contacts.title || "";
+                document.getElementById('contact-address').value = data.contacts.address || "";
+                document.getElementById('contact-phone').value = data.contacts.phone || "";
+            }
+        }
+
+        async function saveConfig() {
+            const token = document.getElementById('gh-token').value.trim();
+            const owner = document.getElementById('gh-owner').value.trim() || "ArbanSchool";
+            const repo = document.getElementById('gh-repo').value.trim() || "arbanschool.github.io";
+
+            if (!token) {
+                showStatus('Заполните токен доступа вверху!', 'error');
+                return;
+            }
+
+            localStorage.setItem('gh_token', token);
+            localStorage.setItem('gh_owner', owner);
+            localStorage.setItem('gh_repo', repo);
+
+            showStatus('Отправка коммита на GitHub...', 'loading');
+
+            const cardsArray = [
+                {
+                    title: document.getElementById('c1-title').value,
+                    text: document.getElementById('c1-text').value
+                },
+                {
+                    title: document.getElementById('c2-title').value,
+                    text: document.getElementById('c2-text').value
+                },
+                {
+                    title: document.getElementById('c3-title').value,
+                    text: document.getElementById('c3-text').value
+                }
+            ];
+
+            const updatedConfig = {
+                site_title: document.getElementById('site-title').value,
+                logo_url: document.getElementById('logo-url').value,
+                logo_fallback_text: document.getElementById('logo-fallback-text').value,
+                books: {
+                    fill_color: document.getElementById('book-fill-color').value || "#FFD600",
+                    stroke_color: document.getElementById('book-stroke-color').value || "#8A2BE2"
+                },
+                welcome: {
+                    title: document.getElementById('welcome-title').value,
+                    subtitle: document.getElementById('welcome-subtitle').value
+                },
+                calculator: {
+                    title: document.getElementById('calc-title').value,
+                    price_individual_40: Number(document.getElementById('p-ind-40').value) || 0,
+                    price_pair_40: Number(document.getElementById('p-pair-40').value) || 0,
+                    price_group_40: Number(document.getElementById('p-group-40').value) || 0,
+                    price_individual_60: Number(document.getElementById('p-ind-60').value) || 0,
+                    price_pair_60: Number(document.getElementById('p-pair-60').value) || 0,
+                    price_group_60: Number(document.getElementById('p-group-60').value) || 0
+                },
+                about: {
+                    title: document.getElementById('about-title').value,
+                    cards: cardsArray
+                },
+                contacts: {
+                    title: document.getElementById('contacts-title').value,
+                    address: document.getElementById('contact-address').value,
+                    phone: document.getElementById('contact-phone').value
+                }
+            };
+
+            const url = `https://api.github.com/repos/${owner}/${repo}/contents/${CONFIG_FILE}`;
+
+            try {
+                const getRes = await fetch(url, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+                
+                let sha = "";
+                if (getRes.ok) {
+                    const fileData = await getRes.json();
+                    sha = fileData.sha;
+                }
+
+                const jsonStr = JSON.stringify(updatedConfig, null, 2);
+                const utf8Bytes = new TextEncoder().encode(jsonStr);
+                let binString = "";
+                for (let i = 0; i < utf8Bytes.length; i++) {
+                    binString += String.fromCharCode(utf8Bytes[i]);
+                }
+                const base64Content = btoa(binString);
+
+                const bodyPayload = {
+                    message: "Админ-панель: обновление конфигурации сайта и цвета книг",
+                    content: base64Content
+                };
+                if (sha) bodyPayload.sha = sha;
+
+                const putRes = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bodyPayload)
+                });
+
+                if (putRes.ok) {
+                    showStatus('🎉 Успешно сохранено! Изменения появятся на основном сайте в течение минуты.', 'success');
+                } else {
+                    const putErr = await putRes.json();
+                    showStatus(`Ошибка GitHub API: ${putErr.message}`, 'error');
+                }
+
+            } catch (err) {
+                console.error(err);
+                showStatus('Сетевая ошибка при запросе к репозиторию.', 'error');
+            }
+        }
+
+        function showStatus(text, type) {
+            const el = document.getElementById('status-message');
+            el.innerText = text;
+            el.className = '';
+            el.style.display = 'block';
+
+            if (type === 'success') el.classList.add('status-success');
+            else if (type === 'error') el.classList.add('status-error');
+            else if (type === 'loading') el.classList.add('status-loading');
+        }
+    </script>
+</body>
+</html>            <label for="contacts-title">Заголовок секции:</label>
             <input type="text" id="contacts-title">
         </div>
         <div class="field-group">
