@@ -5,681 +5,858 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arban School - Школа английского языка</title>
     
-    <!-- Подключение шрифтов и стилей библиотеки Choices.js -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
     <style>
         :root {
             --purple: #8A2BE2;
             --purple-dark: #5A189A;
             --yellow: #FFD600;
-            --bg-yellow: #FFD600;
-            --text-dark: #1F2937;
-            --card-bg: #FFFFFF;
-            --book-fill: #FFFFFF;
+            --yellow-dark: #FFB700;
+            --text-dark: #222;
+            --text-light: #FFF;
+            --book-fill: #FFD600;
             --book-stroke: #8A2BE2;
         }
 
         * {
-            box-sizing: border-border;
             margin: 0;
             padding: 0;
-            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        html, body {
+        /* ПРИМАГНИЧИВАНИЕ СТРАНИЦ */
+        html {
             scroll-behavior: smooth;
-            background-color: var(--bg-yellow);
+            scroll-snap-type: y mandatory;
+        }
+
+        body {
+            background-color: var(--yellow);
             color: var(--text-dark);
             overflow-x: hidden;
         }
 
-        /* ---------------- ЕДИНЫЙ ЭКРАН ПРИВЕТСТВИЯ ---------------- */
-        #welcome-section {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            background-color: var(--bg-yellow);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: visible !important;
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Бургер-кнопка меню */
-        .menu-toggle {
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Навигация */
+        .sidebar {
             position: fixed;
-            top: 25px;
-            right: 25px;
-            z-index: 1000;
-            width: 50px;
-            height: 50px;
-            background: var(--purple);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: transform 0.2s ease, background 0.3s ease;
+            right: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background-color: rgba(45, 10, 80, 0.95);
+            padding-top: 80px;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            transform: translateX(100%);
+            transition: transform 0.4s ease;
+            z-index: 100;
         }
 
-        .menu-toggle:hover {
-            transform: scale(1.05);
-            background: var(--purple-dark);
+        .sidebar.active {
+            transform: translateX(0);
         }
 
-        .menu-toggle span {
+        .sidebar a {
             display: block;
-            width: 26px;
-            height: 3px;
-            background-color: var(--yellow);
-            border-radius: 2px;
+            padding: 15px 30px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            border-left: 5px solid transparent;
             transition: all 0.3s ease;
         }
 
-        /* Навигация (Выпадающее меню) */
-        .main-nav {
-            position: fixed;
-            top: 85px;
-            right: 25px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            padding: 15px 0;
-            display: none;
-            flex-direction: column;
-            z-index: 999;
-            min-width: 220px;
-        }
-
-        .main-nav.active {
-            display: flex;
-        }
-
-        .main-nav a {
-            padding: 12px 24px;
-            color: var(--text-dark);
-            text-decoration: none;
-            font-weight: 500;
-            transition: background 0.2s ease, color 0.2s ease;
-        }
-
-        .main-nav a:hover {
-            background: #F3F4F6;
-            color: var(--purple);
-        }
-
-        /* Центральный контент */
-        .welcome-content {
-            text-align: center;
-            z-index: 2;
-            padding: 0 20px;
-        }
-
-        /* Логотип */
-        .welcome-logo {
-            width: 160px;
-            height: 160px;
-            background: var(--purple);
-            border-radius: 50%;
-            margin: 0 auto 30px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 12px 30px rgba(138, 43, 226, 0.3);
-            overflow: hidden;
-        }
-
-        .welcome-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .welcome-logo-text {
+        .sidebar a:hover {
+            background-color: var(--purple);
+            border-left: 5px solid var(--yellow);
             color: var(--yellow);
-            font-size: 80px;
-            font-weight: 900;
-            user-select: none;
+            padding-left: 40px;
         }
 
-        /* Заголовки */
-        .welcome-title {
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: #000;
-            margin-bottom: 12px;
-            letter-spacing: -1px;
+        /* БУРГЕР-МЕНЮ */
+        .burger {
+            display: block;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 101;
+            cursor: pointer;
+            background: var(--purple);
+            padding: 12px;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: none;
         }
 
-        .welcome-subtitle {
-            font-size: 1.25rem;
-            font-weight: 500;
-            color: #374151;
+        .burger div {
+            width: 25px;
+            height: 3px;
+            background-color: var(--yellow);
+            margin: 5px;
+            transition: 0.3s;
         }
 
-        /* ==================== АНИМАЦИЯ ПАДЕНИЯ КНИГ ==================== */
-        
+        .burger.active div:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+        .burger.active div:nth-child(2) {
+            opacity: 0;
+        }
+        .burger.active div:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        /* СЕКЦИИ НА ВЕСЬ ЭКРАН */
+        .section-block {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            scroll-snap-align: start;
+            position: relative;
+        }
+
+        /* ЭКРАН 1: Приветствие */
+        #welcome-section {
+            background-color: var(--yellow);
+            color: var(--text-dark);
+            text-align: center;
+            overflow: hidden; 
+        }
+
+        #welcome-section .logo-container {
+            background-color: var(--purple-dark);
+            color: var(--yellow);
+        }
+
+        /* КОНТЕЙНЕР ДЛЯ АНИМАЦИИ КНИГ */
         .welcome-books-container {
             position: absolute;
-            bottom: 0;
-            right: 20px;
-            width: 20vw;
-            min-width: 220px;
-            max-width: 380px;
+            bottom: -10px;
+            right: 0;
+            width: 13vw;
+            min-width: 140px;
+            max-width: 220px;
+            aspect-ratio: 240 / 180;
             pointer-events: none;
             z-index: 10;
-            overflow: visible !important;
         }
 
         .welcome-books-container svg {
             width: 100%;
             height: 100%;
-            overflow: visible !important;
         }
 
         .book {
-            fill: var(--book-fill, #FFFFFF);
-            stroke: var(--book-stroke, #8A2BE2);
+            fill: var(--book-fill);
+            stroke: var(--book-stroke);
             stroke-width: 5;
             stroke-linejoin: round;
-            stroke-linecap: round;
-            opacity: 1 !important;
-            will-change: transform;
-            transform-box: fill-box;
-        }
-
-        .book-details {
-            stroke: var(--book-stroke, #8A2BE2);
-            stroke-width: 3;
-            fill: none;
-        }
-
-        .book-frame-outer {
-            stroke: var(--book-stroke, #8A2BE2);
-            stroke-width: 1.5;
-            fill: none;
-        }
-
-        .book-frame-inner {
-            stroke: var(--book-stroke, #8A2BE2);
-            stroke-width: 0.75;
-            stroke-dasharray: 2 2;
-            fill: none;
+            opacity: 0;
+            transition: fill 0.3s ease, stroke 0.3s ease;
         }
 
         .book1 {
-            transform-origin: 110px 170px;
-            animation: dropUltraSharp1 0.75s linear forwards;
-            animation-delay: 0.05s;
+            transform-origin: 120px 175px;
+            animation: dropSharp1 0.85s linear forwards;
+            animation-delay: 0.1s;
         }
 
         .book2 {
-            transform-origin: 110px 130px;
-            animation: dropUltraSharp2 0.75s linear forwards;
-            animation-delay: 0.35s;
+            transform-origin: 135px 135px;
+            animation: dropSharp2 0.85s linear forwards;
+            animation-delay: 0.5s;
         }
 
         .book3 {
-            transform-origin: 110px 90px;
-            animation: dropUltraSharp3 0.75s linear forwards;
-            animation-delay: 0.65s;
+            transform-origin: 110px 95px;
+            animation: dropSharp3 0.85s linear forwards;
+            animation-delay: 0.9s;
         }
 
-        /* Книга 1 (Нижняя) - приземляется на нижнюю грань y=170 */
-        @keyframes dropUltraSharp1 {
+        @keyframes dropSharp1 {
             0% {
-                transform: translate(0, -1000px) rotate(-20deg);
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+                transform: translate(-10px, -600px) rotate(0deg);
+                opacity: 0;
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
-            35% {
-                transform: translate(0, 0px) rotate(-8deg);
-                animation-timing-function: cubic-bezier(0, 0.7, 0.1, 1);
+            10% { opacity: 1; }
+            40% {
+                transform: translate(6px, 0px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
             }
-            52% {
-                transform: translate(0, -25px) rotate(4deg);
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+            55% {
+                transform: translate(6px, -20px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
-            68% {
-                transform: translate(0, 0px) rotate(-2deg);
-                animation-timing-function: cubic-bezier(0, 0.7, 0.1, 1);
+            70% {
+                transform: translate(6px, 0px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
             }
             82% {
-                transform: translate(0, -6px) rotate(1deg);
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+                transform: translate(6px, -4px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
             100% {
-                transform: translate(0, 0px) rotate(0deg);
+                transform: translate(6px, 0px) rotate(0deg);
+                opacity: 1;
             }
         }
 
-        /* Книга 2 (Средняя) - ложится ровно на первую */
-        @keyframes dropUltraSharp2 {
+        @keyframes dropSharp2 {
             0% {
-                transform: translate(0, -1000px) rotate(25deg);
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+                transform: translate(10px, -600px) rotate(0deg);
+                opacity: 0;
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
-            35% {
-                transform: translate(0, 0px) rotate(10deg);
-                animation-timing-function: cubic-bezier(0, 0.7, 0.1, 1);
+            10% { opacity: 1; }
+            40% {
+                transform: translate(-7px, 0px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
             }
-            52% {
-                transform: translate(0, -20px) rotate(-5deg);
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+            55% {
+                transform: translate(-7px, -20px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
-            68% {
-                transform: translate(0, 0px) rotate(2deg);
-                animation-timing-function: cubic-bezier(0, 0.7, 0.1, 1);
+            70% {
+                transform: translate(-7px, 0px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
             }
             82% {
-                transform: translate(0, -5px) rotate(-1deg);
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+                transform: translate(-7px, -4px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
             100% {
-                transform: translate(0, 0px) rotate(0deg);
+                transform: translate(-7px, 0px) rotate(0deg);
+                opacity: 1;
             }
         }
 
-        /* Книга 3 (Верхняя) - ложится ровно на вторую */
-        @keyframes dropUltraSharp3 {
+        @keyframes dropSharp3 {
             0% {
-                transform: translate(0, -1000px) rotate(-18deg);
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+                transform: translate(-10px, -600px) rotate(0deg);
+                opacity: 0;
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
-            35% {
-                transform: translate(0, 0px) rotate(-6deg);
-                animation-timing-function: cubic-bezier(0, 0.7, 0.1, 1);
+            10% { opacity: 1; }
+            40% {
+                transform: translate(4px, 0px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
             }
-            52% {
-                transform: translate(0, -15px) rotate(3deg);
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+            55% {
+                transform: translate(4px, -20px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
-            68% {
-                transform: translate(0, 0px) rotate(-1deg);
-                animation-timing-function: cubic-bezier(0, 0.7, 0.1, 1);
+            70% {
+                transform: translate(4px, 0px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
             }
             82% {
-                transform: translate(0, -4px) rotate(0.5deg);
-                animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+                transform: translate(4px, -4px) rotate(0deg);
+                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
             100% {
-                transform: translate(0, 0px) rotate(0deg);
+                transform: translate(4px, 0px) rotate(0deg);
+                opacity: 1;
             }
         }
 
-        /* ---------------- ОБЩИЕ СТИЛИ СЕКЦИЙ И КАЛЬКУЛЯТОРА ---------------- */
-        .section-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 80px 20px;
+        /* ЭКРАН 2: О нас */
+        #about-section {
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+            color: var(--text-light);
         }
 
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: var(--purple-dark);
-            margin-bottom: 40px;
-        }
-
-        /* Калькулятор */
-        .calc-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-        }
-
-        .calc-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-bottom: 30px;
-        }
-
-        .calc-field label {
-            display: block;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #374151;
-        }
-
-        .calc-result-box {
-            background: #F9FAFB;
-            border: 2px dashed var(--purple);
-            border-radius: 16px;
-            padding: 24px;
-            text-align: center;
-        }
-
-        .calc-result-price {
+        #about-section h2 {
             font-size: 3rem;
-            font-weight: 900;
+            color: var(--yellow);
+            margin-bottom: 45px;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        /* ЭКРАН 3: Калькулятор */
+        #calculator-section {
+            background-color: var(--yellow);
+            color: var(--text-dark);
+        }
+
+        /* ЭКРАН 4: Контакты */
+        #contacts-section {
+            background: linear-gradient(135deg, var(--purple-dark), #3d0066);
+            color: var(--text-light);
+        }
+
+        #contacts-section .card h2 {
             color: var(--purple-dark);
         }
 
-        /* Карточки "О нас" */
-        .cards-grid {
+        /* ЛОГОТИП */
+        .logo-container {
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 8rem;
+            font-weight: 900;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            animation: scaleIn 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+        }
+
+        .main-title {
+            font-size: 4.2rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .subtitle {
+            font-size: 1.6rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        /* СЕТКА КАРТОЧЕК */
+        .cards-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+            padding: 10px;
         }
 
         .about-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease;
+            background: white;
+            border-radius: 24px;
+            padding: 45px 35px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border: 3px solid transparent;
+            transform: translateY(0); 
+            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.35s ease, border-color 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            opacity: 0;
         }
 
-        .about-card:hover {
-            transform: translateY(-5px);
+        .about-card:hover,
+        .about-card:active {
+            transform: translateY(-18px) !important;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4) !important;
+            border-color: var(--yellow) !important;
+            cursor: pointer;
         }
 
         .about-card h3 {
-            color: var(--purple);
-            font-size: 1.4rem;
-            margin-bottom: 12px;
+            font-size: 1.6rem;
+            color: var(--purple-dark);
+            font-weight: 700;
         }
 
         .about-card p {
-            color: #4B5563;
-            line-height: 1.6;
+            font-size: 1.1rem;
+            color: #333;
+            line-height: 1.7;
         }
 
-        /* Контакты */
-        .contacts-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 40px;
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 45px;
+            width: 100%;
+            max-width: 580px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        #calculator-section .card {
+            border-bottom: 8px solid var(--purple);
+        }
+
+        #contacts-section .card {
+            color: var(--text-dark);
+            border-bottom: 8px solid var(--purple-dark);
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        .about-card.visible {
+            opacity: 1;
+            transition: opacity 0.8s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.35s ease, border-color 0.25s ease;
+        }
+
+        .card h2 {
+            font-size: 2.4rem;
+            margin-bottom: 35px;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            color: var(--purple-dark);
+            font-weight: 700;
         }
 
-        .contacts-info {
-            font-size: 1.2rem;
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #444;
+            font-size: 1.05rem;
+        }
+
+        .choices {
+            width: 100%;
+            margin-bottom: 0;
+        }
+
+        .choices__inner {
+            background-color: #F8FAFC !important;
+            border: 2px solid #E2E8F0 !important;
+            border-radius: 14px !important;
+            padding: 12px 20px !important;
+            font-size: 1.1rem !important;
+            color: #333 !important;
+            min-height: auto !important;
+            transition: all 0.3s ease;
+        }
+
+        .choices.is-focused .choices__inner,
+        .choices.is-open .choices__inner {
+            border-color: var(--purple) !important;
+            background-color: #FFF !important;
+            box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.15) !important;
+        }
+
+        .choices__list--dropdown {
+            border: 2px solid var(--purple) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
+            overflow: hidden;
+            margin-top: 5px;
+            background: white !important;
+            z-index: 100 !important;
+        }
+
+        .choices__list--dropdown .choices__item--focusable:hover {
+            background-color: rgba(138, 43, 226, 0.08) !important;
+            color: var(--purple-dark) !important;
+        }
+
+        .choices__list--dropdown .choices__item.is-selected {
+            background-color: var(--purple) !important;
+            color: white !important;
+        }
+
+        .choices[data-type="select-one"]::after {
+            border: none !important;
+            content: "" !important;
+            position: absolute !important;
+            right: 22px !important;
+            top: 50% !important;
+            margin-top: -5px !important;
+            width: 8px !important;
+            height: 8px !important;
+            border-right: 2px solid var(--purple) !important;
+            border-bottom: 2px solid var(--purple) !important;
+            transform: rotate(45deg) !important;
+            transition: transform 0.3s ease, margin-top 0.3s ease !important;
+        }
+
+        .choices.is-open[data-type="select-one"]::after {
+            transform: rotate(-135deg) !important;
+            margin-top: 1px !important;
+        }
+
+        button.calc-btn {
+            width: 100%;
+            padding: 18px;
+            background-color: var(--purple);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.25rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
             margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+        }
+
+        button.calc-btn:hover {
+            background-color: var(--purple-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(138, 43, 226, 0.4);
+        }
+
+        #result {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 1.7rem;
+            font-weight: bold;
+            color: var(--purple-dark);
+            min-height: 38px;
+        }
+
+        .contact-info {
+            text-align: center;
+            font-size: 1.25rem;
             line-height: 1.8;
         }
 
-        /* Адаптивность */
-        @media (max-width: 768px) {
-            .welcome-title { font-size: 2.5rem; }
-            .welcome-subtitle { font-size: 1rem; }
-            .welcome-logo { width: 120px; height: 120px; }
-            .welcome-logo-text { font-size: 60px; }
-            .welcome-books-container { width: 40vw; min-width: 180px; }
+        .contact-info p {
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        .contact-info span {
+            color: var(--purple-dark);
+            font-weight: 700;
+            font-size: 1.4rem;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 992px) {
+            .section-block {
+                height: 100vh;
+                padding: 40px 20px;
+            }
+
+            .main-title {
+                font-size: 2.4rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .logo-container {
+                width: 140px;
+                height: 140px;
+                font-size: 3.8rem;
+                margin-bottom: 20px;
+            }
+
+            .welcome-books-container {
+                width: 25vw;  
+                min-width: 120px;
+                height: auto;
+                bottom: -8px;
+                right: 0;
+            }
+
+            #about-section h2 {
+                font-size: 2rem;
+                margin-bottom: 25px;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+
+            .about-card {
+                padding: 22px 20px;
+                gap: 10px;
+            }
+
+            .about-card:hover,
+            .about-card:active {
+                transform: translateY(-4px) !important;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
+                border-color: var(--yellow) !important;
+            }
+
+            .about-card h3 {
+                font-size: 1.25rem;
+            }
+
+            .about-card p {
+                font-size: 0.95rem;
+                line-height: 1.5;
+            }
+            
+            .card {
+                padding: 30px 25px;
+            }
+            
+            .card h2 {
+                font-size: 1.8rem;
+                margin-bottom: 25px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Кнопка вызова меню -->
-    <button class="menu-toggle" id="menu-toggle-btn" aria-label="Открыть меню">
-        <span></span>
-        <span></span>
-        <span></span>
+    <button class="burger" id="burger" onclick="toggleMenu()">
+        <div></div>
+        <div></div>
+        <div></div>
     </button>
 
-    <!-- Выпадающее меню -->
-    <nav class="main-nav" id="main-nav-menu">
-        <a href="#welcome-section" onclick="closeMenu()">Главная</a>
-        <a href="#calculator-section" onclick="closeMenu()">Рассчитать стоимость</a>
-        <a href="#about-section" onclick="closeMenu()">О нас</a>
-        <a href="#contacts-section" onclick="closeMenu()">Контакты</a>
+    <nav class="sidebar" id="sidebar">
+        <a href="#welcome-section">Главная</a>
+        <a href="#about-section">О нас</a>
+        <a href="#calculator-section">Калькулятор цен</a>
+        <a href="#contacts-section">Контакты</a>
     </nav>
 
-    <!-- СЕКЦИЯ 1: Приветствие -->
-    <section id="welcome-section">
-        <div class="welcome-content">
-            <div class="welcome-logo" id="welcome-logo-bg">
-                <span class="welcome-logo-text" id="welcome-logo-text">A</span>
-            </div>
-            <h1 class="welcome-title" id="welcome-title">Arban School</h1>
-            <p class="welcome-subtitle" id="welcome-subtitle">Эффективный английский для больших целей</p>
-        </div>
-
-        <!-- Анимация падающих книг -->
+    <header class="section-block" id="welcome-section">
+        <div class="logo-container" id="logo-block">A</div>
+        <h1 class="main-title" id="welcome-title">Arban School</h1>
+        <p class="subtitle" id="welcome-subtitle">Эффективный английский для больших целей</p>
+        
+        <!-- ВСТРОЕННАЯ АНИМАЦИЯ С КНИГАМИ -->
         <div class="welcome-books-container">
-            <svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-                <!-- Нижняя книга (Book 1: y=130..170) -->
-                <g class="book1">
-                    <rect class="book" x="10" y="130" width="200" height="40" rx="4" />
-                    <line class="book-details" x1="30" y1="130" x2="30" y2="170" />
-                    <line class="book-details" x1="190" y1="130" x2="190" y2="170" />
-                    <rect class="book-frame-outer" x="42" y="136" width="136" height="28" rx="2" />
-                    <rect class="book-frame-inner" x="45" y="139" width="130" height="22" rx="1" />
+            <svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+                <!-- Книга 1 (Нижняя) -->
+                <g class="book book1">
+                    <rect x="30" y="135" width="180" height="40" rx="6" />
                 </g>
-
-                <!-- Средняя книга (Book 2: y=90..130) -->
-                <g class="book2">
-                    <rect class="book" x="10" y="90" width="200" height="40" rx="4" />
-                    <line class="book-details" x1="30" y1="90" x2="30" y2="130" />
-                    <line class="book-details" x1="190" y1="90" x2="190" y2="130" />
-                    <rect class="book-frame-outer" x="42" y="96" width="136" height="28" rx="2" />
-                    <rect class="book-frame-inner" x="45" y="99" width="130" height="22" rx="1" />
+                <!-- Книга 2 (Средняя) -->
+                <g class="book book2">
+                    <rect x="30" y="95" width="180" height="40" rx="6" />
                 </g>
-
-                <!-- Верхняя книга (Book 3: y=50..90) -->
-                <g class="book3">
-                    <rect class="book" x="10" y="50" width="200" height="40" rx="4" />
-                    <line class="book-details" x1="30" y1="50" x2="30" y2="90" />
-                    <line class="book-details" x1="190" y1="50" x2="190" y2="90" />
-                    <rect class="book-frame-outer" x="42" y="56" width="136" height="28" rx="2" />
-                    <rect class="book-frame-inner" x="45" y="59" width="130" height="22" rx="1" />
+                <!-- Книга 3 (Верхняя) -->
+                <g class="book book3">
+                    <rect x="30" y="55" width="180" height="40" rx="6" />
                 </g>
             </svg>
         </div>
+    </header>
+
+    <section class="section-block" id="about-section">
+        <h2 id="about-title">О нас</h2>
+        <div class="cards-container" id="cards-container"></div>
     </section>
 
-    <!-- СЕКЦИЯ 2: Калькулятор стоимости -->
-    <section id="calculator-section">
-        <div class="section-container">
-            <h2 class="section-title" id="calc-title">Рассчитать стоимость</h2>
-            <div class="calc-card">
-                <div class="calc-grid">
-                    <div class="calc-field">
-                        <label for="format-select">Формат занятий:</label>
-                        <select id="format-select">
-                            <option value="individual">Индивидуально</option>
-                            <option value="pair">В паре</option>
-                            <option value="group">В группе</option>
-                        </select>
-                    </div>
-                    <div class="calc-field">
-                        <label for="duration-select">Длительность урока:</label>
-                        <select id="duration-select">
-                            <option value="40">40 минут</option>
-                            <option value="60" selected>60 минут</option>
-                        </select>
-                    </div>
-                    <div class="calc-field">
-                        <label for="lessons-count">Занятий в неделю:</label>
-                        <select id="lessons-count">
-                            <option value="1">1 занятие</option>
-                            <option value="2" selected>2 занятия</option>
-                            <option value="3">3 занятия</option>
-                            <option value="4">4 занятия</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="calc-result-box">
-                    <div style="color: #6B7280; font-weight: 500; margin-bottom: 5px;">Примерная стоимость в месяц:</div>
-                    <div class="calc-result-price" id="total-price">0 ₽</div>
-                </div>
+    <section class="section-block" id="calculator-section">
+        <div class="card reveal-card">
+            <h2 id="calc-title">Рассчитать стоимость</h2>
+            <div class="form-group">
+                <label for="duration">Длительность урока:</label>
+                <select id="duration">
+                    <option value="40">40 минут</option>
+                    <option value="60">60 минут</option>
+                </select>
             </div>
+            <div class="form-group">
+                <label for="format">Формат обучения:</label>
+                <select id="format">
+                    <option value="individual">Индивидуально</option>
+                    <option value="pair">В паре</option>
+                    <option value="group">В группе</option>
+                </select>
+            </div>
+            <button class="calc-btn" onclick="calculatePrice()">Узнать цену</button>
+            <div id="result"></div>
         </div>
     </section>
 
-    <!-- СЕКЦИЯ 3: О нас -->
-    <section id="about-section">
-        <div class="section-container">
-            <h2 class="section-title" id="about-title">О нас</h2>
-            <div class="cards-grid" id="about-cards-container">
-                <!-- Карточки загружаются динамически из site-config.json -->
+    <section class="section-block" id="contacts-section">
+        <div class="card reveal-card">
+            <h2 id="contacts-title">Ждём вас на занятиях</h2>
+            <div class="contact-info">
+                <p>📍 Адрес нашей школы:<br><span id="contact-address">ул. Английская, д. 10, офис 404</span></p>
+                <p>📞 Связаться с нами:<br><span id="contact-phone">+7 (999) 123-45-67</span></p>
             </div>
         </div>
     </section>
-
-    <!-- СЕКЦИЯ 4: Контакты -->
-    <section id="contacts-section">
-        <div class="section-container">
-            <h2 class="section-title" id="contacts-title">Ждём вас на занятиях</h2>
-            <div class="contacts-card">
-                <div class="contacts-info" id="contacts-address">ул. Английская, д. 10, офис 404</div>
-                <div class="contacts-info" id="contacts-phone" style="font-weight: 700; color: var(--purple);">+7 (999) 123-45-67</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Подключение библиотеки Choices.js -->
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
     <script>
-        // Глобальный объект прайс-листа
-        let pricingData = {
-            individual_40: 800,
-            pair_40: 600,
-            group_40: 400,
-            individual_60: 1200,
-            pair_60: 900,
-            group_60: 600
-        };
+        const CONFIG_FILE = 'site-config.json';
+        let pricePrices = {}; 
+        const revealObserver = createObserver();
 
-        // Переменные экземпляров Choices.js
-        let formatChoice, durationChoice, countChoice;
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('burger').classList.toggle('active');
+        }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            // Инициализация кастомных селектов
-            formatChoice = new Choices('#format-select', { searchEnabled: false, itemSelectText: '' });
-            durationChoice = new Choices('#duration-select', { searchEnabled: false, itemSelectText: '' });
-            countChoice = new Choices('#lessons-count', { searchEnabled: false, itemSelectText: '' });
-
-            // Навешивание слушателей калькулятора
-            document.getElementById('format-select').addEventListener('change', calculatePrice);
-            document.getElementById('duration-select').addEventListener('change', calculatePrice);
-            document.getElementById('lessons-count').addEventListener('change', calculatePrice);
-
-            // Логика меню
-            const menuBtn = document.getElementById('menu-toggle-btn');
-            const menuNav = document.getElementById('main-nav-menu');
-
-            menuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                menuNav.classList.toggle('active');
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('sidebar').classList.remove('active');
+                document.getElementById('burger').classList.remove('active');
             });
-
-            document.addEventListener('click', (e) => {
-                if (!menuNav.contains(e.target) && !menuBtn.contains(e.target)) {
-                    menuNav.classList.remove('active');
-                }
-            });
-
-            // Загрузка динамического конфига
-            loadSiteConfig();
         });
 
-        function closeMenu() {
-            document.getElementById('main-nav-menu').classList.remove('active');
-        }
-
-        // Загрузка файла site-config.json
-        function loadSiteConfig() {
-            fetch(`site-config.json?v=${Date.now()}`)
-                .then(res => res.json())
-                .then(data => {
-                    // Заголовок вкладки
-                    if (data.site_title) document.title = data.site_title;
-
-                    // Логотип
-                    const logoBg = document.getElementById('welcome-logo-bg');
-                    if (data.logo_url && data.logo_url.trim() !== "") {
-                        logoBg.innerHTML = `<img src="${data.logo_url}" alt="Logo">`;
-                    } else if (data.logo_fallback_text) {
-                        document.getElementById('welcome-logo-text').innerText = data.logo_fallback_text;
-                    }
-
-                    // Приветствие
-                    if (data.welcome) {
-                        if (data.welcome.title) document.getElementById('welcome-title').innerText = data.welcome.title;
-                        if (data.welcome.subtitle) document.getElementById('welcome-subtitle').innerText = data.welcome.subtitle;
-                    }
-
-                    // Калькулятор
-                    if (data.calculator) {
-                        if (data.calculator.title) document.getElementById('calc-title').innerText = data.calculator.title;
-                        
-                        pricingData = {
-                            individual_40: data.calculator.price_individual_40 || 0,
-                            pair_40: data.calculator.price_pair_40 || 0,
-                            group_40: data.calculator.price_group_40 || 0,
-                            individual_60: data.calculator.price_individual_60 || 0,
-                            pair_60: data.calculator.price_pair_60 || 0,
-                            group_60: data.calculator.price_group_60 || 0
-                        };
-                    }
-
-                    // О нас
-                    if (data.about) {
-                        if (data.about.title) document.getElementById('about-title').innerText = data.about.title;
-                        
-                        const container = document.getElementById('about-cards-container');
-                        if (data.about.cards && Array.isArray(data.about.cards)) {
-                            container.innerHTML = '';
-                            data.about.cards.forEach(card => {
-                                const cardEl = document.createElement('div');
-                                cardEl.className = 'about-card';
-                                cardEl.innerHTML = `<h3>${card.title || ''}</h3><p>${card.text || ''}</p>`;
-                                container.appendChild(cardEl);
-                            });
-                        }
-                    }
-
-                    // Контакты
-                    if (data.contacts) {
-                        if (data.contacts.title) document.getElementById('contacts-title').innerText = data.contacts.title;
-                        if (data.contacts.address) document.getElementById('contacts-address').innerText = data.contacts.address;
-                        if (data.contacts.phone) document.getElementById('contacts-phone').innerText = data.contacts.phone;
-                    }
-
-                    // Настройки цветов книг
-                    if (data.books) {
-                        if (data.books.fill_color) {
-                            document.documentElement.style.setProperty('--book-fill', data.books.fill_color);
-                        }
-                        if (data.books.stroke_color) {
-                            document.documentElement.style.setProperty('--book-stroke', data.books.stroke_color);
-                        }
-                    }
-
-                    calculatePrice();
-                })
-                .catch(err => {
-                    console.log("Конфиг недоступен или загружен локально", err);
-                    calculatePrice();
+        document.addEventListener("DOMContentLoaded", () => {
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                new Choices(select, {
+                    searchEnabled: false,
+                    itemSelectText: '',
+                    shouldSort: false
                 });
+            });
+
+            fetch(`${CONFIG_FILE}?v=${Date.now()}`)
+                .then(res => {
+                    if (!res.ok) throw new Error('Конфиг не найден');
+                    return res.json();
+                })
+                .then(data => applyConfig(data))
+                .catch(err => {
+                    console.warn("Загружены дефолтные настройки:", err);
+                    applyDefaultConfig();
+                });
+        });
+
+        function createObserver() {
+            return new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
         }
 
-        // Расчёт стоимости
+        function applyConfig(data) {
+            if (data.site_title) document.title = data.site_title;
+            
+            const logoBlock = document.getElementById('logo-block');
+            if (data.logo_url && data.logo_url.trim() !== "") {
+                logoBlock.innerHTML = `<img src="${data.logo_url}" alt="Логотип">`;
+            } else {
+                logoBlock.innerText = data.logo_fallback_text || "A";
+            }
+
+            // Перенесено из первого кода: чтение цвета книг
+            if (data.books) {
+                if (data.books.fill_color) {
+                    document.documentElement.style.setProperty('--book-fill', data.books.fill_color);
+                }
+                if (data.books.stroke_color) {
+                    document.documentElement.style.setProperty('--book-stroke', data.books.stroke_color);
+                }
+            }
+
+            if (data.welcome) {
+                document.getElementById('welcome-title').innerText = data.welcome.title || "Arban School";
+                document.getElementById('welcome-subtitle').innerText = data.welcome.subtitle || "";
+            }
+
+            if (data.calculator) {
+                document.getElementById('calc-title').innerText = data.calculator.title || "Рассчитать стоимость";
+                pricePrices = data.calculator;
+            }
+
+            if (data.about) {
+                document.getElementById('about-title').innerText = data.about.title || "О нас";
+                const container = document.getElementById('cards-container');
+                container.innerHTML = "";
+
+                const cards = data.about.cards || [];
+                cards.forEach(card => {
+                    const cardHtml = document.createElement('div');
+                    cardHtml.className = 'about-card';
+                    cardHtml.innerHTML = `
+                        <h3>${card.title || 'Заголовок'}</h3>
+                        <p>${card.text || 'Описание...'}</p>
+                    `;
+                    container.appendChild(cardHtml);
+                    revealObserver.observe(cardHtml);
+                });
+            }
+
+            if (data.contacts) {
+                document.getElementById('contacts-title').innerText = data.contacts.title || "Ждём вас на занятиях";
+                document.getElementById('contact-address').innerText = data.contacts.address || "";
+                document.getElementById('contact-phone').innerText = data.contacts.phone || "";
+            }
+
+            document.querySelectorAll('.reveal-card').forEach(c => revealObserver.observe(c));
+        }
+
+        function applyDefaultConfig() {
+            document.documentElement.style.setProperty('--book-fill', '#FFD600');
+            document.documentElement.style.setProperty('--book-stroke', '#8A2BE2');
+
+            pricePrices = {
+                price_individual_40: 800, price_pair_40: 600, price_group_40: 400,
+                price_individual_60: 1200, price_pair_60: 900, price_group_60: 600
+            };
+
+            const container = document.getElementById('cards-container');
+            container.innerHTML = `
+                <div class="about-card">
+                    <h3>Высокое качество</h3>
+                    <p>Индивидуальный подход к каждому ученику, современные материалы и методики обучения.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Опытные педагоги</h3>
+                    <p>Наши преподаватели помогут преодолеть языковой барьер быстро, легко и без стресса.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Гибкий график</h3>
+                    <p>Подбираем удобное время для занятий индивидуально, в парах или уютных мини-группах.</p>
+                </div>
+            `;
+            
+            document.querySelectorAll('.about-card, .reveal-card').forEach(c => revealObserver.observe(c));
+        }
+
         function calculatePrice() {
-            const format = document.getElementById('format-select').value;
-            const duration = document.getElementById('duration-select').value;
-            const count = parseInt(document.getElementById('lessons-count').value, 10);
+            const duration = document.getElementById('duration').value;
+            const format = document.getElementById('format').value;
+            const resultDiv = document.getElementById('result');
+            
+            let price = 0;
+            let suffix = " ₽ / урок";
 
-            const key = `${format}_${duration}`;
-            const pricePerLesson = pricingData[key] || 0;
-            const monthlyTotal = pricePerLesson * count * 4;
+            if (duration === "40") {
+                if (format === "individual") price = pricePrices.price_individual_40 || 800;
+                else if (format === "pair") { price = pricePrices.price_pair_40 || 600; suffix += " (с человека)"; }
+                else if (format === "group") { price = pricePrices.price_group_40 || 400; suffix += " (с человека)"; }
+            } else if (duration === "60") {
+                if (format === "individual") price = pricePrices.price_individual_60 || 1200;
+                else if (format === "pair") { price = pricePrices.price_pair_60 || 900; suffix += " (с человека)"; }
+                else if (format === "group") { price = pricePrices.price_group_60 || 600; suffix += " (с человека)"; }
+            }
 
-            document.getElementById('total-price').innerText = `${monthlyTotal.toLocaleString('ru-RU')} ₽`;
+            resultDiv.style.opacity = 0;
+            setTimeout(() => {
+                resultDiv.innerText = "Стоимость: " + price + suffix;
+                resultDiv.style.transition = "opacity 0.4s ease";
+                resultDiv.style.opacity = 1;
+            }, 150);
         }
     </script>
 </body>
