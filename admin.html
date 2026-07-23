@@ -404,26 +404,25 @@
         const CONFIG_FILE = 'site-config.json';
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Подставляем дефолтные значение ArbanSchool и arbanschool.github.io
-            document.getElementById('gh-owner').value = localStorage.getItem('gh_owner') || "ArbanSchool";
-            document.getElementById('gh-repo').value = localStorage.getItem('gh_repo') || "arbanschool.github.io";
+    // Подгружаем токен из localStorage, если он там сохранён
+    if (localStorage.getItem('gh_token')) {
+        document.getElementById('gh-token').value = localStorage.getItem('gh_token');
+    }
+    
+    // Если в localStorage ранее сохранялись логин/репо, используем их, иначе оставляем дефолтные из HTML
+    if (localStorage.getItem('gh_owner')) {
+        document.getElementById('gh-owner').value = localStorage.getItem('gh_owner');
+    }
+    if (localStorage.getItem('gh_repo')) {
+        document.getElementById('gh-repo').value = localStorage.getItem('gh_repo');
+    }
 
-            const hostname = window.location.hostname;
-            const pathParts = window.location.pathname.split('/');
-            
-            if (hostname.includes('.github.io')) {
-                document.getElementById('gh-owner').value = hostname.split('.')[0];
-                const repoName = pathParts[1] && pathParts[1] !== "" ? pathParts[1] : hostname;
-                document.getElementById('gh-repo').value = repoName;
-            }
-
-            if (localStorage.getItem('gh_token')) document.getElementById('gh-token').value = localStorage.getItem('gh_token');
-
-            fetch(`${CONFIG_FILE}?v=${Date.now()}`)
-                .then(res => res.json())
-                .then(data => fillForm(data))
-                .catch(err => console.log("Файл настроек считывается с сервера", err));
-        });
+    // Загрузка JSON-конфига
+    fetch(`${CONFIG_FILE}?v=${Date.now()}`)
+        .then(res => res.json())
+        .then(data => fillForm(data))
+        .catch(err => console.log("Файл настроек считывается с сервера", err));
+    });
 
         function fillForm(data) {
             document.getElementById('site-title').value = data.site_title || "";
