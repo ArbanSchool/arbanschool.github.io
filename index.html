@@ -144,6 +144,28 @@
             color: var(--yellow);
         }
 
+        /* НОВЫЙ ДЕКОРАТИВНЫЙ ЭЛЕМЕНТ (SVG) */
+        .top-left-decoration {
+            position: absolute;
+            top: -20px; /* Немного вылезает за край для стиля */
+            left: -30px;
+            width: 150px; /* Размер по умолчанию */
+            height: auto;
+            transform: rotate(-20deg); /* Поворот */
+            opacity: 0.8; /* Легкая прозрачность */
+            pointer-events: none; /* Не мешает кликам */
+            z-index: 1; /* Поднимаем над фоном, но под логотипом/текстом */
+        }
+
+        /* Адаптация размера SVG для мобильных */
+        @media (max-width: 768px) {
+            .top-left-decoration {
+                width: 100px;
+                top: -10px;
+                left: -15px;
+            }
+        }
+
         /* КОНТЕЙНЕР ДЛЯ АНИМАЦИИ КНИГ */
         .welcome-books-container {
             position: absolute;
@@ -192,34 +214,28 @@
         /* ОБНОВЛЕННЫЕ АНИМАЦИИ (С НАКЛОНОМ ПРИ ПОЛЕТЕ) */
         @keyframes dropTilted1 {
             0% {
-                /* Летит сверху, наклонена влево */
                 transform: translate(-10px, -600px) rotate(-15deg);
                 opacity: 0;
                 animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
             10% { opacity: 1; }
             40% {
-                /* Удар о землю: приземляется с небольшим наклоном в финальную точку по X */
                 transform: translate(6px, 0px) rotate(-5deg);
                 animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
             }
             55% {
-                /* Отскок вверх: выпрямляется */
                 transform: translate(6px, -20px) rotate(0deg);
                 animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
             70% {
-                /* Снова вниз: уже ровно */
                 transform: translate(6px, 0px) rotate(0deg);
                 animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
             }
             82% {
-                /* Микро-отскок: ровно */
                 transform: translate(6px, -4px) rotate(0deg);
                 animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
             100% {
-                /* Финал: ровно лежит стопкой (со сдвигом 6px) */
                 transform: translate(6px, 0px) rotate(0deg);
                 opacity: 1;
             }
@@ -227,19 +243,16 @@
 
         @keyframes dropTilted2 {
             0% {
-                /* Летит сверху, наклонена вправо */
                 transform: translate(10px, -600px) rotate(15deg);
                 opacity: 0;
                 animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
             10% { opacity: 1; }
             40% {
-                /* Удар: наклон меньше, точка X финальная */
                 transform: translate(-7px, 0px) rotate(5deg);
                 animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
             }
             55% {
-                /* Отскок: выпрямилась */
                 transform: translate(-7px, -20px) rotate(0deg);
                 animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
@@ -252,7 +265,6 @@
                 animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
             100% {
-                /* Финал: ровно (со сдвигом -7px) */
                 transform: translate(-7px, 0px) rotate(0deg);
                 opacity: 1;
             }
@@ -260,19 +272,16 @@
 
         @keyframes dropTilted3 {
             0% {
-                /* Летит сверху, наклонена влево */
                 transform: translate(-10px, -600px) rotate(-15deg);
                 opacity: 0;
                 animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
             10% { opacity: 1; }
             40% {
-                /* Удар */
                 transform: translate(4px, 0px) rotate(-5deg);
                 animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
             }
             55% {
-                /* Отскок: выпрямилась */
                 transform: translate(4px, -20px) rotate(0deg);
                 animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
@@ -285,7 +294,6 @@
                 animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
             }
             100% {
-                /* Финал: ровно (со сдвигом 4px) */
                 transform: translate(4px, 0px) rotate(0deg);
                 opacity: 1;
             }
@@ -335,6 +343,8 @@
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
             animation: scaleIn 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow: hidden;
+            position: relative; /* Чтобы быть над декоративным элементом */
+            z-index: 2;
         }
 
         .logo-container img {
@@ -349,12 +359,16 @@
             letter-spacing: 2px;
             margin-bottom: 15px;
             animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            z-index: 2;
         }
 
         .subtitle {
             font-size: 1.6rem;
             opacity: 0.9;
             animation: fadeInUp 1s ease-out;
+            position: relative;
+            z-index: 2;
         }
 
         /* СЕТКА КАРТОЧЕК */
@@ -562,11 +576,13 @@
             font-size: 1.4rem;
         }
 
-        /* Мобильная адаптация */
+        /* Мобильная адаптация логотипа и заголовков */
         @media (max-width: 992px) {
-            .section-block {
-                height: 100vh;
-                padding: 40px 20px;
+            .logo-container {
+                width: 140px;
+                height: 140px;
+                font-size: 3.8rem;
+                margin-bottom: 20px;
             }
 
             .main-title {
@@ -575,63 +591,6 @@
 
             .subtitle {
                 font-size: 1.2rem;
-            }
-
-            .logo-container {
-                width: 140px;
-                height: 140px;
-                font-size: 3.8rem;
-                margin-bottom: 20px;
-            }
-
-            .welcome-books-container {
-                width: 25vw;  
-                min-width: 120px;
-                height: auto;
-                bottom: -8px;
-                right: 0;
-            }
-
-            #about-section h2 {
-                font-size: 2rem;
-                margin-bottom: 25px;
-            }
-
-            .cards-container {
-                grid-template-columns: 1fr;
-                gap: 15px;
-                max-height: 70vh;
-                overflow-y: auto;
-            }
-
-            .about-card {
-                padding: 22px 20px;
-                gap: 10px;
-            }
-
-            .about-card:hover,
-            .about-card:active {
-                transform: translateY(-4px) !important;
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
-                border-color: var(--yellow) !important;
-            }
-
-            .about-card h3 {
-                font-size: 1.25rem;
-            }
-
-            .about-card p {
-                font-size: 0.95rem;
-                line-height: 1.5;
-            }
-            
-            .card {
-                padding: 30px 25px;
-            }
-            
-            .card h2 {
-                font-size: 1.8rem;
-                margin-bottom: 25px;
             }
         }
     </style>
@@ -652,6 +611,21 @@
     </nav>
 
     <header class="section-block" id="welcome-section">
+        <!-- SVG В ЛЕВОМ ВЕРХНЕМ УГЛУ -->
+        <svg class="top-left-decoration" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+            <path style="fill: none; stroke: rgb(172, 158, 2);" d="M 19.898 195.436 L 19.898 414.393 L 19.898 195.436 Z"/>
+            <path style="fill: none; stroke: rgb(172, 158, 2);" d="M 2.948 443.534 L 36.847 385.256"/>
+            <rect x="29.709" y="85.543" width="444.235" height="260.584" rx="9" ry="9" style="stroke: rgb(172, 158, 2); fill: rgb(172, 158, 2);"/>
+            <rect x="30.731" y="86.571" width="442.703" height="258.715" rx="9" ry="9" style="stroke-width: 1; stroke: rgb(172, 158, 2); fill: rgb(255, 214, 0);"/>
+            <path style="fill: none; stroke: rgb(172, 158, 2);" d="M 30.081 196.122 L 19.274 196.07 L 30.081 196.122 Z"/>
+            <ellipse style="stroke: rgb(172, 158, 2); fill: rgb(172, 158, 2);" cx="29.061" cy="196.084" rx="0.64" ry="2.285"/>
+            <path style="fill: none; stroke: rgb(172, 158, 2); stroke-width: 1; transform-box: fill-box; transform-origin: 50% 50%;" d="M 483.56 409.951 L 483.56 190.995 L 483.56 409.951 Z" transform="matrix(-0.999999, 0, 0, -1, -0.000044, -0.000013)"/>
+            <path style="fill: none; stroke: rgb(172, 158, 2); stroke-width: 1; transform-box: fill-box; transform-origin: 50% 50%;" d="M 466.615 380.814 L 500.513 439.091" transform="matrix(-1, 0, 0, -1, 0.000014, -0.000065)"/>
+            <path style="fill: none; stroke: rgb(172, 158, 2); stroke-width: 1; transform-box: fill-box; transform-origin: 50% 50%;" d="M 484.188 191.629 L 473.38 191.681 L 484.188 191.629 Z" transform="matrix(-1, 0, 0, -1, 0.000002, -0.000005)"/>
+            <ellipse style="stroke: rgb(172, 158, 2); fill: rgb(172, 158, 2); stroke-width: 1;" cx="-474.39" cy="191.641" rx="0.64" ry="2.285" transform="matrix(-1, 0, 0, 1, 0, 0)"/>
+            <rect x="270.464" y="365.87" width="463.563" height="4.362" style="stroke: rgb(172, 158, 2); fill: rgb(215, 197, 0);" transform="matrix(1, 0.00044, 0, -1, -250.531693, 725.333603)"/>
+        </svg>
+
         <div class="logo-container" id="logo-block">A</div>
         <h1 class="main-title" id="welcome-title">Arban School</h1>
         <p class="subtitle" id="welcome-subtitle">Эффективный английский для больших целей</p>
@@ -773,7 +747,6 @@
                 logoBlock.innerText = data.logo_fallback_text || "A";
             }
 
-            // Перенесено из первого кода: чтение цвета книг
             if (data.books) {
                 if (data.books.fill_color) {
                     document.documentElement.style.setProperty('--book-fill', data.books.fill_color);
