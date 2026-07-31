@@ -5,739 +5,708 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arban School - Школа английского языка</title>
     
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         :root {
-            --purple: #8A2BE2;
-            --purple-dark: #5A189A;
-            --yellow: #FFD600;
-            --yellow-dark: #FFB700;
-            --text-dark: #222;
-            --text-light: #FFF;
-            --book-fill: #FFD600;
-            --book-stroke: #8A2BE2;
+            /* Базовый акцентный цвет (меняется динамически из JSON) */
+            --primary-color: #0284c7;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        /* ПРИМАГНИЧИВАНИЕ СТРАНИЦ */
-        html {
-            scroll-behavior: smooth;
-            scroll-snap-type: y mandatory;
-        }
-
-        body {
-            background-color: var(--yellow);
-            color: var(--text-dark);
-            overflow-x: hidden;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* Навигация */
-        .sidebar {
-            position: fixed;
-            right: 0;
-            top: 0;
-            width: 250px;
+        /* ОСНОВНОЙ ЭКРАН */
+        .hero-section {
+            width: 100vw;
             height: 100vh;
-            background-color: rgba(45, 10, 80, 0.95);
-            padding-top: 80px;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
-            transform: translateX(100%);
-            transition: transform 0.4s ease;
-            z-index: 100;
-        }
-
-        .sidebar.active {
-            transform: translateX(0);
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 30px;
-            color: white;
-            text-decoration: none;
-            font-size: 1.1rem;
-            border-left: 5px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar a:hover {
-            background-color: var(--purple);
-            border-left: 5px solid var(--yellow);
-            color: var(--yellow);
-            padding-left: 40px;
-        }
-
-        /* БУРГЕР-МЕНЮ */
-        .burger {
-            display: block;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 101;
-            cursor: pointer;
-            background: var(--purple);
-            padding: 12px;
-            border-radius: 5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            border: none;
-        }
-
-        .burger div {
-            width: 25px;
-            height: 3px;
-            background-color: var(--yellow);
-            margin: 5px;
-            transition: 0.3s;
-        }
-
-        .burger.active div:nth-child(1) {
-            transform: rotate(-45deg) translate(-5px, 6px);
-        }
-        .burger.active div:nth-child(2) {
-            opacity: 0;
-        }
-        .burger.active div:nth-child(3) {
-            transform: rotate(45deg) translate(-5px, -6px);
-        }
-
-        /* СЕКЦИИ НА ВЕСЬ ЭКРАН */
-        .section-block {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 40px 20px;
-            scroll-snap-align: start;
+            background-image: url('16-9.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             position: relative;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
         }
 
-        /* ЭКРАН 1: Приветствие */
-        #welcome-section {
-            background-color: var(--yellow);
-            color: var(--text-dark);
-            text-align: center;
-            overflow: hidden; 
-        }
-
-        #welcome-section .logo-container {
-            background-color: var(--purple-dark);
-            color: var(--yellow);
-        }
-
-        /* НОВЫЙ ДЕКОРАТИВНЫЙ ЭЛЕМЕНТ (SVG) */
-        .top-left-decoration {
+        /* ОБЩИЙ СЛОЙ ДЛЯ СЕКЦИЙ */
+        .page-content {
             position: absolute;
-            top: -20px; /* Немного вылезает за край для стиля */
-            left: -30px;
-            width: 150px; /* Размер по умолчанию */
-            height: auto;
-            transform: rotate(-20deg); /* Поворот */
-            opacity: 0.8; /* Легкая прозрачность */
-            pointer-events: none; /* Не мешает кликам */
-            z-index: 1; /* Поднимаем над фоном, но под логотипом/текстом */
-        }
-
-        /* Адаптация размера SVG для мобильных */
-        @media (max-width: 768px) {
-            .top-left-decoration {
-                width: 100px;
-                top: -10px;
-                left: -15px;
-            }
-        }
-
-        /* КОНТЕЙНЕР ДЛЯ АНИМАЦИИ КНИГ */
-        .welcome-books-container {
-            position: absolute;
-            bottom: -10px;
-            right: 0;
-            width: 13vw;
-            min-width: 140px;
-            max-width: 220px;
-            aspect-ratio: 240 / 180;
+            left: 4%;
+            top: 50%;
+            transform: translateY(120vh);
+            opacity: 0;
             pointer-events: none;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 10;
         }
 
-        .welcome-books-container svg {
-            width: 100%;
-            height: 100%;
+        /* СОСТОЯНИЯ АНИМАЦИИ */
+        .page-content.active {
+            transform: translateY(-50%);
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        .book {
-            fill: var(--book-fill);
-            stroke: var(--book-stroke);
-            stroke-width: 5;
-            stroke-linejoin: round;
+        .page-content.exit-up {
+            transform: translateY(-150vh);
             opacity: 0;
-            transition: fill 0.3s ease, stroke 0.3s ease;
+            pointer-events: none;
         }
 
-        .book1 {
-            transform-origin: 120px 175px;
-            animation: dropTilted1 0.85s linear forwards;
-            animation-delay: 0.1s;
-        }
-
-        .book2 {
-            transform-origin: 135px 135px;
-            animation: dropTilted2 0.85s linear forwards;
-            animation-delay: 0.5s;
-        }
-
-        .book3 {
-            transform-origin: 110px 95px;
-            animation: dropTilted3 0.85s linear forwards;
-            animation-delay: 0.9s;
-        }
-
-        /* ОБНОВЛЕННЫЕ АНИМАЦИИ (С НАКЛОНОМ ПРИ ПОЛЕТЕ) */
-        @keyframes dropTilted1 {
-            0% {
-                transform: translate(-10px, -600px) rotate(-15deg);
-                opacity: 0;
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            10% { opacity: 1; }
-            40% {
-                transform: translate(6px, 0px) rotate(-5deg);
-                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
-            }
-            55% {
-                transform: translate(6px, -20px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            70% {
-                transform: translate(6px, 0px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
-            }
-            82% {
-                transform: translate(6px, -4px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            100% {
-                transform: translate(6px, 0px) rotate(0deg);
-                opacity: 1;
-            }
-        }
-
-        @keyframes dropTilted2 {
-            0% {
-                transform: translate(10px, -600px) rotate(15deg);
-                opacity: 0;
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            10% { opacity: 1; }
-            40% {
-                transform: translate(-7px, 0px) rotate(5deg);
-                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
-            }
-            55% {
-                transform: translate(-7px, -20px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            70% {
-                transform: translate(-7px, 0px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
-            }
-            82% {
-                transform: translate(-7px, -4px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            100% {
-                transform: translate(-7px, 0px) rotate(0deg);
-                opacity: 1;
-            }
-        }
-
-        @keyframes dropTilted3 {
-            0% {
-                transform: translate(-10px, -600px) rotate(-15deg);
-                opacity: 0;
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            10% { opacity: 1; }
-            40% {
-                transform: translate(4px, 0px) rotate(-5deg);
-                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
-            }
-            55% {
-                transform: translate(4px, -20px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            70% {
-                transform: translate(4px, 0px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0, 0, 0.4, 1);
-            }
-            82% {
-                transform: translate(4px, -4px) rotate(0deg);
-                animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
-            }
-            100% {
-                transform: translate(4px, 0px) rotate(0deg);
-                opacity: 1;
-            }
-        }
-
-        /* ЭКРАН 2: О нас */
-        #about-section {
-            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
-            color: var(--text-light);
-        }
-
-        #about-section h2 {
-            font-size: 3rem;
-            color: var(--yellow);
-            margin-bottom: 45px;
+        /* ---------------- СЕКЦИЯ 1: ЛОГОТИП И ЗАГОЛОВОК ---------------- */
+        #page-1 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            font-weight: 800;
         }
 
-        /* ЭКРАН 3: Калькулятор */
-        #calculator-section {
-            background-color: var(--yellow);
-            color: var(--text-dark);
-        }
-
-        /* ЭКРАН 4: Контакты */
-        #contacts-section {
-            background: linear-gradient(135deg, var(--purple-dark), #3d0066);
-            color: var(--text-light);
-        }
-
-        #contacts-section .card h2 {
-            color: var(--purple-dark);
-        }
-
-        /* ЛОГОТИП */
         .logo-container {
-            width: 280px;
-            height: 280px;
+            width: 250px;
+            height: 250px;
             border-radius: 50%;
+            background-color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 8rem;
-            font-weight: 900;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
-            animation: scaleIn 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 6.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            border: 5px solid var(--primary-color);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.2), 0 14px 40px rgba(0, 0, 0, 0.15);
             overflow: hidden;
-            position: relative; /* Чтобы быть над декоративным элементом */
-            z-index: 2;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            margin: 0 auto;
+        }
+
+        .logo-container:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.3), 0 18px 50px rgba(0, 0, 0, 0.2);
         }
 
         .logo-container img {
             width: 100%;
             height: 100%;
-            object-fit: cover; 
+            object-fit: cover;
         }
 
         .main-title {
-            font-size: 4.2rem;
+            margin-top: 28px;
+            font-size: 3.8rem;
             font-weight: 800;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-            animation: fadeInUp 0.8s ease-out;
-            position: relative;
-            z-index: 2;
+            color: var(--primary-color);
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.9);
+            text-align: center;
+            transition: color 0.3s ease;
         }
 
         .subtitle {
-            font-size: 1.6rem;
-            opacity: 0.9;
-            animation: fadeInUp 1s ease-out;
-            position: relative;
-            z-index: 2;
+            margin-top: 10px;
+            font-size: 1.45rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-align: center;
+            max-width: 480px;
+            line-height: 1.4;
+            text-shadow: 0 1px 5px rgba(255, 255, 255, 0.9);
+            filter: brightness(0.85);
+            transition: color 0.3s ease;
         }
 
-        /* СЕТКА КАРТОЧЕК */
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            width: 100%;
-            max-width: 1200px;
-            padding: 10px;
-        }
-
-        .about-card {
-            background: white;
-            border-radius: 24px;
-            padding: 45px 35px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-            border: 3px solid transparent;
-            transform: translateY(0); 
-            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.35s ease, border-color 0.25s ease;
+        /* ---------------- СЕКЦИЯ 2: О НАС ---------------- */
+        .card-about-wrap {
+            width: 480px;
+            height: 560px;
+            border-radius: 16px;
+            background: #e5e7eb;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            opacity: 0;
+            gap: 12px;
+            padding: 0.8em;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.18);
         }
 
-        .about-card:hover,
-        .about-card:active {
-            transform: translateY(-18px) !important;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4) !important;
-            border-color: var(--yellow) !important;
-            cursor: pointer;
-        }
-
-        .about-card h3 {
-            font-size: 1.6rem;
-            color: var(--purple-dark);
-            font-weight: 700;
-        }
-
-        .about-card p {
-            font-size: 1.1rem;
-            color: #333;
-            line-height: 1.7;
-        }
-
-        .card {
-            background: white;
-            border-radius: 28px;
-            padding: 45px;
+        .card-about-wrap p {
             width: 100%;
-            max-width: 580px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-            opacity: 0;
-            transform: translateY(40px);
-        }
-
-        #calculator-section .card {
-            border-bottom: 8px solid var(--purple);
-        }
-
-        #contacts-section .card {
-            color: var(--text-dark);
-            border-bottom: 8px solid var(--purple-dark);
-        }
-
-        .card.visible {
-            opacity: 1;
-            transform: translateY(0);
-            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        
-        .about-card.visible {
-            opacity: 1;
-            transition: opacity 0.8s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.35s ease, border-color 0.25s ease;
-        }
-
-        .card h2 {
-            font-size: 2.4rem;
-            margin-bottom: 35px;
-            text-align: center;
-            color: var(--purple-dark);
-            font-weight: 700;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 12px;
-            font-weight: 600;
-            color: #444;
-            font-size: 1.05rem;
-        }
-
-        .choices {
-            width: 100%;
-            margin-bottom: 0;
-        }
-
-        .choices__inner {
-            background-color: #F8FAFC !important;
-            border: 2px solid #E2E8F0 !important;
-            border-radius: 14px !important;
-            padding: 12px 20px !important;
-            font-size: 1.1rem !important;
-            color: #333 !important;
-            min-height: auto !important;
-            transition: all 0.3s ease;
-        }
-
-        .choices.is-focused .choices__inner,
-        .choices.is-open .choices__inner {
-            border-color: var(--purple) !important;
-            background-color: #FFF !important;
-            box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.15) !important;
-        }
-
-        .choices__list--dropdown {
-            border: 2px solid var(--purple) !important;
-            border-radius: 14px !important;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
+            flex: 1;
             overflow: hidden;
-            margin-top: 5px;
-            background: white !important;
-            z-index: 100 !important;
-        }
-
-        .choices__list--dropdown .choices__item--focusable:hover {
-            background-color: rgba(138, 43, 226, 0.08) !important;
-            color: var(--purple-dark) !important;
-        }
-
-        .choices__list--dropdown .choices__item.is-selected {
-            background-color: var(--purple) !important;
-            color: white !important;
-        }
-
-        .choices[data-type="select-one"]::after {
-            border: none !important;
-            content: "" !important;
-            position: absolute !important;
-            right: 22px !important;
-            top: 50% !important;
-            margin-top: -5px !important;
-            width: 8px !important;
-            height: 8px !important;
-            border-right: 2px solid var(--purple) !important;
-            border-bottom: 2px solid var(--purple) !important;
-            transform: rotate(45deg) !important;
-            transition: transform 0.3s ease, margin-top 0.3s ease !important;
-        }
-
-        .choices.is-open[data-type="select-one"]::after {
-            transform: rotate(-135deg) !important;
-            margin-top: 1px !important;
-        }
-
-        button.calc-btn {
-            width: 100%;
-            padding: 18px;
-            background-color: var(--purple);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            font-size: 1.25rem;
-            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 15px;
-            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+            border-radius: 10px;
+            transition: all .5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #ffffff;
+            border: 2.5px solid var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
         }
 
-        button.calc-btn:hover {
-            background-color: var(--purple-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(138, 43, 226, 0.4);
+        .card-about-wrap p:hover {
+            flex: 3.2;
+            background: #f8fafc;
         }
 
-        #result {
-            margin-top: 25px;
-            text-align: center;
-            font-size: 1.7rem;
-            font-weight: bold;
-            color: var(--purple-dark);
-            min-height: 38px;
-        }
-
-        .contact-info {
-            text-align: center;
-            font-size: 1.25rem;
-            line-height: 1.8;
-        }
-
-        .contact-info p {
-            margin-bottom: 20px;
-            color: #444;
-        }
-
-        .contact-info span {
-            color: var(--purple-dark);
+        .card-about-wrap p .card-title {
             font-weight: 700;
-            font-size: 1.4rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            font-size: 1.15rem;
+            text-align: center;
+            transition: color 0.3s ease;
         }
 
-        /* Мобильная адаптация логотипа и заголовков */
-        @media (max-width: 992px) {
-            .logo-container {
-                width: 140px;
-                height: 140px;
-                font-size: 3.8rem;
-                margin-bottom: 20px;
-            }
+        .card-about-wrap p .card-text {
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: opacity 0.4s ease 0.1s, max-height 0.4s ease, margin-top 0.3s ease;
+            color: #334155;
+            font-size: 1.05rem;
+            text-align: center;
+            line-height: 1.45;
+            margin-top: 0;
+        }
 
-            .main-title {
-                font-size: 2.4rem;
-            }
+        .card-about-wrap p:hover .card-text {
+            opacity: 1;
+            max-height: 140px;
+            margin-top: 12px;
+        }
 
-            .subtitle {
-                font-size: 1.2rem;
-            }
+        /* ---------------- СЕКЦИЯ 3: КАЛЬКУЛЯТОР ---------------- */
+        .calc-box {
+            width: 500px;
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 44px 36px;
+            border: 4.5px solid var(--primary-color);
+            box-shadow: 0 0 35px rgba(0, 0, 0, 0.1), 0 16px 45px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 36px;
+            transition: border-color 0.3s ease;
+        }
+
+        .calc-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.3s ease;
+        }
+
+        .duration-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .duration-label {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            opacity: 0.6;
+            transition: color 0.3s ease, font-size 0.3s ease, opacity 0.3s ease;
+        }
+
+        .duration-label.active {
+            opacity: 1;
+            font-size: 1.45rem;
+        }
+
+        .switch {
+            font-size: 20px;
+            position: relative;
+            display: inline-block;
+            width: 3.5em;
+            height: 2em;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #cbd5e1;
+            border-radius: 50px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 2em;
+            width: 2em;
+            inset: 0;
+            background-color: white;
+            border-radius: 50px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .switch input:checked + .slider {
+            background: var(--primary-color);
+        }
+
+        .switch input:focus + .slider {
+            box-shadow: 0 0 1px var(--primary-color);
+        }
+
+        .switch input:checked + .slider:before {
+            transform: translateX(1.5em);
+        }
+
+        .cir-tabs {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px;
+            background: #f1f5f9;
+            border: 2px solid #cbd5e1;
+            border-radius: 999px;
+            box-shadow: 0 1px 1px rgba(14, 17, 22, 0.04), 0 10px 25px -10px rgba(14, 17, 22, 0.08);
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .cir-tabs__r {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .cir-tabs__t {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 46px;
+            flex: 1;
+            padding: 0 14px;
+            border-radius: 999px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+                        color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+                        box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .cir-tabs__t:hover {
+            color: #0f172a;
+        }
+
+        .cir-tabs__r:checked + .cir-tabs__t {
+            background: var(--primary-color);
+            color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .price-box {
+            width: 100%;
+            background: #f8fafc;
+            border: 2.5px solid var(--primary-color);
+            border-radius: 20px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transition: border-color 0.3s ease;
+        }
+
+        .price-caption {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .price-value-container {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s ease;
+        }
+
+        /* ---------------- СЕКЦИЯ 4: КОНТАКТЫ (Uiverse Glassmorphism) ---------------- */
+        .contacts-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            align-items: center;
+            justify-content: center;
+            z-index: 0;
+            padding: 20px;
+        }
+
+        /* Шары на заднем фоне карточек */
+        .contacts-wrapper::after {
+            content: " ";
+            position: absolute;
+            height: 160px;
+            width: 160px;
+            left: 85%;
+            top: 10%;
+            transform: translateX(-100%);
+            background-image: linear-gradient(var(--primary-color), #38bdf8);
+            border-radius: 50%;
+            z-index: -1;
+            border: 2px solid #ffffffa6;
+            box-shadow: inset 10px 0px 20px #fff;
+            animation: ani 28s ease-in-out infinite;
+        }
+
+        .contacts-wrapper::before {
+            content: " ";
+            position: absolute;
+            height: 100px;
+            width: 100px;
+            left: 15%;
+            bottom: 5%;
+            transform: translateX(-100%);
+            background-image: linear-gradient(90deg, #38bdf8, var(--primary-color));
+            border-radius: 50%;
+            z-index: -1;
+            border: 2px solid #ffffffa6;
+            box-shadow: inset 10px 0px 20px #fff;
+        }
+
+        .contact-card {
+            width: 440px;
+            min-height: 180px;
+            border: 1.5px solid rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            background: rgba(255, 255, 255, 0.45);
+            padding: 28px;
+            position: relative;
+            box-shadow: inset 2px 1px 6px rgba(255, 255, 255, 0.6), 0 20px 40px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+            z-index: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .contact-card::after {
+            z-index: -1;
+            content: " ";
+            position: absolute;
+            width: 150%;
+            top: 0;
+            left: 0;
+            height: 12px;
+            background: #ffffff;
+            transform: rotateZ(50deg);
+            filter: blur(25px);
+            animation: shine 10s ease infinite;
+        }
+
+        .contact-card .innerText {
+            color: transparent;
+            -webkit-background-clip: text;
+            background-image: linear-gradient(90deg, var(--primary-color), #0f172a);
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.2em;
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+
+        .contact-card .desc {
+            padding: 2px;
+            color: #334155;
+            font-size: 1.15rem;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        @keyframes ani {
+            0% { transform: translateX(0%) scale(1); }
+            50% { transform: translateX(-60%) scale(0.85); }
+            100% { transform: translateX(0%) scale(1); }
+        }
+
+        @keyframes shine {
+            0% { top: 100%; left: -100%; }
+            50%, 100% { top: 0%; left: 70%; }
+        }
+
+        /* ---------------- ВЕРХНЕЕ МЕНЮ ---------------- */
+        .top-navigation {
+            position: absolute;
+            top: 36px;
+            right: 52px;
+            z-index: 50;
+        }
+
+        .shadow-box-up {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+
+        .shadow-button-flat-nopressed {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+        }
+
+        .shadow-button-flat-pressed {
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn.active {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+            border-color: var(--primary-color) !important;
         }
     </style>
 </head>
 <body>
 
-    <button class="burger" id="burger" onclick="toggleMenu()">
-        <div></div>
-        <div></div>
-        <div></div>
-    </button>
-
-    <nav class="sidebar" id="sidebar">
-        <a href="#welcome-section">Главная</a>
-        <a href="#about-section">О нас</a>
-        <a href="#calculator-section">Калькулятор цен</a>
-        <a href="#contacts-section">Контакты</a>
-    </nav>
-
-    <header class="section-block" id="welcome-section">
-        <!-- SVG В ЛЕВОМ ВЕРХНЕМ УГЛУ -->
-        <svg class="top-left-decoration" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
-            <path style="fill: none; stroke: rgb(172, 158, 2);" d="M 19.898 195.436 L 19.898 414.393 L 19.898 195.436 Z"/>
-            <path style="fill: none; stroke: rgb(172, 158, 2);" d="M 2.948 443.534 L 36.847 385.256"/>
-            <rect x="29.709" y="85.543" width="444.235" height="260.584" rx="9" ry="9" style="stroke: rgb(172, 158, 2); fill: rgb(172, 158, 2);"/>
-            <rect x="30.731" y="86.571" width="442.703" height="258.715" rx="9" ry="9" style="stroke-width: 1; stroke: rgb(172, 158, 2); fill: rgb(255, 214, 0);"/>
-            <path style="fill: none; stroke: rgb(172, 158, 2);" d="M 30.081 196.122 L 19.274 196.07 L 30.081 196.122 Z"/>
-            <ellipse style="stroke: rgb(172, 158, 2); fill: rgb(172, 158, 2);" cx="29.061" cy="196.084" rx="0.64" ry="2.285"/>
-            <path style="fill: none; stroke: rgb(172, 158, 2); stroke-width: 1; transform-box: fill-box; transform-origin: 50% 50%;" d="M 483.56 409.951 L 483.56 190.995 L 483.56 409.951 Z" transform="matrix(-0.999999, 0, 0, -1, -0.000044, -0.000013)"/>
-            <path style="fill: none; stroke: rgb(172, 158, 2); stroke-width: 1; transform-box: fill-box; transform-origin: 50% 50%;" d="M 466.615 380.814 L 500.513 439.091" transform="matrix(-1, 0, 0, -1, 0.000014, -0.000065)"/>
-            <path style="fill: none; stroke: rgb(172, 158, 2); stroke-width: 1; transform-box: fill-box; transform-origin: 50% 50%;" d="M 484.188 191.629 L 473.38 191.681 L 484.188 191.629 Z" transform="matrix(-1, 0, 0, -1, 0.000002, -0.000005)"/>
-            <ellipse style="stroke: rgb(172, 158, 2); fill: rgb(172, 158, 2); stroke-width: 1;" cx="-474.39" cy="191.641" rx="0.64" ry="2.285" transform="matrix(-1, 0, 0, 1, 0, 0)"/>
-            <rect x="270.464" y="365.87" width="463.563" height="4.362" style="stroke: rgb(172, 158, 2); fill: rgb(215, 197, 0);" transform="matrix(1, 0.00044, 0, -1, -250.531693, 725.333603)"/>
-        </svg>
-
-        <div class="logo-container" id="logo-block">A</div>
-        <h1 class="main-title" id="welcome-title">Arban School</h1>
-        <p class="subtitle" id="welcome-subtitle">Эффективный английский для больших целей</p>
+    <main class="hero-section">
         
-        <!-- ВСТРОЕННАЯ АНИМАЦИЯ С КНИГАМИ -->
-        <div class="welcome-books-container">
-            <svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
-                <!-- Книга 1 (Нижняя) -->
-                <g class="book book1">
-                    <rect x="30" y="135" width="180" height="40" rx="6" />
-                </g>
-                <!-- Книга 2 (Средняя) -->
-                <g class="book book2">
-                    <rect x="30" y="95" width="180" height="40" rx="6" />
-                </g>
-                <!-- Книга 3 (Верхняя) -->
-                <g class="book book3">
-                    <rect x="30" y="55" width="180" height="40" rx="6" />
-                </g>
-            </svg>
-        </div>
-    </header>
+        <!-- ВЕРХНЕЕ МЕНЮ (4 кнопки) -->
+        <div class="top-navigation">
+            <div class="flex bg-white/90 backdrop-blur-md w-fit px-2.5 py-2.5 shadow-box-up rounded-2xl border border-white/40">
+                <div class="rounded-2xl w-full px-1.5 py-1.5 flex gap-2">
+                    
+                    <!-- 1. Главная -->
+                    <button
+                        id="nav-btn-1"
+                        title="Главная"
+                        onclick="showPage(1)"
+                        class="nav-btn active text-gray-600 hover:text-black border-2 inline-flex items-center p-3 border-transparent bg-gray-100/80 shadow-button-flat-nopressed hover:border-2 hover:border-gray-300 hover:shadow-button-flat-pressed focus:outline-none font-medium rounded-full text-sm text-center transition-all"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                        </svg>
+                    </button>
 
-    <section class="section-block" id="about-section">
-        <h2 id="about-title">О нас</h2>
-        <div class="cards-container" id="cards-container"></div>
-    </section>
+                    <!-- 2. О нас -->
+                    <button
+                        id="nav-btn-2"
+                        title="О нас"
+                        onclick="showPage(2)"
+                        class="nav-btn text-gray-600 hover:text-black border-2 inline-flex items-center p-3 border-transparent bg-gray-100/80 shadow-button-flat-nopressed hover:border-2 hover:border-gray-300 hover:shadow-button-flat-pressed focus:outline-none font-medium rounded-full text-sm text-center transition-all"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
 
-    <section class="section-block" id="calculator-section">
-        <div class="card reveal-card">
-            <h2 id="calc-title">Рассчитать стоимость</h2>
-            <div class="form-group">
-                <label for="duration">Длительность урока:</label>
-                <select id="duration">
-                    <option value="40">40 минут</option>
-                    <option value="60">60 минут</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="format">Формат обучения:</label>
-                <select id="format">
-                    <option value="individual">Индивидуально</option>
-                    <option value="pair">В паре</option>
-                    <option value="group">В группе</option>
-                </select>
-            </div>
-            <button class="calc-btn" onclick="calculatePrice()">Узнать цену</button>
-            <div id="result"></div>
-        </div>
-    </section>
+                    <!-- 3. Калькулятор -->
+                    <button
+                        id="nav-btn-3"
+                        title="Калькулятор"
+                        onclick="showPage(3)"
+                        class="nav-btn text-gray-600 hover:text-black border-2 inline-flex items-center p-3 border-transparent bg-gray-100/80 shadow-button-flat-nopressed hover:border-2 hover:border-gray-300 hover:shadow-button-flat-pressed focus:outline-none font-medium rounded-full text-sm text-center transition-all"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 14H7v-2h10v2zm0-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                    </button>
 
-    <section class="section-block" id="contacts-section">
-        <div class="card reveal-card">
-            <h2 id="contacts-title">Ждём вас на занятиях</h2>
-            <div class="contact-info">
-                <p>📍 Адрес нашей школы:<br><span id="contact-address">ул. Английская, д. 10, офис 404</span></p>
-                <p>📞 Связаться с нами:<br><span id="contact-phone">+7 (999) 123-45-67</span></p>
+                    <!-- 4. Контакты -->
+                    <button
+                        id="nav-btn-4"
+                        title="Контакты"
+                        onclick="showPage(4)"
+                        class="nav-btn text-gray-600 hover:text-black border-2 inline-flex items-center p-3 border-transparent bg-gray-100/80 shadow-button-flat-nopressed hover:border-2 hover:border-gray-300 hover:shadow-button-flat-pressed focus:outline-none font-medium rounded-full text-sm text-center transition-all"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                        </svg>
+                    </button>
+
+                </div>
             </div>
         </div>
-    </section>
+
+        <!-- 1. СЕКЦИЯ ЛОГОТИПА И ТЕКСТА -->
+        <div class="page-content active" id="page-1">
+            <div class="logo-container" id="logo-block">A</div>
+            <h1 class="main-title" id="welcome-title">Arban School</h1>
+            <p class="subtitle" id="welcome-subtitle">Эффективный английский для больших целей</p>
+        </div>
+
+        <!-- 2. СЕКЦИЯ «О НАС» -->
+        <div class="page-content" id="page-2">
+            <div class="card-about-wrap" id="uiverse-card">
+                <!-- Генерируется через JS -->
+            </div>
+        </div>
+
+        <!-- 3. СЕКЦИЯ «КАЛЬКУЛЯТОР ЦЕН» -->
+        <div class="page-content" id="page-3">
+            <div class="calc-box">
+                <div class="calc-title" id="calc-title-text">Стоимость обучения</div>
+
+                <div class="duration-container">
+                    <span class="duration-label active" id="lbl-40">40 мин</span>
+                    <label class="switch">
+                        <input type="checkbox" id="duration-toggle" onchange="updateCalculator()">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="duration-label" id="lbl-60">60 мин</span>
+                </div>
+
+                <div class="cir-tabs">
+                    <input type="radio" name="format-type" id="tab-solo" value="solo" class="cir-tabs__r" checked onchange="updateCalculator()">
+                    <label for="tab-solo" class="cir-tabs__t">Индивидуально</label>
+
+                    <input type="radio" name="format-type" id="tab-pair" value="pair" class="cir-tabs__r" onchange="updateCalculator()">
+                    <label for="tab-pair" class="cir-tabs__t">В парах</label>
+
+                    <input type="radio" name="format-type" id="tab-group" value="group" class="cir-tabs__r" onchange="updateCalculator()">
+                    <label for="tab-group" class="cir-tabs__t">Группа</label>
+                </div>
+
+                <div class="price-box">
+                    <span class="price-caption">Стоимость за занятие</span>
+                    <div class="price-value-container">
+                        <span id="price-number">600</span>
+                        <span>₽</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. СЕКЦИЯ «КОНТАКТЫ» -->
+        <div class="page-content" id="page-4">
+            <div class="contacts-wrapper">
+                <!-- Верхняя карточка: Телефон -->
+                <div class="contact-card">
+                    <div class="innerText" id="contact-phone">+7 (900) 000-00-00</div>
+                    <div class="desc">Телефон для связи и записи на уроки</div>
+                </div>
+
+                <!-- Нижняя карточка: Адрес -->
+                <div class="contact-card">
+                    <div class="innerText" id="contact-address">г. Абакан</div>
+                    <div class="desc">Адрес учебного центра</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
 
     <script>
         const CONFIG_FILE = 'site-config.json';
-        let pricePrices = {}; 
-        const revealObserver = createObserver();
+        let currentPage = 1;
+        
+        let priceMatrix = {
+            "40": { solo: 600, pair: 450, group: 350 },
+            "60": { solo: 900, pair: 700, group: 500 }
+        };
 
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('burger').classList.toggle('active');
+        let currentDisplayedPrice = 600;
+
+        function showPage(newPage) {
+            if (newPage === currentPage) return;
+
+            const oldElem = document.getElementById(`page-${currentPage}`);
+            const newElem = document.getElementById(`page-${newPage}`);
+
+            document.querySelectorAll('.nav-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', idx === newPage - 1);
+            });
+
+            if (oldElem && newElem) {
+                if (newPage > currentPage) {
+                    oldElem.className = "page-content exit-up";
+                    newElem.className = "page-content active";
+                } else {
+                    oldElem.className = "page-content";
+                    newElem.className = "page-content active";
+                }
+            }
+
+            currentPage = newPage;
+
+            if (currentPage === 3) {
+                updateCalculator();
+            }
         }
 
-        document.querySelectorAll('.sidebar a').forEach(link => {
-            link.addEventListener('click', () => {
-                document.getElementById('sidebar').classList.remove('active');
-                document.getElementById('burger').classList.remove('active');
-            });
-        });
+        function updateCalculator() {
+            const is60 = document.getElementById('duration-toggle').checked;
+            const durationKey = is60 ? "60" : "40";
+
+            document.getElementById('lbl-40').classList.toggle('active', !is60);
+            document.getElementById('lbl-60').classList.toggle('active', is60);
+
+            const selectedFormat = document.querySelector('input[name="format-type"]:checked').value;
+            const targetPrice = priceMatrix[durationKey]?.[selectedFormat] || 0;
+
+            animateValue("price-number", currentDisplayedPrice, targetPrice, 400);
+            currentDisplayedPrice = targetPrice;
+        }
+
+        function animateValue(id, start, end, duration) {
+            if (start === end) return;
+            const obj = document.getElementById(id);
+            const range = end - start;
+            let startTime = null;
+
+            function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / duration, 1);
+                const easeProgress = progress * (2 - progress); 
+                obj.innerText = Math.floor(start + range * easeProgress);
+
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    obj.innerText = end;
+                }
+            }
+            window.requestAnimationFrame(step);
+        }
 
         document.addEventListener("DOMContentLoaded", () => {
-            const selects = document.querySelectorAll('select');
-            selects.forEach(select => {
-                new Choices(select, {
-                    searchEnabled: false,
-                    itemSelectText: '',
-                    shouldSort: false
-                });
-            });
-
             fetch(`${CONFIG_FILE}?v=${Date.now()}`)
-                .then(res => {
-                    if (!res.ok) throw new Error('Конфиг не найден');
-                    return res.json();
-                })
+                .then(res => res.json())
                 .then(data => applyConfig(data))
                 .catch(err => {
-                    console.warn("Загружены дефолтные настройки:", err);
-                    applyDefaultConfig();
+                    console.warn("Используются дефолтные значения:", err);
+                    applyDefaultCards();
                 });
         });
 
-        function createObserver() {
-            return new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add("visible");
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.1 });
-        }
-
         function applyConfig(data) {
+            // Динамическая установка акцентного цвета через CSS переменную
+            if (data.primary_color) {
+                document.documentElement.style.setProperty('--primary-color', data.primary_color);
+            }
+
             if (data.site_title) document.title = data.site_title;
             
             const logoBlock = document.getElementById('logo-block');
@@ -747,104 +716,80 @@
                 logoBlock.innerText = data.logo_fallback_text || "A";
             }
 
-            if (data.books) {
-                if (data.books.fill_color) {
-                    document.documentElement.style.setProperty('--book-fill', data.books.fill_color);
-                }
-                if (data.books.stroke_color) {
-                    document.documentElement.style.setProperty('--book-stroke', data.books.stroke_color);
-                }
-            }
-
             if (data.welcome) {
                 document.getElementById('welcome-title').innerText = data.welcome.title || "Arban School";
                 document.getElementById('welcome-subtitle').innerText = data.welcome.subtitle || "";
             }
 
-            if (data.calculator) {
-                document.getElementById('calc-title').innerText = data.calculator.title || "Рассчитать стоимость";
-                pricePrices = data.calculator;
+            if (data.about && data.about.cards) {
+                renderCards(data.about.cards);
+            } else {
+                applyDefaultCards();
             }
 
-            if (data.about) {
-                document.getElementById('about-title').innerText = data.about.title || "О нас";
-                const container = document.getElementById('cards-container');
-                container.innerHTML = "";
-
-                const cards = data.about.cards || [];
-                cards.forEach(card => {
-                    const cardHtml = document.createElement('div');
-                    cardHtml.className = 'about-card';
-                    cardHtml.innerHTML = `
-                        <h3>${card.title || 'Заголовок'}</h3>
-                        <p>${card.text || 'Описание...'}</p>
-                    `;
-                    container.appendChild(cardHtml);
-                    revealObserver.observe(cardHtml);
-                });
+            // Маппинг формата калькулятора (работает с обоими форматами JSON)
+            if (data.calculator) {
+                if (data.calculator.title) {
+                    document.getElementById('calc-title-text').innerText = data.calculator.title;
+                }
+                
+                if (data.calculator.price_individual_40 !== undefined) {
+                    priceMatrix = {
+                        "40": { 
+                            solo: data.calculator.price_individual_40, 
+                            pair: data.calculator.price_pair_40, 
+                            group: data.calculator.price_group_40 
+                        },
+                        "60": { 
+                            solo: data.calculator.price_individual_60, 
+                            pair: data.calculator.price_pair_60, 
+                            group: data.calculator.price_group_60 
+                        }
+                    };
+                }
+            } else if (data.prices) {
+                priceMatrix = data.prices;
             }
 
             if (data.contacts) {
-                document.getElementById('contacts-title').innerText = data.contacts.title || "Ждём вас на занятиях";
-                document.getElementById('contact-address').innerText = data.contacts.address || "";
-                document.getElementById('contact-phone').innerText = data.contacts.phone || "";
+                if (data.contacts.phone) {
+                    document.getElementById('contact-phone').innerText = data.contacts.phone;
+                }
+                if (data.contacts.address) {
+                    document.getElementById('contact-address').innerText = data.contacts.address;
+                }
             }
-
-            document.querySelectorAll('.reveal-card').forEach(c => revealObserver.observe(c));
         }
 
-        function applyDefaultConfig() {
-            document.documentElement.style.setProperty('--book-fill', '#FFD600');
-            document.documentElement.style.setProperty('--book-stroke', '#8A2BE2');
+        function renderCards(cardsArray) {
+            const container = document.getElementById('uiverse-card');
+            container.innerHTML = "";
 
-            pricePrices = {
-                price_individual_40: 800, price_pair_40: 600, price_group_40: 400,
-                price_individual_60: 1200, price_pair_60: 900, price_group_60: 600
-            };
-
-            const container = document.getElementById('cards-container');
-            container.innerHTML = `
-                <div class="about-card">
-                    <h3>Высокое качество</h3>
-                    <p>Индивидуальный подход к каждому ученику, современные материалы и методики обучения.</p>
-                </div>
-                <div class="about-card">
-                    <h3>Опытные педагоги</h3>
-                    <p>Наши преподаватели помогут преодолеть языковой барьер быстро, легко и без стресса.</p>
-                </div>
-                <div class="about-card">
-                    <h3>Гибкий график</h3>
-                    <p>Подбираем удобное время для занятий индивидуально, в парах или уютных мини-группах.</p>
-                </div>
-            `;
-            
-            document.querySelectorAll('.about-card, .reveal-card').forEach(c => revealObserver.observe(c));
+            cardsArray.forEach(card => {
+                const p = document.createElement('p');
+                p.innerHTML = `
+                    <span class="card-title">${card.title}</span>
+                    <span class="card-text">${card.text || ''}</span>
+                `;
+                container.appendChild(p);
+            });
         }
 
-        function calculatePrice() {
-            const duration = document.getElementById('duration').value;
-            const format = document.getElementById('format').value;
-            const resultDiv = document.getElementById('result');
-            
-            let price = 0;
-            let suffix = " ₽ / урок";
-
-            if (duration === "40") {
-                if (format === "individual") price = pricePrices.price_individual_40 || 800;
-                else if (format === "pair") { price = pricePrices.price_pair_40 || 600; suffix += " (с человека)"; }
-                else if (format === "group") { price = pricePrices.price_group_40 || 400; suffix += " (с человека)"; }
-            } else if (duration === "60") {
-                if (format === "individual") price = pricePrices.price_individual_60 || 1200;
-                else if (format === "pair") { price = pricePrices.price_pair_60 || 900; suffix += " (с человека)"; }
-                else if (format === "group") { price = pricePrices.price_group_60 || 600; suffix += " (с человека)"; }
-            }
-
-            resultDiv.style.opacity = 0;
-            setTimeout(() => {
-                resultDiv.innerText = "Стоимость: " + price + suffix;
-                resultDiv.style.transition = "opacity 0.4s ease";
-                resultDiv.style.opacity = 1;
-            }, 150);
+        function applyDefaultCards() {
+            renderCards([
+                { 
+                    title: "Дети любого возраста", 
+                    text: "Обучение детей от 3 лет по специальной программе" 
+                },
+                { 
+                    title: "Подготовка к ОГЭ и ЕГЭ", 
+                    text: "Высокие баллы на экзаменах и разбор сложных вариантов" 
+                },
+                { 
+                    title: "Профессиональные учителя", 
+                    text: "Опытные преподаватели с высшей квалификацией" 
+                }
+            ]);
         }
     </script>
 </body>
