@@ -1,23 +1,11 @@
 {
   "site_title": "Arban School - Школа английского языка",
+  "primary_color": "#0284c7",
   "logo_url": "ArbanSchool.jpg",
   "logo_fallback_text": "A",
-  "books": {
-    "fill_color": "#FFD600",
-    "stroke_color": "#ac9e02"
-  },
   "welcome": {
     "title": "Arban School",
     "subtitle": "Эффективный английский для больших целей"
-  },
-  "calculator": {
-    "title": "Рассчитать стоимость",
-    "price_individual_40": 800,
-    "price_pair_40": 600,
-    "price_group_40": 400,
-    "price_individual_60": 1200,
-    "price_pair_60": 900,
-    "price_group_60": 600
   },
   "about": {
     "title": "О нас",
@@ -36,9 +24,18 @@
       }
     ]
   },
+  "calculator": {
+    "title": "Рассчитать стоимость",
+    "price_individual_40": 800,
+    "price_pair_40": 600,
+    "price_group_40": 400,
+    "price_individual_60": 1200,
+    "price_pair_60": 900,
+    "price_group_60": 600
+  },
   "contacts": {
     "title": "Ждём вас на занятиях",
-    "address": "ул. Английская, д. 10, офис 404",
-    "phone": "+7 (999) 123-45-67"
+    "phone": "+7 (999) 123-45-67",
+    "address": "ул. Английская, д. 10, офис 404"
   }
 }
