@@ -10,7 +10,6 @@
 
     <style>
         :root {
-            /* Базовый акцентный цвет (меняется динамически из JSON) */
             --primary-color: #0284c7;
         }
 
@@ -21,7 +20,6 @@
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        /* ОСНОВНОЙ ЭКРАН - Убираем overflow:hidden, чтобы разрешить события тача */
         .hero-section {
             width: 100vw;
             height: 100vh;
@@ -32,8 +30,9 @@
             position: relative;
             display: flex;
             align-items: center;
-            overflow: hidden; /* Оставляем, чтобы контент не вылезал за границы экрана */
-            touch-action: none; /* Важно: отключаем стандартные жесты браузера, чтобы они не мешали нашим свайпам */
+            justify-content: flex-start; /* Десктоп: контент слева */
+            overflow: hidden;
+            touch-action: none;
         }
 
         /* ОБЩИЙ СЛОЙ ДЛЯ СЕКЦИЙ */
@@ -48,7 +47,6 @@
             z-index: 10;
         }
 
-        /* СОСТОЯНИЯ АНИМАЦИИ */
         .page-content.active {
             transform: translateY(-50%);
             opacity: 1;
@@ -70,6 +68,18 @@
             text-align: center;
         }
 
+        /* [ФИКС] Подложка для контраста на первой странице */
+        #page-1 .text-content-wrapper {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin-top: 25px;
+        }
+
         .logo-container {
             width: 250px;
             height: 250px;
@@ -84,13 +94,7 @@
             border: 5px solid var(--primary-color);
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.2), 0 14px 40px rgba(0, 0, 0, 0.15);
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease, border-color 0.3s ease;
             margin: 0 auto;
-        }
-
-        .logo-container:hover {
-            transform: scale(1.03);
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.3), 0 18px 50px rgba(0, 0, 0, 0.2);
         }
 
         .logo-container img {
@@ -100,27 +104,23 @@
         }
 
         .main-title {
-            margin-top: 28px;
             font-size: 3.8rem;
             font-weight: 800;
             color: var(--primary-color);
             letter-spacing: -0.5px;
             text-shadow: 0 2px 10px rgba(255, 255, 255, 0.9);
-            text-align: center;
-            transition: color 0.3s ease;
+            margin: 0; /* Обнуляем отступ, т.к. он теперь в wrapper */
         }
 
         .subtitle {
-            margin-top: 10px;
+            margin-top: 5px;
             font-size: 1.45rem;
             font-weight: 600;
             color: var(--primary-color);
             text-align: center;
             max-width: 480px;
             line-height: 1.4;
-            text-shadow: 0 1px 5px rgba(255, 255, 255, 0.9);
             filter: brightness(0.85);
-            transition: color 0.3s ease;
         }
 
         /* ---------------- СЕКЦИЯ 2: О НАС ---------------- */
@@ -137,7 +137,6 @@
         }
 
         .card-about-wrap p {
-            width: 100%;
             flex: 1;
             overflow: hidden;
             cursor: pointer;
@@ -150,7 +149,6 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            position: relative;
         }
 
         .card-about-wrap p:hover {
@@ -165,7 +163,6 @@
             letter-spacing: .06em;
             font-size: 1.15rem;
             text-align: center;
-            transition: color 0.3s ease;
         }
 
         .card-about-wrap p .card-text {
@@ -198,7 +195,6 @@
             flex-direction: column;
             align-items: center;
             gap: 36px;
-            transition: border-color 0.3s ease;
         }
 
         .calc-title {
@@ -207,7 +203,6 @@
             color: var(--primary-color);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            transition: color 0.3s ease;
         }
 
         .duration-container {
@@ -221,7 +216,6 @@
             font-weight: 700;
             color: var(--primary-color);
             opacity: 0.6;
-            transition: color 0.3s ease, font-size 0.3s ease, opacity 0.3s ease;
         }
 
         .duration-label.active {
@@ -255,9 +249,6 @@
         .slider:before {
             position: absolute;
             content: "";
-            display: flex;
-            align-items: center;
-            justify-content: center;
             height: 2em;
             width: 2em;
             inset: 0;
@@ -269,10 +260,6 @@
 
         .switch input:checked + .slider {
             background: var(--primary-color);
-        }
-
-        .switch input:focus + .slider {
-            box-shadow: 0 0 1px var(--primary-color);
         }
 
         .switch input:checked + .slider:before {
@@ -287,7 +274,6 @@
             background: #f1f5f9;
             border: 2px solid #cbd5e1;
             border-radius: 999px;
-            box-shadow: 0 1px 1px rgba(14, 17, 22, 0.04), 0 10px 25px -10px rgba(14, 17, 22, 0.08);
             width: 100%;
             justify-content: space-between;
         }
@@ -311,13 +297,6 @@
             color: #64748b;
             cursor: pointer;
             white-space: nowrap;
-            transition: background-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
-                        color 220ms cubic-bezier(0.22, 1, 0.36, 1),
-                        box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .cir-tabs__t:hover {
-            color: #0f172a;
         }
 
         .cir-tabs__r:checked + .cir-tabs__t {
@@ -336,7 +315,6 @@
             flex-direction: column;
             align-items: center;
             gap: 6px;
-            transition: border-color 0.3s ease;
         }
 
         .price-caption {
@@ -354,7 +332,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: color 0.3s ease;
         }
 
         /* ---------------- СЕКЦИЯ 4: КОНТАКТЫ (Uiverse Glassmorphism) ---------------- */
@@ -369,7 +346,6 @@
             padding: 20px;
         }
 
-        /* Шары на заднем фоне карточек */
         .contacts-wrapper::after {
             content: " ";
             position: absolute;
@@ -488,61 +464,169 @@
             color: white !important;
             border-color: var(--primary-color) !important;
         }
+
+        /* ==========================================================================
+           [МОБИЛЬНАЯ ВЕРСТКА] - @media query для телефонов
+           ========================================================================== */
+        @media (max-width: 768px) {
+            .hero-section {
+                justify-content: center; /* Центрируем всё содержимое */
+                background-position: 65% center; /* Чуть сдвигаем фон, чтобы лицо было видно */
+            }
+
+            .page-content {
+                left: auto; /* Сбрасываем привязку слева */
+                width: 90%; /* Занимаем почти всю ширину экрана */
+                display: flex;
+                flex-direction: column;
+                align-items: center; /* Центрируем карточки внутри слоя */
+                transform: translateY(120vh) scale(0.9); /* Чуть уменьшаем при входе */
+            }
+
+            .page-content.active {
+                transform: translateY(-50%) scale(1); /* Возвращаем масштаб */
+            }
+
+            /* --- Первая страница --- */
+            .logo-container {
+                width: 180px; /* Уменьшаем логотип */
+                height: 180px;
+                font-size: 5rem;
+                border-width: 4px;
+            }
+
+            .main-title {
+                font-size: 2.8rem; /* Уменьшаем заголовок */
+            }
+
+            .subtitle {
+                font-size: 1.1rem;
+                max-width: 100%;
+            }
+
+            /* --- Карточки "О нас" --- */
+            .card-about-wrap {
+                width: 100%; /* Адаптивная ширина */
+                max-width: 360px; /* Но не шире 360px (как просили, узкие) */
+                height: 500px; /* Чуть меньше высота */
+            }
+
+            .card-about-wrap p .card-title {
+                font-size: 1rem;
+            }
+
+            .card-about-wrap p .card-text {
+                font-size: 0.9rem;
+            }
+
+            /* --- Калькулятор --- */
+            .calc-box {
+                width: 100%; /* Адаптивная ширина */
+                max-width: 380px; /* Узкая карточка калькулятора */
+                padding: 30px 20px;
+                gap: 24px;
+            }
+
+            .calc-title {
+                font-size: 1.4rem;
+            }
+
+            .duration-container {
+                flex-direction: column; /* Переключатель времени в колонку */
+                gap: 10px;
+            }
+
+            .cir-tabs {
+                flex-wrap: wrap; /* Кнопки формата обучения могут переноситься */
+                justify-content: center;
+                gap: 4px;
+                padding: 4px;
+            }
+
+            .cir-tabs__t {
+                height: 38px;
+                font-size: 13px;
+                padding: 0 10px;
+            }
+
+            .price-value-container {
+                font-size: 2.2rem;
+            }
+
+            /* --- Контакты --- */
+            .contacts-wrapper {
+                width: 100%;
+                gap: 16px;
+            }
+
+            .contact-card {
+                width: 100%;
+                max-width: 360px; /* Узкие карточки контактов */
+                min-height: auto;
+                padding: 20px;
+            }
+
+            .contact-card .innerText {
+                font-size: 1.5rem; /* Уменьшаем телефон и адрес */
+            }
+
+            .contact-card .desc {
+                font-size: 1rem;
+            }
+
+            /* --- Навигация --- */
+            .top-navigation {
+                top: auto;
+                bottom: 20px; /* Переносим меню вниз для удобства пальцев */
+                right: 50%;
+                transform: translateX(50%); /* Центрируем меню */
+                width: fit-content;
+            }
+
+            .top-navigation .flex {
+                padding: 10px;
+                border-radius: 999px; /* Делаем меню овальным */
+            }
+
+            .nav-btn {
+                p-3; /* Стандарт Tailwind p-3 */
+            }
+
+            .nav-btn svg {
+                width: 20px; /* Чуть меньше иконки */
+                height: 20px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- В основной тег section добавляем id, чтобы вешать на него события -->
     <main class="hero-section" id="main-hero">
         
         <!-- ВЕРХНЕЕ МЕНЮ (4 кнопки) -->
         <div class="top-navigation">
-            <div class="flex bg-white/90 backdrop-blur-md w-fit px-2.5 py-2.5 shadow-box-up rounded-2xl border border-white/40">
-                <div class="rounded-2xl w-full px-1.5 py-1.5 flex gap-2">
+            <div class="flex bg-white/90 backdrop-blur-md w-fit px-2.5 py-2.5 shadow-box-up rounded-full border border-white/40">
+                <div class="rounded-full w-full px-1.5 py-1.5 flex gap-2">
                     
-                    <!-- 1. Главная -->
-                    <button
-                        id="nav-btn-1"
-                        title="Главная"
-                        onclick="showPage(1)"
-                        class="nav-btn active text-gray-600 hover:text-black border-2 inline-flex items-center p-3 border-transparent bg-gray-100/80 shadow-button-flat-nopressed hover:border-2 hover:border-gray-300 hover:shadow-button-flat-pressed focus:outline-none font-medium rounded-full text-sm text-center transition-all"
-                    >
+                    <button id="nav-btn-1" title="Главная" onclick="showPage(1)" class="nav-btn active text-gray-600 hover:text-black border-2 inline-flex items-center p-3 border-transparent bg-gray-100/80 shadow-button-flat-nopressed focus:outline-none font-medium rounded-full text-sm text-center transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
                         </svg>
                     </button>
 
-                    <!-- 2. О нас -->
-                    <button
-                        id="nav-btn-2"
-                        title="О нас"
-                        onclick="showPage(2)"
-                        class="nav-btn text-gray-600 hover:text-black border-2 inline-flex items-center p-3 border-transparent bg-gray-100/80 shadow-button-flat-nopressed hover:border-2 hover:border-gray-300 hover:shadow-button-flat-pressed focus:outline-none font-medium rounded-full text-sm text-center transition-all"
-                    >
+                    <button id="nav-btn-2" title="О нас" onclick="showPage(2)" class="nav-btn text-gray-600 hover:text-black border-2 inline-flex items-center p-3 border-transparent bg-gray-100/80 shadow-button-flat-nopressed focus:outline-none font-medium rounded-full text-sm text-center transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                         </svg>
                     </button>
 
-                    <!-- 3. Калькулятор -->
-                    <button
-                        id="nav-btn-3"
-                        title="Калькулятор"
-                        onclick="showPage(3)"
-                        class="nav-btn text-gray-600 hover:text-black border-2 inline-flex items-center p-3 border-transparent bg-gray-100/80 shadow-button-flat-nopressed hover:border-2 hover:border-gray-300 hover:shadow-button-flat-pressed focus:outline-none font-medium rounded-full text-sm text-center transition-all"
-                    >
+                    <button id="nav-btn-3" title="Калькулятор" onclick="showPage(3)" class="nav-btn text-gray-600 hover:text-black border-2 inline-flex items-center p-3 border-transparent bg-gray-100/80 shadow-button-flat-nopressed focus:outline-none font-medium rounded-full text-sm text-center transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 14H7v-2h10v2zm0-4H7v-2h10v2zm0-4H7V7h10v2z"/>
                         </svg>
                     </button>
 
-                    <!-- 4. Контакты -->
-                    <button
-                        id="nav-btn-4"
-                        title="Контакты"
-                        onclick="showPage(4)"
-                        class="nav-btn text-gray-600 hover:text-black border-2 inline-flex items-center p-3 border-transparent bg-gray-100/80 shadow-button-flat-nopressed hover:border-2 hover:border-gray-300 hover:shadow-button-flat-pressed focus:outline-none font-medium rounded-full text-sm text-center transition-all"
-                    >
+                    <button id="nav-btn-4" title="Контакты" onclick="showPage(4)" class="nav-btn text-gray-600 hover:text-black border-2 inline-flex items-center p-3 border-transparent bg-gray-100/80 shadow-button-flat-nopressed focus:outline-none font-medium rounded-full text-sm text-center transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
                         </svg>
@@ -555,8 +639,11 @@
         <!-- 1. СЕКЦИЯ ЛОГОТИПА И ТЕКСТА -->
         <div class="page-content active" id="page-1">
             <div class="logo-container" id="logo-block">A</div>
-            <h1 class="main-title" id="welcome-title">Arban School</h1>
-            <p class="subtitle" id="welcome-subtitle">Эффективный английский для больших целей</p>
+            <!-- Обертка для подложки -->
+            <div class="text-content-wrapper">
+                <h1 class="main-title" id="welcome-title">Arban School</h1>
+                <p class="subtitle" id="welcome-subtitle">Эффективный английский для больших целей</p>
+            </div>
         </div>
 
         <!-- 2. СЕКЦИЯ «О НАС» -->
@@ -604,13 +691,11 @@
         <!-- 4. СЕКЦИЯ «КОНТАКТЫ» -->
         <div class="page-content" id="page-4">
             <div class="contacts-wrapper">
-                <!-- Верхняя карточка: Телефон -->
                 <div class="contact-card">
                     <div class="innerText" id="contact-phone">+7 (900) 000-00-00</div>
                     <div class="desc">Телефон для связи и записи на уроки</div>
                 </div>
 
-                <!-- Нижняя карточка: Адрес -->
                 <div class="contact-card">
                     <div class="innerText" id="contact-address">г. Абакан</div>
                     <div class="desc">Адрес учебного центра</div>
@@ -623,15 +708,13 @@
     <script>
         const CONFIG_FILE = 'site-config.json';
         let currentPage = 1;
-        const totalPages = 4; // Определяем общее количество страниц
+        const totalPages = 4;
 
-        // Переменные для защиты от быстрого скролла (debounce)
         let isStatic = true; 
-        const animationDelay = 900; // Должно быть чуть больше, чем CSS transition (800ms)
+        const animationDelay = 900;
 
-        // Переменные для тача
         let touchStartY = 0;
-        const swipeThreshold = 60; // Минимальная длина свайпа в пикселях
+        const swipeThreshold = 60; 
         
         let priceMatrix = {
             "40": { solo: 600, pair: 450, group: 350 },
@@ -640,33 +723,25 @@
 
         let currentDisplayedPrice = 600;
 
-        // --- МОДИФИЦИРОВАННАЯ ФУНКЦИЯ showPage ---
-        // Добавлен флаг userAction, чтобы блокировать переключение, если уже идет анимация
         function showPage(newPage, userAction = true) {
-            // Если анимация уже идет, блокируем вызов
             if (userAction && !isStatic) return;
             if (newPage === currentPage) return;
-            // Граничные условия
             if (newPage < 1 || newPage > totalPages) return;
 
-            // Блокируем новые действия
             isStatic = false;
 
             const oldElem = document.getElementById(`page-${currentPage}`);
             const newElem = document.getElementById(`page-${newPage}`);
 
-            // Обновляем кнопки меню
             document.querySelectorAll('.nav-btn').forEach((btn, idx) => {
                 btn.classList.toggle('active', idx === newPage - 1);
             });
 
             if (oldElem && newElem) {
                 if (newPage > currentPage) {
-                    // Листаем вниз (новая страница уходит вверх)
                     oldElem.className = "page-content exit-up";
                     newElem.className = "page-content active";
                 } else {
-                    // Листаем вверх (старая страница уходит вниз)
                     oldElem.className = "page-content";
                     newElem.className = "page-content active";
                 }
@@ -678,69 +753,37 @@
                 updateCalculator();
             }
 
-            // Разблокируем действия после завершения анимации
             setTimeout(() => {
                 isStatic = true;
             }, animationDelay);
         }
 
-        // --- ФУНКЦИИ ЛИСТАНИЯ ---
-        function nextPage() {
-            showPage(currentPage + 1);
-        }
+        function nextPage() { showPage(currentPage + 1); }
+        function prevPage() { showPage(currentPage - 1); }
 
-        function prevPage() {
-            showPage(currentPage - 1);
-        }
-
-        // --- ОБРАБОТЧИК КОЛЁСИКА МЫШИ (Wheel) ---
         function handleWheel(e) {
-            // Если анимация идет, ничего не делаем
             if (!isStatic) return;
-
-            // Определяем направление
-            if (e.deltaY > 0) {
-                // Колёсико вниз -> Следующая страница
-                nextPage();
-            } else if (e.deltaY < 0) {
-                // Колёсико вверх -> Предыдущая страница
-                prevPage();
-            }
+            if (e.deltaY > 0) { nextPage(); } else if (e.deltaY < 0) { prevPage(); }
         }
 
-        // --- ОБРАБОТЧИКИ СВАЙПОВ (Touch) ---
-        function handleTouchStart(e) {
-            touchStartY = e.touches[0].clientY;
-        }
+        function handleTouchStart(e) { touchStartY = e.touches[0].clientY; }
 
         function handleTouchEnd(e) {
             if (!isStatic) return;
-
             const touchEndY = e.changedTouches[0].clientY;
             const yDiff = touchStartY - touchEndY;
-
-            // Проверяем, достаточно ли длинный свайп
             if (Math.abs(yDiff) > swipeThreshold) {
-                if (yDiff > 0) {
-                    // Свайп вверх (палец идет вверх) -> Следующая страница
-                    nextPage();
-                } else {
-                    // Свайп вниз (палец идет вниз) -> Предыдущая страница
-                    prevPage();
-                }
+                if (yDiff > 0) { nextPage(); } else { prevPage(); }
             }
         }
 
         function updateCalculator() {
             const is60 = document.getElementById('duration-toggle').checked;
             const durationKey = is60 ? "60" : "40";
-
             document.getElementById('lbl-40').classList.toggle('active', !is60);
             document.getElementById('lbl-60').classList.toggle('active', is60);
-
             const selectedFormat = document.querySelector('input[name="format-type"]:checked').value;
             const targetPrice = priceMatrix[durationKey]?.[selectedFormat] || 0;
-
             animateValue("price-number", currentDisplayedPrice, targetPrice, 400);
             currentDisplayedPrice = targetPrice;
         }
@@ -750,31 +793,20 @@
             const obj = document.getElementById(id);
             const range = end - start;
             let startTime = null;
-
             function step(timestamp) {
                 if (!startTime) startTime = timestamp;
                 const progress = Math.min((timestamp - startTime) / duration, 1);
                 const easeProgress = progress * (2 - progress); 
                 obj.innerText = Math.floor(start + range * easeProgress);
-
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                } else {
-                    obj.innerText = end;
-                }
+                if (progress < 1) { window.requestAnimationFrame(step); } else { obj.innerText = end; }
             }
             window.requestAnimationFrame(step);
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Вешаем события на главный экран
             const mainHero = document.getElementById('main-hero');
-            
-            // Мышь
             mainHero.addEventListener('wheel', handleWheel);
-            
-            // Тач (телефон)
-            mainHero.addEventListener('touchstart', handleTouchStart);
+            mainHero.addEventListener('touchstart', handleTouchStart, {passive: true});
             mainHero.addEventListener('touchend', handleTouchEnd);
 
             fetch(`${CONFIG_FILE}?v=${Date.now()}`)
@@ -787,95 +819,23 @@
         });
 
         function applyConfig(data) {
-            // Динамическая установка акцентного цвета через CSS переменную
-            if (data.primary_color) {
-                document.documentElement.style.setProperty('--primary-color', data.primary_color);
-            }
-
+            if (data.primary_color) { document.documentElement.style.setProperty('--primary-color', data.primary_color); }
             if (data.site_title) document.title = data.site_title;
-            
             const logoBlock = document.getElementById('logo-block');
-            if (data.logo_url && data.logo_url.trim() !== "") {
-                logoBlock.innerHTML = `<img src="${data.logo_url}" alt="Логотип">`;
-            } else {
-                logoBlock.innerText = data.logo_fallback_text || "A";
-            }
-
-            if (data.welcome) {
-                document.getElementById('welcome-title').innerText = data.welcome.title || "Arban School";
-                document.getElementById('welcome-subtitle').innerText = data.welcome.subtitle || "";
-            }
-
-            if (data.about && data.about.cards) {
-                renderCards(data.about.cards);
-            } else {
-                applyDefaultCards();
-            }
-
-            // Маппинг формата калькулятора (работает с обоими форматами JSON)
-            if (data.calculator) {
-                if (data.calculator.title) {
-                    document.getElementById('calc-title-text').innerText = data.calculator.title;
-                }
-                
-                if (data.calculator.price_individual_40 !== undefined) {
-                    priceMatrix = {
-                        "40": { 
-                            solo: data.calculator.price_individual_40, 
-                            pair: data.calculator.price_pair_40, 
-                            group: data.calculator.price_group_40 
-                        },
-                        "60": { 
-                            solo: data.calculator.price_individual_60, 
-                            pair: data.calculator.price_pair_60, 
-                            group: data.calculator.price_group_60 
-                        }
-                    };
-                }
-            } else if (data.prices) {
-                priceMatrix = data.prices;
-            }
-
-            if (data.contacts) {
-                if (data.contacts.phone) {
-                    document.getElementById('contact-phone').innerText = data.contacts.phone;
-                }
-                if (data.contacts.address) {
-                    document.getElementById('contact-address').innerText = data.contacts.address;
-                }
-            }
+            if (data.logo_url && data.logo_url.trim() !== "") { logoBlock.innerHTML = `<img src="${data.logo_url}" alt="Логотип">`; } else { logoBlock.innerText = data.logo_fallback_text || "A"; }
+            if (data.welcome) { document.getElementById('welcome-title').innerText = data.welcome.title || "Arban School"; document.getElementById('welcome-subtitle').innerText = data.welcome.subtitle || ""; }
+            if (data.about && data.about.cards) { renderCards(data.about.cards); } else { applyDefaultCards(); }
+            if (data.calculator) { if (data.calculator.title) { document.getElementById('calc-title-text').innerText = data.calculator.title; } if (data.calculator.price_individual_40 !== undefined) { priceMatrix = { "40": { solo: data.calculator.price_individual_40, pair: data.calculator.price_pair_40, group: data.calculator.price_group_40 }, "60": { solo: data.calculator.price_individual_60, pair: data.calculator.price_pair_60, group: data.calculator.price_group_60 } }; } }
+            if (data.contacts) { if (data.contacts.phone) { document.getElementById('contact-phone').innerText = data.contacts.phone; } if (data.contacts.address) { document.getElementById('contact-address').innerText = data.contacts.address; } }
         }
 
         function renderCards(cardsArray) {
             const container = document.getElementById('uiverse-card');
             container.innerHTML = "";
-
-            cardsArray.forEach(card => {
-                const p = document.createElement('p');
-                p.innerHTML = `
-                    <span class="card-title">${card.title}</span>
-                    <span class="card-text">${card.text || ''}</span>
-                `;
-                container.appendChild(p);
-            });
+            cardsArray.forEach(card => { const p = document.createElement('p'); p.innerHTML = `<span class="card-title">${card.title}</span><span class="card-text">${card.text || ''}</span>`; container.appendChild(p); });
         }
 
-        function applyDefaultCards() {
-            renderCards([
-                { 
-                    title: "Дети любого возраста", 
-                    text: "Обучение детей от 3 лет по специальной программе" 
-                },
-                { 
-                    title: "Подготовка к ОГЭ и ЕГЭ", 
-                    text: "Высокие баллы на экзаменах и разбор сложных вариантов" 
-                },
-                { 
-                    title: "Профессиональные учителя", 
-                    text: "Опытные преподаватели с высшей квалификацией" 
-                }
-            ]);
-        }
+        function applyDefaultCards() { renderCards([ { title: "Дети любого возраста", text: "Обучение детей от 3 лет по специальной программе" }, { title: "Подготовка к ОГЭ и ЕГЭ", text: "Высокие баллы на экзаменах и разбор сложных вариантов" }, { title: "Профессиональные учителя", text: "Опытные преподаватели с высшей квалификацией" } ]); }
     </script>
 </body>
 </html>
