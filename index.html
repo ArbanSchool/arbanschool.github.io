@@ -21,7 +21,7 @@
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        /* ОСНОВНОЙ ЭКРАН */
+        /* ОСНОВНОЙ ЭКРАН - Убираем overflow:hidden, чтобы разрешить события тача */
         .hero-section {
             width: 100vw;
             height: 100vh;
@@ -32,7 +32,8 @@
             position: relative;
             display: flex;
             align-items: center;
-            overflow: hidden;
+            overflow: hidden; /* Оставляем, чтобы контент не вылезал за границы экрана */
+            touch-action: none; /* Важно: отключаем стандартные жесты браузера, чтобы они не мешали нашим свайпам */
         }
 
         /* ОБЩИЙ СЛОЙ ДЛЯ СЕКЦИЙ */
@@ -491,7 +492,8 @@
 </head>
 <body>
 
-    <main class="hero-section">
+    <!-- В основной тег section добавляем id, чтобы вешать на него события -->
+    <main class="hero-section" id="main-hero">
         
         <!-- ВЕРХНЕЕ МЕНЮ (4 кнопки) -->
         <div class="top-navigation">
@@ -621,6 +623,15 @@
     <script>
         const CONFIG_FILE = 'site-config.json';
         let currentPage = 1;
+        const totalPages = 4; // Определяем общее количество страниц
+
+        // Переменные для защиты от быстрого скролла (debounce)
+        let isStatic = true; 
+        const animationDelay = 900; // Должно быть чуть больше, чем CSS transition (800ms)
+
+        // Переменные для тача
+        let touchStartY = 0;
+        const swipeThreshold = 60; // Минимальная длина свайпа в пикселях
         
         let priceMatrix = {
             "40": { solo: 600, pair: 450, group: 350 },
@@ -629,21 +640,33 @@
 
         let currentDisplayedPrice = 600;
 
-        function showPage(newPage) {
+        // --- МОДИФИЦИРОВАННАЯ ФУНКЦИЯ showPage ---
+        // Добавлен флаг userAction, чтобы блокировать переключение, если уже идет анимация
+        function showPage(newPage, userAction = true) {
+            // Если анимация уже идет, блокируем вызов
+            if (userAction && !isStatic) return;
             if (newPage === currentPage) return;
+            // Граничные условия
+            if (newPage < 1 || newPage > totalPages) return;
+
+            // Блокируем новые действия
+            isStatic = false;
 
             const oldElem = document.getElementById(`page-${currentPage}`);
             const newElem = document.getElementById(`page-${newPage}`);
 
+            // Обновляем кнопки меню
             document.querySelectorAll('.nav-btn').forEach((btn, idx) => {
                 btn.classList.toggle('active', idx === newPage - 1);
             });
 
             if (oldElem && newElem) {
                 if (newPage > currentPage) {
+                    // Листаем вниз (новая страница уходит вверх)
                     oldElem.className = "page-content exit-up";
                     newElem.className = "page-content active";
                 } else {
+                    // Листаем вверх (старая страница уходит вниз)
                     oldElem.className = "page-content";
                     newElem.className = "page-content active";
                 }
@@ -653,6 +676,58 @@
 
             if (currentPage === 3) {
                 updateCalculator();
+            }
+
+            // Разблокируем действия после завершения анимации
+            setTimeout(() => {
+                isStatic = true;
+            }, animationDelay);
+        }
+
+        // --- ФУНКЦИИ ЛИСТАНИЯ ---
+        function nextPage() {
+            showPage(currentPage + 1);
+        }
+
+        function prevPage() {
+            showPage(currentPage - 1);
+        }
+
+        // --- ОБРАБОТЧИК КОЛЁСИКА МЫШИ (Wheel) ---
+        function handleWheel(e) {
+            // Если анимация идет, ничего не делаем
+            if (!isStatic) return;
+
+            // Определяем направление
+            if (e.deltaY > 0) {
+                // Колёсико вниз -> Следующая страница
+                nextPage();
+            } else if (e.deltaY < 0) {
+                // Колёсико вверх -> Предыдущая страница
+                prevPage();
+            }
+        }
+
+        // --- ОБРАБОТЧИКИ СВАЙПОВ (Touch) ---
+        function handleTouchStart(e) {
+            touchStartY = e.touches[0].clientY;
+        }
+
+        function handleTouchEnd(e) {
+            if (!isStatic) return;
+
+            const touchEndY = e.changedTouches[0].clientY;
+            const yDiff = touchStartY - touchEndY;
+
+            // Проверяем, достаточно ли длинный свайп
+            if (Math.abs(yDiff) > swipeThreshold) {
+                if (yDiff > 0) {
+                    // Свайп вверх (палец идет вверх) -> Следующая страница
+                    nextPage();
+                } else {
+                    // Свайп вниз (палец идет вниз) -> Предыдущая страница
+                    prevPage();
+                }
             }
         }
 
@@ -692,6 +767,16 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
+            // Вешаем события на главный экран
+            const mainHero = document.getElementById('main-hero');
+            
+            // Мышь
+            mainHero.addEventListener('wheel', handleWheel);
+            
+            // Тач (телефон)
+            mainHero.addEventListener('touchstart', handleTouchStart);
+            mainHero.addEventListener('touchend', handleTouchEnd);
+
             fetch(`${CONFIG_FILE}?v=${Date.now()}`)
                 .then(res => res.json())
                 .then(data => applyConfig(data))
