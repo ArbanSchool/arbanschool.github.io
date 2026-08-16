@@ -184,155 +184,80 @@
         }
 
         /* ---------------- СЕКЦИЯ 3: КАЛЬКУЛЯТОР ---------------- */
-        .calc-box {
-            width: 500px;
-            background: #ffffff;
-            border-radius: 28px;
-            padding: 44px 36px;
-            border: 4.5px solid var(--primary-color);
-            box-shadow: 0 0 35px rgba(0, 0, 0, 0.1), 0 16px 45px rgba(0, 0, 0, 0.15);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 36px;
-        }
+        /* Новые стили калькулятора */
+.calc-box {
+    width: 480px;
+    min-height: 480px; /* Сохраняем объём даже при минимуме опций */
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 36px 32px;
+    border: 4.5px solid var(--primary-color);
+    box-shadow: 0 0 35px rgba(0, 0, 0, 0.1), 0 16px 45px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    transition: all 0.4s ease;
+}
 
-        .calc-title {
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+.option-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 6px;
+    text-align: center;
+    letter-spacing: 0.05em;
+}
 
-        .duration-container {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
+/* Вторичные переключатели */
+.sub-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 4px;
+    background: #f1f5f9;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 14px;
+}
 
-        .duration-label {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            opacity: 0.6;
-        }
+.sub-tabs__r {
+    display: none;
+}
 
-        .duration-label.active {
-            opacity: 1;
-            font-size: 1.45rem;
-        }
+.sub-tabs__t {
+    flex: 1;
+    text-align: center;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
 
-        .switch {
-            font-size: 20px;
-            position: relative;
-            display: inline-block;
-            width: 3.5em;
-            height: 2em;
-        }
+.sub-tabs__r:checked + .sub-tabs__t {
+    background: var(--primary-color);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
 
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+/* Плавное скрытие и появление блоков */
+.calc-option-group {
+    max-height: 100px;
+    opacity: 1;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.35s ease, margin 0.35s ease;
+}
 
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            inset: 0;
-            background: #cbd5e1;
-            border-radius: 50px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 2em;
-            width: 2em;
-            inset: 0;
-            background-color: white;
-            border-radius: 50px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .switch input:checked + .slider {
-            background: var(--primary-color);
-        }
-
-        .switch input:checked + .slider:before {
-            transform: translateX(1.5em);
-        }
-
-        .cir-tabs {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px;
-            background: #f1f5f9;
-            border: 2px solid #cbd5e1;
-            border-radius: 999px;
-            width: 100%;
-            justify-content: space-between;
-        }
-
-        .cir-tabs__r {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .cir-tabs__t {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            height: 46px;
-            flex: 1;
-            padding: 0 14px;
-            border-radius: 999px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #64748b;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .cir-tabs__r:checked + .cir-tabs__t {
-            background: var(--primary-color);
-            color: #ffffff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-        }
-
-        .price-box {
-            width: 100%;
-            background: #f8fafc;
-            border: 2.5px solid var(--primary-color);
-            border-radius: 20px;
-            padding: 22px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .price-caption {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .price-value-container {
-            font-size: 2.8rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+.calc-option-group.hidden-option {
+    max-height: 0;
+    opacity: 0;
+    margin: 0 !important;
+    pointer-events: none;
+}
 
         /* ---------------- СЕКЦИЯ 4: КОНТАКТЫ (Uiverse Glassmorphism) ---------------- */
         .contacts-wrapper {
@@ -654,39 +579,67 @@
         </div>
 
         <!-- 3. СЕКЦИЯ «КАЛЬКУЛЯТОР ЦЕН» -->
-        <div class="page-content" id="page-3">
-            <div class="calc-box">
-                <div class="calc-title" id="calc-title-text">Стоимость обучения</div>
 
-                <div class="duration-container">
-                    <span class="duration-label active" id="lbl-40">40 мин</span>
-                    <label class="switch">
-                        <input type="checkbox" id="duration-toggle" onchange="updateCalculator()">
-                        <span class="slider"></span>
-                    </label>
-                    <span class="duration-label" id="lbl-60">60 мин</span>
-                </div>
+    <div class="page-content" id="page-3">
+        <div class="calc-box">
+            <div class="calc-title" id="calc-title-text">Рассчитать стоимость</div>
 
-                <div class="cir-tabs">
-                    <input type="radio" name="format-type" id="tab-solo" value="solo" class="cir-tabs__r" checked onchange="updateCalculator()">
-                    <label for="tab-solo" class="cir-tabs__t">Индивидуально</label>
+            <!-- 1. Выбор формата -->
+            <div class="cir-tabs">
+                <input type="radio" name="calc-type" id="type-group" value="group" class="cir-tabs__r" checked onchange="handleTypeChange()">
+                <label for="type-group" class="cir-tabs__t">Группа</label>
 
-                    <input type="radio" name="format-type" id="tab-pair" value="pair" class="cir-tabs__r" onchange="updateCalculator()">
-                    <label for="tab-pair" class="cir-tabs__t">В парах</label>
+                <input type="radio" name="calc-type" id="type-ind" value="ind" class="cir-tabs__r" onchange="handleTypeChange()">
+                <label for="type-ind" class="cir-tabs__t">Индивидуально</label>
 
-                    <input type="radio" name="format-type" id="tab-group" value="group" class="cir-tabs__r" onchange="updateCalculator()">
-                    <label for="tab-group" class="cir-tabs__t">Группа</label>
-                </div>
+                <input type="radio" name="calc-type" id="type-single" value="single" class="cir-tabs__r" onchange="handleTypeChange()">
+                <label for="type-single" class="cir-tabs__t">Разовое</label>
+            </div>
 
-                <div class="price-box">
-                    <span class="price-caption">Стоимость за занятие</span>
-                    <div class="price-value-container">
-                        <span id="price-number">600</span>
-                        <span>₽</span>
+            <!-- 2. Динамическая панель параметров -->
+            <div class="options-wrapper w-full space-y-4">
+            
+                <!-- Частота (1 или 2 раза в неделю) -->
+                <div id="freq-block" class="calc-option-group">
+                    <span class="option-label">Частота занятий</span>
+                    <div class="sub-tabs">
+                        <input type="radio" name="freq-val" id="freq-1" value="1" class="sub-tabs__r" checked onchange="updateCalculator()">
+                        <label for="freq-1" class="sub-tabs__t">1 раз в неделю</label>
+
+                        <input type="radio" name="freq-val" id="freq-2" value="2" class="sub-tabs__r" onchange="updateCalculator()">
+                        <label for="freq-2" class="sub-tabs__t">2 раза в неделю</label>
                     </div>
                 </div>
+
+            <!-- Длительность (40 или 60 минут) -->
+                <div id="duration-block" class="calc-option-group hidden-option">
+                    <span class="option-label">Длительность урока</span>
+                    <div class="sub-tabs">
+                        <input type="radio" name="dur-val" id="dur-40" value="40" class="sub-tabs__r" checked onchange="updateCalculator()">
+                        <label for="dur-40" class="sub-tabs__t">40 минут</label>
+    
+                        <input type="radio" name="dur-val" id="dur-60" value="60" class="sub-tabs__r" onchange="updateCalculator()">
+                        <label for="dur-60" class="sub-tabs__t">60 минут</label>
+                    </div>
+                </div>
+
+                <!-- Информационная плашка для группы -->
+                <div id="group-note" class="text-xs font-semibold text-slate-400 text-center uppercase tracking-wider pt-1">
+                    Длительность группового урока — 60 минут
+                </div>
+
+            </div>
+
+        <!-- 3. Итоговая цена -->
+        <div class="price-box">
+            <span class="price-caption" id="price-caption-text">Стоимость в месяц</span>
+            <div class="price-value-container">
+                <span id="price-number">0</span>
+                <span>₽</span>
             </div>
         </div>
+    </div>
+</div>
 
         <!-- 4. СЕКЦИЯ «КОНТАКТЫ» -->
         <div class="page-content" id="page-4">
@@ -706,136 +659,248 @@
     </main>
 
     <script>
-        const CONFIG_FILE = 'site-config.json';
-        let currentPage = 1;
-        const totalPages = 4;
+    const CONFIG_FILE = 'site-config.json';
+    let currentPage = 1;
+    const totalPages = 4;
 
-        let isStatic = true; 
-        const animationDelay = 900;
+    let isStatic = true; 
+    const animationDelay = 900;
 
-        let touchStartY = 0;
-        const swipeThreshold = 60; 
+    let touchStartY = 0;
+    const swipeThreshold = 60; 
+
+    // Обновленная матрица цен по умолчанию
+    let priceMatrix = {
+        group: {
+            "1": 2400,
+            "2": 4000
+        },
+        ind: {
+            "1_40": 3200,
+            "1_60": 4800,
+            "2_40": 6000,
+            "2_60": 8800
+        },
+        single: {
+            "40": 900,
+            "60": 1300
+        }
+    };
+
+    let currentDisplayedPrice = 2400;
+
+    function showPage(newPage, userAction = true) {
+        if (userAction && !isStatic) return;
+        if (newPage === currentPage) return;
+        if (newPage < 1 || newPage > totalPages) return;
+
+        isStatic = false;
+
+        const oldElem = document.getElementById(`page-${currentPage}`);
+        const newElem = document.getElementById(`page-${newPage}`);
+
+        document.querySelectorAll('.nav-btn').forEach((btn, idx) => {
+            btn.classList.toggle('active', idx === newPage - 1);
+        });
+
+        if (oldElem && newElem) {
+            if (newPage > currentPage) {
+                oldElem.className = "page-content exit-up";
+                newElem.className = "page-content active";
+            } else {
+                oldElem.className = "page-content";
+                newElem.className = "page-content active";
+            }
+        }
+
+        currentPage = newPage;
+
+        if (currentPage === 3) {
+            handleTypeChange();
+        }
+
+        setTimeout(() => {
+            isStatic = true;
+        }, animationDelay);
+    }
+
+    function nextPage() { showPage(currentPage + 1); }
+    function prevPage() { showPage(currentPage - 1); }
+
+    function handleWheel(e) {
+        if (!isStatic) return;
+        if (e.deltaY > 0) { nextPage(); } else if (e.deltaY < 0) { prevPage(); }
+    }
+
+    function handleTouchStart(e) { touchStartY = e.touches[0].clientY; }
+
+    function handleTouchEnd(e) {
+        if (!isStatic) return;
+        const touchEndY = e.changedTouches[0].clientY;
+        const yDiff = touchStartY - touchEndY;
+        if (Math.abs(yDiff) > swipeThreshold) {
+            if (yDiff > 0) { nextPage(); } else { prevPage(); }
+        }
+    }
+
+    /* --- ЛОГИКА КАЛЬКУЛЯТОРА --- */
+
+    function handleTypeChange() {
+        const selectedType = document.querySelector('input[name="calc-type"]:checked')?.value || 'group';
         
-        let priceMatrix = {
-            "40": { solo: 600, pair: 450, group: 350 },
-            "60": { solo: 900, pair: 700, group: 500 }
-        };
+        const freqBlock = document.getElementById('freq-block');
+        const durBlock = document.getElementById('duration-block');
+        const groupNote = document.getElementById('group-note');
+        const captionText = document.getElementById('price-caption-text');
 
-        let currentDisplayedPrice = 600;
+        if (selectedType === 'group') {
+            freqBlock?.classList.remove('hidden-option');
+            durBlock?.classList.add('hidden-option');
+            groupNote?.classList.remove('hidden-option');
+            if (captionText) captionText.innerText = "Стоимость в месяц";
+        } else if (selectedType === 'ind') {
+            freqBlock?.classList.remove('hidden-option');
+            durBlock?.classList.remove('hidden-option');
+            groupNote?.classList.add('hidden-option');
+            if (captionText) captionText.innerText = "Стоимость в месяц";
+        } else if (selectedType === 'single') {
+            freqBlock?.classList.add('hidden-option');
+            durBlock?.classList.remove('hidden-option');
+            groupNote?.classList.add('hidden-option');
+            if (captionText) captionText.innerText = "Стоимость за занятие";
+        }
 
-        function showPage(newPage, userAction = true) {
-            if (userAction && !isStatic) return;
-            if (newPage === currentPage) return;
-            if (newPage < 1 || newPage > totalPages) return;
+        updateCalculator();
+    }
 
-            isStatic = false;
+    function updateCalculator() {
+        const selectedType = document.querySelector('input[name="calc-type"]:checked')?.value || 'group';
+        const freqVal = document.querySelector('input[name="freq-val"]:checked')?.value || '1';
+        const durVal = document.querySelector('input[name="dur-val"]:checked')?.value || '40';
 
-            const oldElem = document.getElementById(`page-${currentPage}`);
-            const newElem = document.getElementById(`page-${newPage}`);
+        let targetPrice = 0;
 
-            document.querySelectorAll('.nav-btn').forEach((btn, idx) => {
-                btn.classList.toggle('active', idx === newPage - 1);
-            });
+        if (selectedType === 'group') {
+            targetPrice = priceMatrix.group[freqVal] || 0;
+        } else if (selectedType === 'ind') {
+            const key = `${freqVal}_${durVal}`;
+            targetPrice = priceMatrix.ind[key] || 0;
+        } else if (selectedType === 'single') {
+            targetPrice = priceMatrix.single[durVal] || 0;
+        }
 
-            if (oldElem && newElem) {
-                if (newPage > currentPage) {
-                    oldElem.className = "page-content exit-up";
-                    newElem.className = "page-content active";
-                } else {
-                    oldElem.className = "page-content";
-                    newElem.className = "page-content active";
-                }
+        animateValue("price-number", currentDisplayedPrice, targetPrice, 350);
+        currentDisplayedPrice = targetPrice;
+    }
+
+    function animateValue(id, start, end, duration) {
+        if (start === end) return;
+        const obj = document.getElementById(id);
+        if (!obj) return;
+        const range = end - start;
+        let startTime = null;
+
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const easeProgress = progress * (2 - progress); 
+            obj.innerText = Math.floor(start + range * easeProgress);
+            if (progress < 1) { 
+                window.requestAnimationFrame(step); 
+            } else { 
+                obj.innerText = end; 
             }
-
-            currentPage = newPage;
-
-            if (currentPage === 3) {
-                updateCalculator();
-            }
-
-            setTimeout(() => {
-                isStatic = true;
-            }, animationDelay);
         }
+        window.requestAnimationFrame(step);
+    }
 
-        function nextPage() { showPage(currentPage + 1); }
-        function prevPage() { showPage(currentPage - 1); }
+    /* --- ИНИЦИАЛИЗАЦИЯ И JSON CONFIG --- */
 
-        function handleWheel(e) {
-            if (!isStatic) return;
-            if (e.deltaY > 0) { nextPage(); } else if (e.deltaY < 0) { prevPage(); }
-        }
-
-        function handleTouchStart(e) { touchStartY = e.touches[0].clientY; }
-
-        function handleTouchEnd(e) {
-            if (!isStatic) return;
-            const touchEndY = e.changedTouches[0].clientY;
-            const yDiff = touchStartY - touchEndY;
-            if (Math.abs(yDiff) > swipeThreshold) {
-                if (yDiff > 0) { nextPage(); } else { prevPage(); }
-            }
-        }
-
-        function updateCalculator() {
-            const is60 = document.getElementById('duration-toggle').checked;
-            const durationKey = is60 ? "60" : "40";
-            document.getElementById('lbl-40').classList.toggle('active', !is60);
-            document.getElementById('lbl-60').classList.toggle('active', is60);
-            const selectedFormat = document.querySelector('input[name="format-type"]:checked').value;
-            const targetPrice = priceMatrix[durationKey]?.[selectedFormat] || 0;
-            animateValue("price-number", currentDisplayedPrice, targetPrice, 400);
-            currentDisplayedPrice = targetPrice;
-        }
-
-        function animateValue(id, start, end, duration) {
-            if (start === end) return;
-            const obj = document.getElementById(id);
-            const range = end - start;
-            let startTime = null;
-            function step(timestamp) {
-                if (!startTime) startTime = timestamp;
-                const progress = Math.min((timestamp - startTime) / duration, 1);
-                const easeProgress = progress * (2 - progress); 
-                obj.innerText = Math.floor(start + range * easeProgress);
-                if (progress < 1) { window.requestAnimationFrame(step); } else { obj.innerText = end; }
-            }
-            window.requestAnimationFrame(step);
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            const mainHero = document.getElementById('main-hero');
+    document.addEventListener("DOMContentLoaded", () => {
+        const mainHero = document.getElementById('main-hero');
+        if (mainHero) {
             mainHero.addEventListener('wheel', handleWheel);
             mainHero.addEventListener('touchstart', handleTouchStart, {passive: true});
             mainHero.addEventListener('touchend', handleTouchEnd);
+        }
 
-            fetch(`${CONFIG_FILE}?v=${Date.now()}`)
-                .then(res => res.json())
-                .then(data => applyConfig(data))
-                .catch(err => {
-                    console.warn("Используются дефолтные значения:", err);
-                    applyDefaultCards();
-                });
+        // Показываем начальный вид калькулятора
+        handleTypeChange();
+
+        fetch(`${CONFIG_FILE}?v=${Date.now()}`)
+            .then(res => res.json())
+            .then(data => applyConfig(data))
+            .catch(err => {
+                console.warn("Используются дефолтные значения:", err);
+                applyDefaultCards();
+            });
+    });
+
+    function applyConfig(data) {
+        if (data.primary_color) { document.documentElement.style.setProperty('--primary-color', data.primary_color); }
+        if (data.site_title) document.title = data.site_title;
+        
+        const logoBlock = document.getElementById('logo-block');
+        if (logoBlock) {
+            if (data.logo_url && data.logo_url.trim() !== "") { 
+                logoBlock.innerHTML = `<img src="${data.logo_url}" alt="Логотип">`; 
+            } else { 
+                logoBlock.innerText = data.logo_fallback_text || "A"; 
+            }
+        }
+
+        if (data.welcome) { 
+            const titleElem = document.getElementById('welcome-title');
+            const subElem = document.getElementById('welcome-subtitle');
+            if (titleElem) titleElem.innerText = data.welcome.title || "Arban School"; 
+            if (subElem) subElem.innerText = data.welcome.subtitle || ""; 
+        }
+
+        if (data.about && data.about.cards) { 
+            renderCards(data.about.cards); 
+        } else { 
+            applyDefaultCards(); 
+        }
+
+        if (data.calculator) { 
+            if (data.calculator.title) { 
+                const calcTitle = document.getElementById('calc-title-text');
+                if (calcTitle) calcTitle.innerText = data.calculator.title; 
+            } 
+            
+            // Загрузка прайсов из конфига (если переданы)
+            if (data.calculator.prices) {
+                priceMatrix = Object.assign(priceMatrix, data.calculator.prices);
+                updateCalculator();
+            }
+        }
+
+        if (data.contacts) { 
+            const phoneElem = document.getElementById('contact-phone');
+            const addrElem = document.getElementById('contact-address');
+            if (phoneElem && data.contacts.phone) phoneElem.innerText = data.contacts.phone; 
+            if (addrElem && data.contacts.address) addrElem.innerText = data.contacts.address; 
+        }
+    }
+
+    function renderCards(cardsArray) {
+        const container = document.getElementById('uiverse-card');
+        if (!container) return;
+        container.innerHTML = "";
+        cardsArray.forEach(card => { 
+            const p = document.createElement('p'); 
+            p.innerHTML = `<span class="card-title">${card.title}</span><span class="card-text">${card.text || ''}</span>`; 
+            container.appendChild(p); 
         });
+    }
 
-        function applyConfig(data) {
-            if (data.primary_color) { document.documentElement.style.setProperty('--primary-color', data.primary_color); }
-            if (data.site_title) document.title = data.site_title;
-            const logoBlock = document.getElementById('logo-block');
-            if (data.logo_url && data.logo_url.trim() !== "") { logoBlock.innerHTML = `<img src="${data.logo_url}" alt="Логотип">`; } else { logoBlock.innerText = data.logo_fallback_text || "A"; }
-            if (data.welcome) { document.getElementById('welcome-title').innerText = data.welcome.title || "Arban School"; document.getElementById('welcome-subtitle').innerText = data.welcome.subtitle || ""; }
-            if (data.about && data.about.cards) { renderCards(data.about.cards); } else { applyDefaultCards(); }
-            if (data.calculator) { if (data.calculator.title) { document.getElementById('calc-title-text').innerText = data.calculator.title; } if (data.calculator.price_individual_40 !== undefined) { priceMatrix = { "40": { solo: data.calculator.price_individual_40, pair: data.calculator.price_pair_40, group: data.calculator.price_group_40 }, "60": { solo: data.calculator.price_individual_60, pair: data.calculator.price_pair_60, group: data.calculator.price_group_60 } }; } }
-            if (data.contacts) { if (data.contacts.phone) { document.getElementById('contact-phone').innerText = data.contacts.phone; } if (data.contacts.address) { document.getElementById('contact-address').innerText = data.contacts.address; } }
-        }
-
-        function renderCards(cardsArray) {
-            const container = document.getElementById('uiverse-card');
-            container.innerHTML = "";
-            cardsArray.forEach(card => { const p = document.createElement('p'); p.innerHTML = `<span class="card-title">${card.title}</span><span class="card-text">${card.text || ''}</span>`; container.appendChild(p); });
-        }
-
-        function applyDefaultCards() { renderCards([ { title: "Дети любого возраста", text: "Обучение детей от 3 лет по специальной программе" }, { title: "Подготовка к ОГЭ и ЕГЭ", text: "Высокие баллы на экзаменах и разбор сложных вариантов" }, { title: "Профессиональные учителя", text: "Опытные преподаватели с высшей квалификацией" } ]); }
-    </script>
+    function applyDefaultCards() { 
+        renderCards([ 
+            { title: "Дети любого возраста", text: "Обучение детей от 3 лет по специальной программе" }, 
+            { title: "Подготовка к ОГЭ и ЕГЭ", text: "Высокие баллы на экзаменах и разбор сложных вариантов" }, 
+            { title: "Профессиональные учителя", text: "Опытные преподаватели с высшей квалификацией" } 
+        ]); 
+    }
+</script>
 </body>
 </html>
