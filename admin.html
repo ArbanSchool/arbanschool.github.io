@@ -3,422 +3,408 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Панель управления — Arban School</title>
+    <title>Админ-панель - Arban School</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    </style>
 </head>
-<body class="bg-slate-100 min-h-screen p-6 md:p-12">
+<body class="bg-gray-100 min-h-screen p-6">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">🎛️ Админ-панель сайта</h1>
 
-    <div class="max-w-4xl mx-auto space-y-8">
-        
-        <!-- Заголовок -->
-        <div class="flex items-center justify-between border-b border-slate-300 pb-5">
-            <div>
-                <h1 class="text-3xl font-extrabold text-slate-800">Управление Arban School</h1>
-                <p class="text-slate-500 text-sm mt-1">Редактирование сайта и публикация в GitHub Pages</p>
+        <!-- Блок подключения к GitHub -->
+        <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">📁 Подключение к GitHub</h2>
+            <div class="grid gap-4 md:grid-cols-2">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">GitHub Personal Access Token (PAT)</label>
+                    <input type="password" id="gh-token" placeholder="ghp_..." class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Репозиторий (owner/repo)</label>
+                    <input type="text" id="gh-repo" placeholder="username/repo-name" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
             </div>
-            <button onclick="saveConfigToGitHub()" id="save-btn" class="hidden bg-sky-600 hover:bg-sky-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg hover:shadow-sky-500/20 transition-all flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                </svg>
-                Сохранить и опубликовать
+            <button onclick="fetchCurrentConfig()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors">
+                📥 Загрузить конфигурацию
             </button>
         </div>
 
-        <!-- Уведомления -->
-        <div id="status-message" class="hidden p-4 rounded-xl text-sm font-medium"></div>
+        <!-- Статус сообщения -->
+        <div id="status-message" class="hidden mb-6"></div>
 
-        <!-- 0. Авторизация и подключение (Шаг 1) -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-sky-600" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
-                </svg>
-                Подключение к GitHub
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Репозиторий (URL или owner/repo)</label>
-                    <input type="text" id="gh-repo" value="https://github.com/ArbanSchool/arbanschool.github.io/" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm font-mono text-slate-800 focus:ring-2 focus:ring-sky-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">GitHub Personal Access Token (PAT)</label>
-                    <input type="password" id="gh-token" placeholder="ghp_..." class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
-                </div>
-            </div>
-            <button onclick="fetchCurrentConfig()" id="load-btn" class="mt-4 bg-slate-800 hover:bg-slate-900 text-white font-semibold px-5 py-2.5 rounded-lg text-sm transition-all">
-                Подключиться и загрузить данные
-            </button>
-        </div>
-
-        <!-- ОСНОВНАЯ ФОРМА (Скрыта до авторизации) -->
-        <div id="editor-form" class="hidden space-y-8">
+        <!-- Форма редактора (скрыта до загрузки конфига) -->
+        <form id="editor-form" class="hidden space-y-8">
             
-            <!-- 1. Дизайн и цвет (Цветовая палитра) -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                    </svg>
-                    Основной цвет оформления
-                </h2>
-                <div class="flex items-center gap-4 flex-wrap">
-                    <select id="color-preset" onchange="applyColorPreset()" class="border border-slate-300 rounded-lg p-2.5 text-sm bg-slate-50 focus:ring-2 focus:ring-sky-500 focus:outline-none">
-                        <option value="#0284c7">Sky Blue (Голубой)</option>
-                        <option value="#2563eb">Royal Blue (Синий)</option>
-                        <option value="#059669">Emerald (Изумрудный)</option>
-                        <option value="#7c3aed">Purple (Фиолетовый)</option>
-                        <option value="#dc2626">Red (Красный)</option>
-                        <option value="#d97706">Amber (Янтарный)</option>
-                        <option value="custom">Свой цвет...</option>
-                    </select>
-                    <input type="color" id="primary-color-picker" value="#0284c7" onchange="syncColorInput()" class="w-12 h-10 border border-slate-300 rounded-lg p-1 cursor-pointer">
-                    <input type="text" id="primary-color-hex" value="#0284c7" readonly class="w-28 border border-slate-200 rounded-lg p-2 text-sm font-mono text-center text-slate-600 bg-slate-50">
-                </div>
-            </div>
-
-            <!-- 2. Главный экран -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold text-slate-800 mb-4">Заголовок и Логотип</h2>
-                <div class="space-y-4">
+            <!-- Основные настройки -->
+            <section class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">🎨 Основные настройки</h3>
+                <div class="grid gap-4 md:grid-cols-2">
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Название школы</label>
-                        <input type="text" id="welcome-title" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Подзаголовок</label>
-                        <input type="text" id="welcome-subtitle" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">URL Изображения логотипа</label>
-                            <input type="text" id="logo-url" placeholder="1.png или https://..." class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Запасная буква логотипа</label>
-                            <input type="text" id="logo-fallback" maxlength="2" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Основной цвет</label>
+                        <div class="flex gap-2">
+                            <input type="color" id="primary-color-picker" value="#0284c7" class="w-12 h-10 border border-slate-300 rounded-lg cursor-pointer" onchange="syncColorInput()">
+                            <input type="text" id="primary-color-hex" value="#0284c7" class="flex-1 border border-slate-300 rounded-lg p-2 text-sm" onchange="document.getElementById('primary-color-picker').value = this.value; document.getElementById('color-preset').value = 'custom'">
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- 3. Секция «О нас» -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-bold text-slate-800">Карточки «О нас»</h2>
-                    <button onclick="addCard()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-lg transition-all">+ Добавить карточку</button>
-                </div>
-                <div id="cards-container" class="space-y-3"></div>
-            </div>
-
-            <!-- 4. Калькулятор цен -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold text-slate-800 mb-4">Калькулятор цен (₽)</h2>
-                <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Заголовок калькулятора</label>
-                        <input type="text" id="calc-title" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-                            <span class="font-bold text-slate-700 block text-sm border-b pb-2">Уроки 40 минут</span>
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-slate-600">Индивидуально:</span>
-                                <input type="number" id="price-ind-40" class="w-24 border border-slate-300 rounded p-1.5 text-right font-mono">
-                            </div>
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-slate-600">В парах:</span>
-                                <input type="number" id="price-pair-40" class="w-24 border border-slate-300 rounded p-1.5 text-right font-mono">
-                            </div>
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-slate-600">Группа:</span>
-                                <input type="number" id="price-group-40" class="w-24 border border-slate-300 rounded p-1.5 text-right font-mono">
-                            </div>
-                        </div>
-
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-                            <span class="font-bold text-slate-700 block text-sm border-b pb-2">Уроки 60 минут</span>
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-slate-600">Индивидуально:</span>
-                                <input type="number" id="price-ind-60" class="w-24 border border-slate-300 rounded p-1.5 text-right font-mono">
-                            </div>
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-slate-600">В парах:</span>
-                                <input type="number" id="price-pair-60" class="w-24 border border-slate-300 rounded p-1.5 text-right font-mono">
-                            </div>
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-slate-600">Группа:</span>
-                                <input type="number" id="price-group-60" class="w-24 border border-slate-300 rounded p-1.5 text-right font-mono">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 5. Контакты -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold text-slate-800 mb-4">Контакты</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Телефон</label>
-                        <input type="text" id="contact-phone" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">URL логотипа</label>
+                        <input type="text" id="logo-url" placeholder="logo.png" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Адрес</label>
-                        <input type="text" id="contact-address" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Текст логотипа (если нет картинки)</label>
+                        <input type="text" id="logo-fallback" value="A" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
                     </div>
                 </div>
-            </div>
+            </section>
 
-        </div>
+            <!-- Приветственный блок -->
+            <section class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">👋 Приветственный блок</h3>
+                <div class="grid gap-4 md:grid-cols-2">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Заголовок</label>
+                        <input type="text" id="welcome-title" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Подзаголовок</label>
+                        <input type="text" id="welcome-subtitle" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                    </div>
+                </div>
+            </section>
 
+            <!-- Карточки "О нас" -->
+            <section class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">📇 Карточки "О нас"</h3>
+                <div id="cards-container" class="space-y-3 mb-4"></div>
+                <button type="button" onclick="addCard()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm">
+                    ➕ Добавить карточку
+                </button>
+            </section>
+
+            <!-- Калькулятор -->
+            <section class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">🧮 Калькулятор стоимости</h3>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Заголовок калькулятора</label>
+                    <input type="text" id="calc-title" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                </div>
+                
+                <h4 class="font-medium text-gray-600 mb-3">Индивидуальные занятия</h4>
+                <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-4 mb-6">
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">1 ученик, 40 мин</label>
+                        <input type="number" id="price-ind-40-1" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">2 ученика, 40 мин</label>
+                        <input type="number" id="price-ind-40-2" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">1 ученик, 60 мин</label>
+                        <input type="number" id="price-ind-60-1" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">2 ученика, 60 мин</label>
+                        <input type="number" id="price-ind-60-2" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                    </div>
+                </div>
+
+                <h4 class="font-medium text-gray-600 mb-3">Разовые занятия</h4>
+                <div class="grid gap-3 md:grid-cols-2 mb-6">
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">40 минут</label>
+                        <input type="number" id="price-single-40" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">60 минут</label>
+                        <input type="number" id="price-single-60" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                    </div>
+                </div>
+
+                <h4 class="font-medium text-gray-600 mb-3">Групповые занятия</h4>
+                <div class="grid gap-3 md:grid-cols-2">
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">1 группа (до 4 чел)</label>
+                        <input type="number" id="price-group-1" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">2 группа (до 8 чел)</label>
+                        <input type="number" id="price-group-2" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Контакты -->
+            <section class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">📞 Контакты</h3>
+                <div class="grid gap-4 md:grid-cols-2">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Телефон</label>
+                        <input type="text" id="contact-phone" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Адрес</label>
+                        <input type="text" id="contact-address" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Кнопка сохранения -->
+            <button type="button" id="save-btn" onclick="saveConfigToGitHub()" class="hidden w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl transition-colors text-lg">
+                💾 Сохранить изменения в GitHub
+            </button>
+        </form>
     </div>
 
     <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwI8VO1qW0xmqqgG-HMMTkCCsxl4kMtFmsrj8AzVngehi1yHD1zKbXzNXQQzJz8urd6/exec';
-const CONFIG_FILE = 'site-config.json';
+        const CONFIG_PATH = "site-config.json";
+        let currentSha = null;
 
-let currentConfig = {
-    site_title: "Arban School",
-    primary_color: "#4a90e2",
-    logo_url: "",
-    logo_fallback_text: "A",
-    welcome: { title: "", subtitle: "" },
-    about: { cards: [] },
-    calculator: {
-        title: "Рассчитайте стоимость обучения",
-        prices: {
-            group: { "1": 2400, "2": 4000 },
-            ind: { "1_40": 3200, "1_60": 4800, "2_40": 6000, "2_60": 8800 },
-            single: { "40": 900, "60": 1300 }
-        }
-    },
-    contacts: { phone: "", address: "" }
-};
-
-document.addEventListener("DOMContentLoaded", () => {
-    loadConfig();
-
-    const form = document.getElementById('admin-form');
-    if (form) {
-        form.addEventListener('submit', handleFormSubmit);
-    }
-
-    const addCardBtn = document.getElementById('add-card-btn');
-    if (addCardBtn) {
-        addCardBtn.addEventListener('click', addCardField);
-    }
-});
-
-function loadConfig() {
-    fetch(`${CONFIG_FILE}?v=${Date.now()}`)
-        .then(res => {
-            if (!res.ok) throw new Error("Файл конфигурации не найден");
-            return res.json();
-        })
-        .then(data => {
-            currentConfig = Object.assign({}, currentConfig, data);
-            fillAdminForm(currentConfig);
-        })
-        .catch(err => {
-            console.warn("Не удалось прочитать site-config.json, используем шаблоны:", err);
-            fillAdminForm(currentConfig);
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedToken = localStorage.getItem("gh_pat_token");
+            const savedRepo = localStorage.getItem("gh_repo_path");
+            
+            if (savedToken) document.getElementById("gh-token").value = savedToken;
+            if (savedRepo) document.getElementById("gh-repo").value = savedRepo;
         });
-}
 
-function fillAdminForm(data) {
-    setValue('admin-site-title', data.site_title);
-    setValue('admin-primary-color', data.primary_color);
-    setValue('admin-logo-url', data.logo_url);
-    setValue('admin-logo-fallback', data.logo_fallback_text);
-
-    if (data.welcome) {
-        setValue('admin-welcome-title', data.welcome.title);
-        setValue('admin-welcome-subtitle', data.welcome.subtitle);
-    }
-
-    if (data.about && Array.isArray(data.about.cards)) {
-        renderAdminCards(data.about.cards);
-    }
-
-    if (data.calculator) {
-        setValue('admin-calc-title', data.calculator.title);
-
-        if (data.calculator.prices) {
-            const p = data.calculator.prices;
-            setValue('price-group-1', p.group?.["1"]);
-            setValue('price-group-2', p.group?.["2"]);
-
-            setValue('price-ind-1-40', p.ind?.["1_40"]);
-            setValue('price-ind-1-60', p.ind?.["1_60"]);
-            setValue('price-ind-2-40', p.ind?.["2_40"]);
-            setValue('price-ind-2-60', p.ind?.["2_60"]);
-
-            setValue('price-single-40', p.single?.["40"]);
-            setValue('price-single-60', p.single?.["60"]);
+        // Парсинг owner/repo из ввода пользователя
+        function cleanRepoPath(input) {
+            let str = input.trim().replace(/\/$/, "");
+            if (str.includes("github.com/")) {
+                str = str.split("github.com/")[1];
+            }
+            const parts = str.split("/").filter(Boolean);
+            if (parts.length >= 2) {
+                return `${parts[0]}/${parts[1]}`;
+            }
+            return str;
         }
-    }
 
-    if (data.contacts) {
-        setValue('admin-contact-phone', data.contacts.phone);
-        setValue('admin-contact-address', data.contacts.address);
-    }
-}
-
-function renderAdminCards(cards) {
-    const container = document.getElementById('cards-container');
-    if (!container) return;
-    container.innerHTML = '';
-
-    cards.forEach((card, index) => {
-        const cardBox = document.createElement('div');
-        cardBox.className = 'card-edit-item';
-        cardBox.innerHTML = `
-            <div class="field-group">
-                <label>Заголовок карточки #${index + 1}</label>
-                <input type="text" class="card-input-title" value="${escapeHtml(card.title || '')}" required>
-            </div>
-            <div class="field-group">
-                <label>Текст карточки</label>
-                <input type="text" class="card-input-text" value="${escapeHtml(card.text || '')}">
-            </div>
-            <button type="button" class="btn-delete" onclick="removeCardField(${index})">Удалить</button>
-            <hr>
-        `;
-        container.appendChild(cardBox);
-    });
-}
-
-function addCardField() {
-    const container = document.getElementById('cards-container');
-    if (!container) return;
-
-    const cardsCount = container.querySelectorAll('.card-edit-item').length;
-    const cardBox = document.createElement('div');
-    cardBox.className = 'card-edit-item';
-    cardBox.innerHTML = `
-        <div class="field-group">
-            <label>Заголовок карточки #${cardsCount + 1}</label>
-            <input type="text" class="card-input-title" value="" required>
-        </div>
-        <div class="field-group">
-            <label>Текст карточки</label>
-            <input type="text" class="card-input-text" value="">
-        </div>
-        <button type="button" class="btn-delete" onclick="removeCardField(${cardsCount})">Удалить</button>
-        <hr>
-    `;
-    container.appendChild(cardBox);
-}
-
-function removeCardField(index) {
-    const container = document.getElementById('cards-container');
-    if (!container) return;
-    const items = container.querySelectorAll('.card-edit-item');
-    if (items[index]) {
-        items[index].remove();
-    }
-}
-
-function collectFormData() {
-    const cardItems = document.querySelectorAll('.card-edit-item');
-    const cardsArray = [];
-    cardItems.forEach(item => {
-        const titleVal = item.querySelector('.card-input-title')?.value.trim();
-        const textVal = item.querySelector('.card-input-text')?.value.trim();
-        if (titleVal) {
-            cardsArray.push({ title: titleVal, text: textVal });
+        // Синхронизация палитры
+        function syncColorInput() {
+            const color = document.getElementById("primary-color-picker").value;
+            document.getElementById("primary-color-hex").value = color;
         }
-    });
 
-    return {
-        action: 'save_config',
-        config: {
-            site_title: getValue('admin-site-title'),
-            primary_color: getValue('admin-primary-color'),
-            logo_url: getValue('admin-logo-url'),
-            logo_fallback_text: getValue('admin-logo-fallback'),
-            welcome: {
-                title: getValue('admin-welcome-title'),
-                subtitle: getValue('admin-welcome-subtitle')
-            },
-            about: {
-                cards: cardsArray
-            },
-            calculator: {
-                title: getValue('admin-calc-title'),
-                prices: {
-                    group: {
-                        "1": Number(getValue('price-group-1')) || 0,
-                        "2": Number(getValue('price-group-2')) || 0
-                    },
-                    ind: {
-                        "1_40": Number(getValue('price-ind-1-40')) || 0,
-                        "1_60": Number(getValue('price-ind-1-60')) || 0,
-                        "2_40": Number(getValue('price-ind-2-40')) || 0,
-                        "2_60": Number(getValue('price-ind-2-60')) || 0
-                    },
-                    single: {
-                        "40": Number(getValue('price-single-40')) || 0,
-                        "60": Number(getValue('price-single-60')) || 0
-                    }
+        // Добавление элементов «О нас»
+        function addCard(title = "", text = "") {
+            const container = document.getElementById("cards-container");
+            const div = document.createElement("div");
+            div.className = "card-row flex gap-2 items-center bg-white p-3 rounded-lg border border-slate-300";
+            div.innerHTML = `
+                <input type="text" placeholder="Заголовок" value="${escapeHtml(title)}" class="card-title-val w-1/3 border border-slate-300 rounded-lg p-2 text-sm" required>
+                <input type="text" placeholder="Описание" value="${escapeHtml(text)}" class="card-text-val w-2/3 border border-slate-300 rounded-lg p-2 text-sm">
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 p-2 font-bold text-lg">&times;</button>
+            `;
+            container.appendChild(div);
+        }
+
+        // Экранирование HTML
+        function escapeHtml(str) {
+            if (!str) return "";
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        // Загрузка конфига из GitHub API
+        async function fetchCurrentConfig() {
+            const token = document.getElementById("gh-token").value.trim();
+            const rawRepo = document.getElementById("gh-repo").value;
+            const repo = cleanRepoPath(rawRepo);
+
+            if (!token) {
+                showMessage("Пожалуйста, введите GitHub Personal Access Token (PAT)", "bg-amber-100 text-amber-800 border border-amber-300");
+                return;
+            }
+
+            showMessage("Загрузка данных из GitHub...", "bg-blue-100 text-blue-800 border border-blue-300");
+
+            try {
+                const fileUrl = `https://api.github.com/repos/${repo}/contents/${CONFIG_PATH}`;
+                const res = await fetch(fileUrl, {
+                    headers: { "Authorization": `token ${token}` }
+                });
+
+                if (!res.ok) {
+                    if (res.status === 404) throw new Error("Файл site-config.json не найден в репозитории.");
+                    if (res.status === 401) throw new Error("Неверный токен доступа (PAT).");
+                    throw new Error(`Ошибка GitHub API: ${res.statusText}`);
                 }
-            },
-            contacts: {
-                phone: getValue('admin-contact-phone'),
-                address: getValue('admin-contact-address')
+
+                const fileData = await res.json();
+                currentSha = fileData.sha;
+
+                // Декодируем UTF-8 из Base64
+                const jsonText = new TextDecoder().decode(
+                    Uint8Array.from(atob(fileData.content.replace(/\n/g, "")), c => c.charCodeAt(0))
+                );
+                const data = JSON.parse(jsonText);
+
+                // Сохраняем учётку в localStorage
+                localStorage.setItem("gh_pat_token", token);
+                localStorage.setItem("gh_repo_path", rawRepo);
+
+                // Заполняем поля
+                document.getElementById("primary-color-picker").value = data.primary_color || "#0284c7";
+                document.getElementById("primary-color-hex").value = data.primary_color || "#0284c7";
+
+                document.getElementById("welcome-title").value = data.welcome?.title || "";
+                document.getElementById("welcome-subtitle").value = data.welcome?.subtitle || "";
+                document.getElementById("logo-url").value = data.logo_url || "";
+                document.getElementById("logo-fallback").value = data.logo_fallback_text || "A";
+
+                document.getElementById("cards-container").innerHTML = "";
+                if (data.about?.cards && Array.isArray(data.about.cards)) {
+                    data.about.cards.forEach(c => addCard(c.title, c.text));
+                }
+
+                // Калькулятор - новая структура с prices
+                document.getElementById("calc-title").value = data.calculator?.title || "Рассчитать стоимость";
+                
+                const prices = data.calculator?.prices || {};
+                
+                // Индивидуальные
+                document.getElementById("price-ind-40-1").value = prices.individual_40_1 ?? 800;
+                document.getElementById("price-ind-40-2").value = prices.individual_40_2 ?? 750;
+                document.getElementById("price-ind-60-1").value = prices.individual_60_1 ?? 1200;
+                document.getElementById("price-ind-60-2").value = prices.individual_60_2 ?? 1100;
+                
+                // Разовые
+                document.getElementById("price-single-40").value = prices.single_40 ?? 900;
+                document.getElementById("price-single-60").value = prices.single_60 ?? 1350;
+                
+                // Групповые
+                document.getElementById("price-group-1").value = prices.group_1 ?? 450;
+                document.getElementById("price-group-2").value = prices.group_2 ?? 400;
+
+                document.getElementById("contact-phone").value = data.contacts?.phone || "";
+                document.getElementById("contact-address").value = data.contacts?.address || "";
+
+                // Открываем форму и кнопку сохранения
+                document.getElementById("editor-form").classList.remove("hidden");
+                document.getElementById("save-btn").classList.remove("hidden");
+                
+                showMessage("Конфигурация успешно загружена! Теперь можно редактировать.", "bg-emerald-100 text-emerald-800 border border-emerald-300");
+
+            } catch (err) {
+                showMessage("Ошибка загрузки: " + err.message, "bg-red-100 text-red-800 border border-red-300");
             }
         }
-    };
-}
 
-function handleFormSubmit(event) {
-    event.preventDefault();
-    const payload = collectFormData();
-    const saveBtn = document.getElementById('save-btn');
+        // Сборка объекта JSON
+        function buildConfigObject() {
+            const cards = [];
+            document.querySelectorAll(".card-row").forEach(row => {
+                const titleVal = row.querySelector(".card-title-val").value.trim();
+                const textVal = row.querySelector(".card-text-val").value.trim();
+                if (titleVal) {
+                    cards.push({
+                        title: titleVal,
+                        text: textVal
+                    });
+                }
+            });
 
-    if (saveBtn) {
-        saveBtn.disabled = true;
-        saveBtn.innerText = 'Сохранение...';
-    }
-
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    })
-    .then(() => {
-        alert('Данные успешно отправлены в Google Apps Script!');
-    })
-    .catch(err => {
-        console.error('Ошибка сохранения:', err);
-        alert('Ошибка при сохранении: ' + err.message);
-    })
-    .finally(() => {
-        if (saveBtn) {
-            saveBtn.disabled = false;
-            saveBtn.innerText = 'Сохранить изменения';
+            return {
+                primary_color: document.getElementById("primary-color-picker").value,
+                site_title: document.getElementById("welcome-title").value + " - Школа английского языка",
+                logo_url: document.getElementById("logo-url").value,
+                logo_fallback_text: document.getElementById("logo-fallback").value,
+                welcome: {
+                    title: document.getElementById("welcome-title").value,
+                    subtitle: document.getElementById("welcome-subtitle").value
+                },
+                about: { cards },
+                calculator: {
+                    title: document.getElementById("calc-title").value,
+                    prices: {
+                        individual_40_1: parseInt(document.getElementById("price-ind-40-1").value) || 0,
+                        individual_40_2: parseInt(document.getElementById("price-ind-40-2").value) || 0,
+                        individual_60_1: parseInt(document.getElementById("price-ind-60-1").value) || 0,
+                        individual_60_2: parseInt(document.getElementById("price-ind-60-2").value) || 0,
+                        single_40: parseInt(document.getElementById("price-single-40").value) || 0,
+                        single_60: parseInt(document.getElementById("price-single-60").value) || 0,
+                        group_1: parseInt(document.getElementById("price-group-1").value) || 0,
+                        group_2: parseInt(document.getElementById("price-group-2").value) || 0
+                    }
+                },
+                contacts: {
+                    phone: document.getElementById("contact-phone").value,
+                    address: document.getElementById("contact-address").value
+                }
+            };
         }
-    });
-}
 
-function getValue(id) {
-    const el = document.getElementById(id);
-    return el ? el.value.trim() : '';
-}
+        // Сохранение изменений в GitHub
+        async function saveConfigToGitHub() {
+            const token = document.getElementById("gh-token").value.trim();
+            const rawRepo = document.getElementById("gh-repo").value;
+            const repo = cleanRepoPath(rawRepo);
+            const saveBtn = document.getElementById("save-btn");
 
-function setValue(id, val) {
-    const el = document.getElementById(id);
-    if (el) el.value = val !== undefined ? val : '';
-}
+            if (!token) {
+                showMessage("Укажите GitHub PAT!", "bg-red-100 text-red-800 border border-red-300");
+                return;
+            }
 
-function escapeHtml(str) {
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
+            saveBtn.disabled = true;
+            saveBtn.classList.add("opacity-50");
+            showMessage("Публикация изменений в GitHub...", "bg-blue-100 text-blue-800 border border-blue-300");
+
+            try {
+                const configObject = buildConfigObject();
+                const jsonContent = JSON.stringify(configObject, null, 2);
+                
+                // Кодируем UTF-8 в Base64
+                const bytes = new TextEncoder().encode(jsonContent);
+                const binString = String.fromCharCode(...bytes);
+                const base64Content = btoa(binString);
+
+                const fileUrl = `https://api.github.com/repos/${repo}/contents/${CONFIG_PATH}`;
+                
+                const putBody = {
+                    message: "Update site-config.json via Admin Panel",
+                    content: base64Content,
+                    branch: "main"
+                };
+                if (currentSha) putBody.sha = currentSha;
+
+                const putRes = await fetch(fileUrl, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `token ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(putBody)
+                });
+
+                if (!putRes.ok) {
+                    const errData = await putRes.json();
+                    throw new Error(errData.message || "Ошибка PUT-запроса");
+                }
+
+                const resData = await putRes.json();
+                currentSha = resData.content.sha;
+
+                showMessage("✅ Успешно опубликовано! Изменения подтянутся на сайт в течение минуты.", "bg-emerald-100 text-emerald-800 border border-emerald-300");
+
+            } catch (err) {
+                showMessage("Ошибка сохранения: " + err.message, "bg-red-100 text-red-800 border border-red-300");
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.classList.remove("opacity-50");
+            }
+        }
+
+        function showMessage(text, classes) {
+            const msgBox = document.getElementById("status-message");
+            msgBox.className = `p-4 rounded-xl text-sm font-medium ${classes}`;
+            msgBox.innerText = text;
+            msgBox.classList.remove("hidden");
+        }
     </script>
 </body>
 </html>
