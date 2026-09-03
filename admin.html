@@ -178,8 +178,8 @@
     </div>
 
     <script>
-        const CONFIG_FILE = 'site-config.json';
-const SAVE_ENDPOINT = 'save-config.php'; // PHP-скрипт или Apps Script обработчик сохранения JSON
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwI8VO1qW0xmqqgG-HMMTkCCsxl4kMtFmsrj8AzVngehi1yHD1zKbXzNXQQzJz8urd6/exec';
+const CONFIG_FILE = 'site-config.json';
 
 let currentConfig = {
     site_title: "Arban School",
@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function loadConfig() {
     fetch(`${CONFIG_FILE}?v=${Date.now()}`)
         .then(res => {
-            if (!res.ok) throw new Error("Не удалось загрузить конфиг");
+            if (!res.ok) throw new Error("Файл конфигурации не найден");
             return res.json();
         })
         .then(data => {
@@ -224,52 +224,44 @@ function loadConfig() {
             fillAdminForm(currentConfig);
         })
         .catch(err => {
-            console.warn("Ошибка загрузки файла конфигурации. Используются дефолтные данные:", err);
+            console.warn("Не удалось прочитать site-config.json, используем шаблоны:", err);
             fillAdminForm(currentConfig);
         });
 }
 
 function fillAdminForm(data) {
-    // Общие настройки
     setValue('admin-site-title', data.site_title);
     setValue('admin-primary-color', data.primary_color);
     setValue('admin-logo-url', data.logo_url);
     setValue('admin-logo-fallback', data.logo_fallback_text);
 
-    // Главный экран (Welcome)
     if (data.welcome) {
         setValue('admin-welcome-title', data.welcome.title);
         setValue('admin-welcome-subtitle', data.welcome.subtitle);
     }
 
-    // Карточки
     if (data.about && Array.isArray(data.about.cards)) {
         renderAdminCards(data.about.cards);
     }
 
-    // Калькулятор
     if (data.calculator) {
         setValue('admin-calc-title', data.calculator.title);
 
         if (data.calculator.prices) {
             const p = data.calculator.prices;
-            // Групповые
             setValue('price-group-1', p.group?.["1"]);
             setValue('price-group-2', p.group?.["2"]);
 
-            // Индивидуальные
             setValue('price-ind-1-40', p.ind?.["1_40"]);
             setValue('price-ind-1-60', p.ind?.["1_60"]);
             setValue('price-ind-2-40', p.ind?.["2_40"]);
             setValue('price-ind-2-60', p.ind?.["2_60"]);
 
-            // Разовые
             setValue('price-single-40', p.single?.["40"]);
             setValue('price-single-60', p.single?.["60"]);
         }
     }
 
-    // Контакты
     if (data.contacts) {
         setValue('admin-contact-phone', data.contacts.phone);
         setValue('admin-contact-address', data.contacts.address);
@@ -332,7 +324,6 @@ function removeCardField(index) {
 }
 
 function collectFormData() {
-    // Сбор карточек
     const cardItems = document.querySelectorAll('.card-edit-item');
     const cardsArray = [];
     cardItems.forEach(item => {
@@ -344,46 +335,49 @@ function collectFormData() {
     });
 
     return {
-        site_title: getValue('admin-site-title'),
-        primary_color: getValue('admin-primary-color'),
-        logo_url: getValue('admin-logo-url'),
-        logo_fallback_text: getValue('admin-logo-fallback'),
-        welcome: {
-            title: getValue('admin-welcome-title'),
-            subtitle: getValue('admin-welcome-subtitle')
-        },
-        about: {
-            cards: cardsArray
-        },
-        calculator: {
-            title: getValue('admin-calc-title'),
-            prices: {
-                group: {
-                    "1": Number(getValue('price-group-1')) || 0,
-                    "2": Number(getValue('price-group-2')) || 0
-                },
-                ind: {
-                    "1_40": Number(getValue('price-ind-1-40')) || 0,
-                    "1_60": Number(getValue('price-ind-1-60')) || 0,
-                    "2_40": Number(getValue('price-ind-2-40')) || 0,
-                    "2_60": Number(getValue('price-ind-2-60')) || 0
-                },
-                single: {
-                    "40": Number(getValue('price-single-40')) || 0,
-                    "60": Number(getValue('price-single-60')) || 0
+        action: 'save_config',
+        config: {
+            site_title: getValue('admin-site-title'),
+            primary_color: getValue('admin-primary-color'),
+            logo_url: getValue('admin-logo-url'),
+            logo_fallback_text: getValue('admin-logo-fallback'),
+            welcome: {
+                title: getValue('admin-welcome-title'),
+                subtitle: getValue('admin-welcome-subtitle')
+            },
+            about: {
+                cards: cardsArray
+            },
+            calculator: {
+                title: getValue('admin-calc-title'),
+                prices: {
+                    group: {
+                        "1": Number(getValue('price-group-1')) || 0,
+                        "2": Number(getValue('price-group-2')) || 0
+                    },
+                    ind: {
+                        "1_40": Number(getValue('price-ind-1-40')) || 0,
+                        "1_60": Number(getValue('price-ind-1-60')) || 0,
+                        "2_40": Number(getValue('price-ind-2-40')) || 0,
+                        "2_60": Number(getValue('price-ind-2-60')) || 0
+                    },
+                    single: {
+                        "40": Number(getValue('price-single-40')) || 0,
+                        "60": Number(getValue('price-single-60')) || 0
+                    }
                 }
+            },
+            contacts: {
+                phone: getValue('admin-contact-phone'),
+                address: getValue('admin-contact-address')
             }
-        },
-        contacts: {
-            phone: getValue('admin-contact-phone'),
-            address: getValue('admin-contact-address')
         }
     };
 }
 
 function handleFormSubmit(event) {
     event.preventDefault();
-    const newConfig = collectFormData();
+    const payload = collectFormData();
     const saveBtn = document.getElementById('save-btn');
 
     if (saveBtn) {
@@ -391,18 +385,14 @@ function handleFormSubmit(event) {
         saveBtn.innerText = 'Сохранение...';
     }
 
-    fetch(SAVE_ENDPOINT, {
+    fetch(SCRIPT_URL, {
         method: 'POST',
+        mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newConfig)
+        body: JSON.stringify(payload)
     })
-    .then(res => res.json())
-    .then(result => {
-        if (result.success) {
-            alert('Конфигурация успешно сохранена!');
-        } else {
-            throw new Error(result.message || 'Не удалось сохранить файл');
-        }
+    .then(() => {
+        alert('Данные успешно отправлены в Google Apps Script!');
     })
     .catch(err => {
         console.error('Ошибка сохранения:', err);
@@ -416,7 +406,6 @@ function handleFormSubmit(event) {
     });
 }
 
-/* Вспомогательные функции */
 function getValue(id) {
     const el = document.getElementById(id);
     return el ? el.value.trim() : '';
