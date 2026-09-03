@@ -25,15 +25,19 @@
   },
   "calculator": {
     "title": "Рассчитать стоимость",
-    "price_individual_40": 800,
-    "price_pair_40": 600,
-    "price_group_40": 400,
-    "price_individual_60": 1200,
-    "price_pair_60": 900,
-    "price_group_60": 600
+    "prices": {
+      "individual_40_1": 800,
+      "individual_40_2": 750,
+      "individual_60_1": 1200,
+      "individual_60_2": 1100,
+      "single_40": 900,
+      "single_60": 1350,
+      "group_1": 450,
+      "group_2": 400
+    }
   },
   "contacts": {
     "phone": "+7 (923) 396-33-44",
-    "address": "ул. Генерала Тихонова 10"
+    "address": "ул. Генерала Тихонова, 6"
   }
 }
