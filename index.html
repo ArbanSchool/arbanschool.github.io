@@ -779,348 +779,347 @@
     </main>
 
     <script>
-    // ВСТАВЬ СЮДА СВОЮ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT:
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwI8VO1qW0xmqqgG-HMMTkCCsxl4kMtFmsrj8AzVngehi1yHD1zKbXzNXQQzJz8urd6/exec';
+const CONFIG_FILE = 'site-config.json';
 
-    const CONFIG_FILE = 'site-config.json';
-    let currentPage = 1;
-    const totalPages = 4;
-    let isStatic = true; 
-    const animationDelay = 900;
-    let touchStartY = 0;
-    const swipeThreshold = 60; 
+let currentPage = 1;
+const totalPages = 4;
+let isStatic = true; 
+const animationDelay = 900;
+let touchStartY = 0;
+const swipeThreshold = 60; 
 
-    let isFormExpanded = false;
+let isFormExpanded = false;
 
-    let priceMatrix = {
-        group: { "1": 2400, "2": 4000 },
-        ind: { "1_40": 3200, "1_60": 4800, "2_40": 6000, "2_60": 8800 },
-        single: { "40": 900, "60": 1300 }
-    };
+let priceMatrix = {
+    group: { "1": 2400, "2": 4000 },
+    ind: { "1_40": 3200, "1_60": 4800, "2_40": 6000, "2_60": 8800 },
+    single: { "40": 900, "60": 1300 }
+};
 
-    let currentDisplayedPrice = 2400;
+let currentDisplayedPrice = 2400;
 
-    function showPage(newPage, userAction = true) {
-        if (userAction && !isStatic) return;
-        if (newPage === currentPage) return;
-        if (newPage < 1 || newPage > totalPages) return;
+function showPage(newPage, userAction = true) {
+    if (userAction && !isStatic) return;
+    if (newPage === currentPage) return;
+    if (newPage < 1 || newPage > totalPages) return;
 
-        isStatic = false;
+    isStatic = false;
 
-        const oldElem = document.getElementById(`page-${currentPage}`);
-        const newElem = document.getElementById(`page-${newPage}`);
+    const oldElem = document.getElementById(`page-${currentPage}`);
+    const newElem = document.getElementById(`page-${newPage}`);
 
-        document.querySelectorAll('.nav-btn').forEach((btn, idx) => {
-            btn.classList.toggle('active', idx === newPage - 1);
-        });
-
-        if (oldElem && newElem) {
-            if (newPage > currentPage) {
-                oldElem.className = "page-content exit-up";
-                newElem.className = "page-content active";
-            } else {
-                oldElem.className = "page-content";
-                newElem.className = "page-content active";
-            }
-        }
-
-        currentPage = newPage;
-        if (currentPage === 3) handleTypeChange();
-
-        setTimeout(() => { isStatic = true; }, animationDelay);
-    }
-
-    function nextPage() { showPage(currentPage + 1); }
-    function prevPage() { showPage(currentPage - 1); }
-
-    function handleWheel(e) {
-        if (!isStatic) return;
-        if (e.deltaY > 0) { nextPage(); } else if (e.deltaY < 0) { prevPage(); }
-    }
-
-    function handleTouchStart(e) { touchStartY = e.touches[0].clientY; }
-
-    function handleTouchEnd(e) {
-        if (!isStatic) return;
-        const touchEndY = e.changedTouches[0].clientY;
-        const yDiff = touchStartY - touchEndY;
-        if (Math.abs(yDiff) > swipeThreshold) {
-            if (yDiff > 0) { nextPage(); } else { prevPage(); }
-        }
-    }
-
-    /* --- ЛОГИКА КАЛЬКУЛЯТОРА --- */
-
-    function handleTypeChange() {
-        const selectedType = document.querySelector('input[name="calc-type"]:checked')?.value || 'group';
-        const freqBlock = document.getElementById('freq-block');
-        const durBlock = document.getElementById('duration-block');
-        const groupNote = document.getElementById('group-note');
-        const captionText = document.getElementById('price-caption-text');
-
-        if (selectedType === 'group') {
-            freqBlock?.classList.remove('hidden-option');
-            durBlock?.classList.add('hidden-option');
-            groupNote?.classList.remove('hidden-option');
-            if (captionText) captionText.innerText = "Стоимость в месяц";
-        } else if (selectedType === 'ind') {
-            freqBlock?.classList.remove('hidden-option');
-            durBlock?.classList.remove('hidden-option');
-            groupNote?.classList.add('hidden-option');
-            if (captionText) captionText.innerText = "Стоимость в месяц";
-        } else if (selectedType === 'single') {
-            freqBlock?.classList.add('hidden-option');
-            durBlock?.classList.remove('hidden-option');
-            groupNote?.classList.add('hidden-option');
-            if (captionText) captionText.innerText = "Стоимость за занятие";
-        }
-
-        updateCalculator();
-    }
-
-    function updateCalculator() {
-        const selectedType = document.querySelector('input[name="calc-type"]:checked')?.value || 'group';
-        const freqVal = document.querySelector('input[name="freq-val"]:checked')?.value || '1';
-        const durVal = document.querySelector('input[name="dur-val"]:checked')?.value || '40';
-
-        let targetPrice = 0;
-
-        if (selectedType === 'group') {
-            targetPrice = priceMatrix.group[freqVal] || 0;
-        } else if (selectedType === 'ind') {
-            const key = `${freqVal}_${durVal}`;
-            targetPrice = priceMatrix.ind[key] || 0;
-        } else if (selectedType === 'single') {
-            targetPrice = priceMatrix.single[durVal] || 0;
-        }
-
-        animateValue("price-number", currentDisplayedPrice, targetPrice, 350);
-        currentDisplayedPrice = targetPrice;
-        updateSliderSummary();
-    }
-
-    function animateValue(id, start, end, duration) {
-        if (start === end) return;
-        const obj = document.getElementById(id);
-        if (!obj) return;
-        const range = end - start;
-        let startTime = null;
-
-        function step(timestamp) {
-            if (!startTime) startTime = timestamp;
-            const progress = Math.min((timestamp - startTime) / duration, 1);
-            const easeProgress = progress * (2 - progress); 
-            obj.innerText = Math.floor(start + range * easeProgress);
-            if (progress < 1) { 
-                window.requestAnimationFrame(step); 
-            } else { 
-                obj.innerText = end; 
-            }
-        }
-        window.requestAnimationFrame(step);
-    }
-
-    function getSelectedDetails() {
-        const typeElem = document.querySelector('input[name="calc-type"]:checked');
-        const freqElem = document.querySelector('input[name="freq-val"]:checked');
-        const durElem = document.querySelector('input[name="dur-val"]:checked');
-
-        const typeMap = { 'group': 'Группа', 'ind': 'Индивидуально', 'single': 'Разовое' };
-        const typeStr = typeMap[typeElem?.value] || 'Группа';
-
-        let detailsArr = [];
-        if (typeElem?.value !== 'single') {
-            detailsArr.push(`${freqElem?.value || 1} раз(а) в неделю`);
-        }
-        if (typeElem?.value !== 'group') {
-            detailsArr.push(`${durElem?.value || 40} минут`);
-        } else {
-            detailsArr.push(`60 минут`);
-        }
-
-        return {
-            type: typeStr,
-            details: detailsArr.join(', '),
-            price: currentDisplayedPrice
-        };
-    }
-
-    function updateSliderSummary() {
-        const info = getSelectedDetails();
-        const hint = document.getElementById('slider-summary-hint');
-        if (hint) {
-            hint.innerText = `Выбрано: ${info.type} • ${info.details}`;
-        }
-    }
-
-    /* --- УПРАВЛЕНИЕ РАЗДВИЖЕНИЕМ И ОТПРАВКОЙ ЗАЯВКИ --- */
-
-    function toggleFormExpansion(expand) {
-        isFormExpanded = expand;
-        const slider = document.getElementById('inputs-slider');
-        const submitBtn = document.getElementById('main-submit-btn');
-        const cancelBtn = document.getElementById('cancel-btn');
-
-        if (expand) {
-            updateSliderSummary();
-            slider?.classList.add('expanded');
-            cancelBtn?.classList.remove('hidden');
-            if (submitBtn) submitBtn.innerText = 'Подтвердить и отправить заявку';
-        } else {
-            slider?.classList.remove('expanded');
-            cancelBtn?.classList.add('hidden');
-            if (submitBtn) submitBtn.innerText = 'Записаться на занятие';
-        }
-    }
-
-    function handleOrderButtonClick() {
-        if (!isFormExpanded) {
-            toggleFormExpansion(true);
-            return;
-        }
-
-        const nameInput = document.getElementById('user-name');
-        const phoneInput = document.getElementById('user-phone');
-        const submitBtn = document.getElementById('main-submit-btn');
-
-        const name = nameInput?.value.trim();
-        const phone = phoneInput?.value.trim();
-
-        if (!name) {
-            alert('Пожалуйста, укажите ваше имя!');
-            nameInput?.focus();
-            return;
-        }
-
-        if (!phone || phone.length < 6) {
-            alert('Пожалуйста, укажите верный номер телефона для связи!');
-            phoneInput?.focus();
-            return;
-        }
-
-        if (!SCRIPT_URL || SCRIPT_URL.includes('ВАШ_СКРИПТ_ID')) {
-            alert('Ошибка: В коде страницы не указана ссылка на Google Apps Script (SCRIPT_URL)!');
-            return;
-        }
-
-        const info = getSelectedDetails();
-        const payload = {
-            name: name,
-            phone: phone,
-            type: info.type,
-            details: info.details,
-            price: info.price
-        };
-
-        submitBtn.disabled = true;
-        submitBtn.innerText = 'Отправка...';
-
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-        .then(() => {
-            alert('Спасибо! Ваша заявка успешно отправлена.');
-            if (nameInput) nameInput.value = '';
-            if (phoneInput) phoneInput.value = '';
-            toggleFormExpansion(false);
-        })
-        .catch(err => {
-            console.error('Ошибка отправки:', err);
-            alert('Произошла ошибка при отправке. Попробуйте ещё раз.');
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-        });
-    }
-
-    /* --- ИНИЦИАЛИЗАЦИЯ И JSON CONFIG --- */
-
-    document.addEventListener("DOMContentLoaded", () => {
-        const mainHero = document.getElementById('main-hero');
-        if (mainHero) {
-            mainHero.addEventListener('wheel', handleWheel);
-            mainHero.addEventListener('touchstart', handleTouchStart, {passive: true});
-            mainHero.addEventListener('touchend', handleTouchEnd);
-        }
-
-        handleTypeChange();
-
-        fetch(`${CONFIG_FILE}?v=${Date.now()}`)
-            .then(res => res.json())
-            .then(data => applyConfig(data))
-            .catch(err => {
-                console.warn("Используются дефолтные значения:", err);
-                applyDefaultCards();
-            });
+    document.querySelectorAll('.nav-btn').forEach((btn, idx) => {
+        btn.classList.toggle('active', idx === newPage - 1);
     });
 
-    function applyConfig(data) {
-        if (data.primary_color) { document.documentElement.style.setProperty('--primary-color', data.primary_color); }
-        if (data.site_title) document.title = data.site_title;
-        
-        const logoBlock = document.getElementById('logo-block');
-        if (logoBlock) {
-            if (data.logo_url && data.logo_url.trim() !== "") { 
-                logoBlock.innerHTML = `<img src="${data.logo_url}" alt="Логотип">`; 
-            } else { 
-                logoBlock.innerText = data.logo_fallback_text || "A"; 
-            }
+    if (oldElem && newElem) {
+        if (newPage > currentPage) {
+            oldElem.className = "page-content exit-up";
+            newElem.className = "page-content active";
+        } else {
+            oldElem.className = "page-content";
+            newElem.className = "page-content active";
         }
+    }
 
-        if (data.welcome) { 
-            const titleElem = document.getElementById('welcome-title');
-            const subElem = document.getElementById('welcome-subtitle');
-            if (titleElem) titleElem.innerText = data.welcome.title || "Arban School"; 
-            if (subElem) subElem.innerText = data.welcome.subtitle || ""; 
-        }
+    currentPage = newPage;
+    if (currentPage === 3) handleTypeChange();
 
-        if (data.about && data.about.cards) { 
-            renderCards(data.about.cards); 
+    setTimeout(() => { isStatic = true; }, animationDelay);
+}
+
+function nextPage() { showPage(currentPage + 1); }
+function prevPage() { showPage(currentPage - 1); }
+
+function handleWheel(e) {
+    if (!isStatic) return;
+    if (e.deltaY > 0) { nextPage(); } else if (e.deltaY < 0) { prevPage(); }
+}
+
+function handleTouchStart(e) { touchStartY = e.touches[0].clientY; }
+
+function handleTouchEnd(e) {
+    if (!isStatic) return;
+    const touchEndY = e.changedTouches[0].clientY;
+    const yDiff = touchStartY - touchEndY;
+    if (Math.abs(yDiff) > swipeThreshold) {
+        if (yDiff > 0) { nextPage(); } else { prevPage(); }
+    }
+}
+
+/* --- ЛОГИКА КАЛЬКУЛЯТОРА --- */
+
+function handleTypeChange() {
+    const selectedType = document.querySelector('input[name="calc-type"]:checked')?.value || 'group';
+    const freqBlock = document.getElementById('freq-block');
+    const durBlock = document.getElementById('duration-block');
+    const groupNote = document.getElementById('group-note');
+    const captionText = document.getElementById('price-caption-text');
+
+    if (selectedType === 'group') {
+        freqBlock?.classList.remove('hidden-option');
+        durBlock?.classList.add('hidden-option');
+        groupNote?.classList.remove('hidden-option');
+        if (captionText) captionText.innerText = "Стоимость в месяц";
+    } else if (selectedType === 'ind') {
+        freqBlock?.classList.remove('hidden-option');
+        durBlock?.classList.remove('hidden-option');
+        groupNote?.classList.add('hidden-option');
+        if (captionText) captionText.innerText = "Стоимость в месяц";
+    } else if (selectedType === 'single') {
+        freqBlock?.classList.add('hidden-option');
+        durBlock?.classList.remove('hidden-option');
+        groupNote?.classList.add('hidden-option');
+        if (captionText) captionText.innerText = "Стоимость за занятие";
+    }
+
+    updateCalculator();
+}
+
+function updateCalculator() {
+    const selectedType = document.querySelector('input[name="calc-type"]:checked')?.value || 'group';
+    const freqVal = document.querySelector('input[name="freq-val"]:checked')?.value || '1';
+    const durVal = document.querySelector('input[name="dur-val"]:checked')?.value || '40';
+
+    let targetPrice = 0;
+
+    if (selectedType === 'group') {
+        targetPrice = priceMatrix.group[freqVal] || 0;
+    } else if (selectedType === 'ind') {
+        const key = `${freqVal}_${durVal}`;
+        targetPrice = priceMatrix.ind[key] || 0;
+    } else if (selectedType === 'single') {
+        targetPrice = priceMatrix.single[durVal] || 0;
+    }
+
+    animateValue("price-number", currentDisplayedPrice, targetPrice, 350);
+    currentDisplayedPrice = targetPrice;
+    updateSliderSummary();
+}
+
+function animateValue(id, start, end, duration) {
+    if (start === end) return;
+    const obj = document.getElementById(id);
+    if (!obj) return;
+    const range = end - start;
+    let startTime = null;
+
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        const easeProgress = progress * (2 - progress); 
+        obj.innerText = Math.floor(start + range * easeProgress);
+        if (progress < 1) { 
+            window.requestAnimationFrame(step); 
         } else { 
-            applyDefaultCards(); 
-        }
-
-        if (data.calculator) { 
-            if (data.calculator.title) { 
-                const calcTitle = document.getElementById('calc-title-text');
-                if (calcTitle) calcTitle.innerText = data.calculator.title; 
-            } 
-            
-            if (data.calculator.prices) {
-                priceMatrix = Object.assign(priceMatrix, data.calculator.prices);
-                updateCalculator();
-            }
-        }
-
-        if (data.contacts) { 
-            const phoneElem = document.getElementById('contact-phone');
-            const addrElem = document.getElementById('contact-address');
-            if (phoneElem && data.contacts.phone) phoneElem.innerText = data.contacts.phone; 
-            if (addrElem && data.contacts.address) addrElem.innerText = data.contacts.address; 
+            obj.innerText = end; 
         }
     }
+    window.requestAnimationFrame(step);
+}
 
-    function renderCards(cardsArray) {
-        const container = document.getElementById('uiverse-card');
-        if (!container) return;
-        container.innerHTML = "";
-        cardsArray.forEach(card => { 
-            const p = document.createElement('p'); 
-            p.innerHTML = `<span class="card-title">${card.title}</span><span class="card-text">${card.text || ''}</span>`; 
-            container.appendChild(p); 
+function getSelectedDetails() {
+    const typeElem = document.querySelector('input[name="calc-type"]:checked');
+    const freqElem = document.querySelector('input[name="freq-val"]:checked');
+    const durElem = document.querySelector('input[name="dur-val"]:checked');
+
+    const typeMap = { 'group': 'Группа', 'ind': 'Индивидуально', 'single': 'Разовое' };
+    const typeStr = typeMap[typeElem?.value] || 'Группа';
+
+    let detailsArr = [];
+    if (typeElem?.value !== 'single') {
+        detailsArr.push(`${freqElem?.value || 1} раз(а) в неделю`);
+    }
+    if (typeElem?.value !== 'group') {
+        detailsArr.push(`${durElem?.value || 40} минут`);
+    } else {
+        detailsArr.push(`60 минут`);
+    }
+
+    return {
+        type: typeStr,
+        details: detailsArr.join(', '),
+        price: currentDisplayedPrice
+    };
+}
+
+function updateSliderSummary() {
+    const info = getSelectedDetails();
+    const hint = document.getElementById('slider-summary-hint');
+    if (hint) {
+        hint.innerText = `Выбрано: ${info.type} • ${info.details}`;
+    }
+}
+
+/* --- УПРАВЛЕНИЕ РАЗДВИЖЕНИЕМ И ОТПРАВКОЙ ЗАЯВКИ --- */
+
+function toggleFormExpansion(expand) {
+    isFormExpanded = expand;
+    const slider = document.getElementById('inputs-slider');
+    const submitBtn = document.getElementById('main-submit-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+
+    if (expand) {
+        updateSliderSummary();
+        slider?.classList.add('expanded');
+        cancelBtn?.classList.remove('hidden');
+        if (submitBtn) submitBtn.innerText = 'Подтвердить и отправить заявку';
+    } else {
+        slider?.classList.remove('expanded');
+        cancelBtn?.classList.add('hidden');
+        if (submitBtn) submitBtn.innerText = 'Записаться на занятие';
+    }
+}
+
+function handleOrderButtonClick() {
+    if (!isFormExpanded) {
+        toggleFormExpansion(true);
+        return;
+    }
+
+    const nameInput = document.getElementById('user-name');
+    const phoneInput = document.getElementById('user-phone');
+    const submitBtn = document.getElementById('main-submit-btn');
+
+    const name = nameInput?.value.trim();
+    const phone = phoneInput?.value.trim();
+
+    if (!name) {
+        alert('Пожалуйста, укажите ваше имя!');
+        nameInput?.focus();
+        return;
+    }
+
+    if (!phone || phone.length < 6) {
+        alert('Пожалуйста, укажите верный номер телефона для связи!');
+        phoneInput?.focus();
+        return;
+    }
+
+    if (!SCRIPT_URL || SCRIPT_URL.includes('ВАШ_СКРИПТ_ID')) {
+        alert('Ошибка: В коде страницы не указана ссылка на Google Apps Script (SCRIPT_URL)!');
+        return;
+    }
+
+    const info = getSelectedDetails();
+    const payload = {
+        name: name,
+        phone: phone,
+        type: info.type,
+        details: info.details,
+        price: info.price
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Отправка...';
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(() => {
+        alert('Спасибо! Ваша заявка успешно отправлена.');
+        if (nameInput) nameInput.value = '';
+        if (phoneInput) phoneInput.value = '';
+        toggleFormExpansion(false);
+    })
+    .catch(err => {
+        console.error('Ошибка отправки:', err);
+        alert('Произошла ошибка при отправке. Попробуйте ещё раз.');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+    });
+}
+
+/* --- ИНИЦИАЛИЗАЦИЯ И JSON CONFIG --- */
+
+document.addEventListener("DOMContentLoaded", () => {
+    const mainHero = document.getElementById('main-hero');
+    if (mainHero) {
+        mainHero.addEventListener('wheel', handleWheel);
+        mainHero.addEventListener('touchstart', handleTouchStart, {passive: true});
+        mainHero.addEventListener('touchend', handleTouchEnd);
+    }
+
+    handleTypeChange();
+
+    fetch(`${CONFIG_FILE}?v=${Date.now()}`)
+        .then(res => res.json())
+        .then(data => applyConfig(data))
+        .catch(err => {
+            console.warn("Используются дефолтные значения:", err);
+            applyDefaultCards();
         });
+});
+
+function applyConfig(data) {
+    if (data.primary_color) { document.documentElement.style.setProperty('--primary-color', data.primary_color); }
+    if (data.site_title) document.title = data.site_title;
+    
+    const logoBlock = document.getElementById('logo-block');
+    if (logoBlock) {
+        if (data.logo_url && data.logo_url.trim() !== "") { 
+            logoBlock.innerHTML = `<img src="${data.logo_url}" alt="Логотип">`; 
+        } else { 
+            logoBlock.innerText = data.logo_fallback_text || "A"; 
+        }
     }
 
-    function applyDefaultCards() { 
-        renderCards([ 
-            { title: "Дети любого возраста", text: "Обучение детей от 3 лет по специальной программе" }, 
-            { title: "Подготовка к ОГЭ и ЕГЭ", text: "Высокие баллы на экзаменах и разбор сложных вариантов" }, 
-            { title: "Профессиональные учителя", text: "Опытные преподаватели с высшей квалификацией" } 
-        ]); 
+    if (data.welcome) { 
+        const titleElem = document.getElementById('welcome-title');
+        const subElem = document.getElementById('welcome-subtitle');
+        if (titleElem) titleElem.innerText = data.welcome.title || "Arban School"; 
+        if (subElem) subElem.innerText = data.welcome.subtitle || ""; 
     }
+
+    if (data.about && data.about.cards) { 
+        renderCards(data.about.cards); 
+    } else { 
+        applyDefaultCards(); 
+    }
+
+    if (data.calculator) { 
+        if (data.calculator.title) { 
+            const calcTitle = document.getElementById('calc-title-text');
+            if (calcTitle) calcTitle.innerText = data.calculator.title; 
+        } 
+        
+        if (data.calculator.prices) {
+            priceMatrix = Object.assign(priceMatrix, data.calculator.prices);
+            updateCalculator();
+        }
+    }
+
+    if (data.contacts) { 
+        const phoneElem = document.getElementById('contact-phone');
+        const addrElem = document.getElementById('contact-address');
+        if (phoneElem && data.contacts.phone) phoneElem.innerText = data.contacts.phone; 
+        if (addrElem && data.contacts.address) addrElem.innerText = data.contacts.address; 
+    }
+}
+
+function renderCards(cardsArray) {
+    const container = document.getElementById('uiverse-card');
+    if (!container) return;
+    container.innerHTML = "";
+    cardsArray.forEach(card => { 
+        const p = document.createElement('p'); 
+        p.innerHTML = `<span class="card-title">${card.title}</span><span class="card-text">${card.text || ''}</span>`; 
+        container.appendChild(p); 
+    });
+}
+
+function applyDefaultCards() { 
+    renderCards([ 
+        { title: "Дети любого возраста", text: "Обучение детей от 3 лет по специальной программе" }, 
+        { title: "Подготовка к ОГЭ и ЕГЭ", text: "Высокие баллы на экзаменах и разбор сложных вариантов" }, 
+        { title: "Профессиональные учителя", text: "Опытные преподаватели с высшей квалификацией" } 
+    ]); 
+}
 </script>
 </body>
 </html>
