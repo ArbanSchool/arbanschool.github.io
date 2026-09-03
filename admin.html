@@ -178,236 +178,258 @@
     </div>
 
     <script>
-        const CONFIG_PATH = "site-config.json";
-        let currentSha = null;
+        const CONFIG_FILE = 'site-config.json';
+const SAVE_ENDPOINT = 'save-config.php'; // PHP-скрипт или Apps Script обработчик сохранения JSON
 
-        document.addEventListener("DOMContentLoaded", () => {
-            const savedToken = localStorage.getItem("gh_pat_token");
-            const savedRepo = localStorage.getItem("gh_repo_path");
-            
-            if (savedToken) document.getElementById("gh-token").value = savedToken;
-            if (savedRepo) document.getElementById("gh-repo").value = savedRepo;
+let currentConfig = {
+    site_title: "Arban School",
+    primary_color: "#4a90e2",
+    logo_url: "",
+    logo_fallback_text: "A",
+    welcome: { title: "", subtitle: "" },
+    about: { cards: [] },
+    calculator: {
+        title: "Рассчитайте стоимость обучения",
+        prices: {
+            group: { "1": 2400, "2": 4000 },
+            ind: { "1_40": 3200, "1_60": 4800, "2_40": 6000, "2_60": 8800 },
+            single: { "40": 900, "60": 1300 }
+        }
+    },
+    contacts: { phone: "", address: "" }
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadConfig();
+
+    const form = document.getElementById('admin-form');
+    if (form) {
+        form.addEventListener('submit', handleFormSubmit);
+    }
+
+    const addCardBtn = document.getElementById('add-card-btn');
+    if (addCardBtn) {
+        addCardBtn.addEventListener('click', addCardField);
+    }
+});
+
+function loadConfig() {
+    fetch(`${CONFIG_FILE}?v=${Date.now()}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Не удалось загрузить конфиг");
+            return res.json();
+        })
+        .then(data => {
+            currentConfig = Object.assign({}, currentConfig, data);
+            fillAdminForm(currentConfig);
+        })
+        .catch(err => {
+            console.warn("Ошибка загрузки файла конфигурации. Используются дефолтные данные:", err);
+            fillAdminForm(currentConfig);
         });
+}
 
-        // Парсинг owner/repo из ввода пользователя
-        function cleanRepoPath(input) {
-            let str = input.trim().replace(/\/$/, "");
-            if (str.includes("github.com/")) {
-                str = str.split("github.com/")[1];
-            }
-            const parts = str.split("/").filter(Boolean);
-            if (parts.length >= 2) {
-                return `${parts[0]}/${parts[1]}`;
-            }
-            return str;
+function fillAdminForm(data) {
+    // Общие настройки
+    setValue('admin-site-title', data.site_title);
+    setValue('admin-primary-color', data.primary_color);
+    setValue('admin-logo-url', data.logo_url);
+    setValue('admin-logo-fallback', data.logo_fallback_text);
+
+    // Главный экран (Welcome)
+    if (data.welcome) {
+        setValue('admin-welcome-title', data.welcome.title);
+        setValue('admin-welcome-subtitle', data.welcome.subtitle);
+    }
+
+    // Карточки
+    if (data.about && Array.isArray(data.about.cards)) {
+        renderAdminCards(data.about.cards);
+    }
+
+    // Калькулятор
+    if (data.calculator) {
+        setValue('admin-calc-title', data.calculator.title);
+
+        if (data.calculator.prices) {
+            const p = data.calculator.prices;
+            // Групповые
+            setValue('price-group-1', p.group?.["1"]);
+            setValue('price-group-2', p.group?.["2"]);
+
+            // Индивидуальные
+            setValue('price-ind-1-40', p.ind?.["1_40"]);
+            setValue('price-ind-1-60', p.ind?.["1_60"]);
+            setValue('price-ind-2-40', p.ind?.["2_40"]);
+            setValue('price-ind-2-60', p.ind?.["2_60"]);
+
+            // Разовые
+            setValue('price-single-40', p.single?.["40"]);
+            setValue('price-single-60', p.single?.["60"]);
         }
+    }
 
-        // Синхронизация палитры
-        function applyColorPreset() {
-            const val = document.getElementById("color-preset").value;
-            if (val !== "custom") {
-                document.getElementById("primary-color-picker").value = val;
-                document.getElementById("primary-color-hex").value = val;
-            }
+    // Контакты
+    if (data.contacts) {
+        setValue('admin-contact-phone', data.contacts.phone);
+        setValue('admin-contact-address', data.contacts.address);
+    }
+}
+
+function renderAdminCards(cards) {
+    const container = document.getElementById('cards-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    cards.forEach((card, index) => {
+        const cardBox = document.createElement('div');
+        cardBox.className = 'card-edit-item';
+        cardBox.innerHTML = `
+            <div class="field-group">
+                <label>Заголовок карточки #${index + 1}</label>
+                <input type="text" class="card-input-title" value="${escapeHtml(card.title || '')}" required>
+            </div>
+            <div class="field-group">
+                <label>Текст карточки</label>
+                <input type="text" class="card-input-text" value="${escapeHtml(card.text || '')}">
+            </div>
+            <button type="button" class="btn-delete" onclick="removeCardField(${index})">Удалить</button>
+            <hr>
+        `;
+        container.appendChild(cardBox);
+    });
+}
+
+function addCardField() {
+    const container = document.getElementById('cards-container');
+    if (!container) return;
+
+    const cardsCount = container.querySelectorAll('.card-edit-item').length;
+    const cardBox = document.createElement('div');
+    cardBox.className = 'card-edit-item';
+    cardBox.innerHTML = `
+        <div class="field-group">
+            <label>Заголовок карточки #${cardsCount + 1}</label>
+            <input type="text" class="card-input-title" value="" required>
+        </div>
+        <div class="field-group">
+            <label>Текст карточки</label>
+            <input type="text" class="card-input-text" value="">
+        </div>
+        <button type="button" class="btn-delete" onclick="removeCardField(${cardsCount})">Удалить</button>
+        <hr>
+    `;
+    container.appendChild(cardBox);
+}
+
+function removeCardField(index) {
+    const container = document.getElementById('cards-container');
+    if (!container) return;
+    const items = container.querySelectorAll('.card-edit-item');
+    if (items[index]) {
+        items[index].remove();
+    }
+}
+
+function collectFormData() {
+    // Сбор карточек
+    const cardItems = document.querySelectorAll('.card-edit-item');
+    const cardsArray = [];
+    cardItems.forEach(item => {
+        const titleVal = item.querySelector('.card-input-title')?.value.trim();
+        const textVal = item.querySelector('.card-input-text')?.value.trim();
+        if (titleVal) {
+            cardsArray.push({ title: titleVal, text: textVal });
         }
+    });
 
-        function syncColorInput() {
-            const color = document.getElementById("primary-color-picker").value;
-            document.getElementById("primary-color-hex").value = color;
-            document.getElementById("color-preset").value = "custom";
-        }
-
-        // Добавление элементов «О нас»
-        function addCard(title = "", text = "") {
-            const container = document.getElementById("cards-container");
-            const div = document.createElement("div");
-            div.className = "card-row flex gap-2 items-center bg-slate-50 p-3 rounded-xl border border-slate-200";
-            div.innerHTML = `
-                <input type="text" placeholder="Заголовок" value="${title}" class="card-title-val w-1/3 border border-slate-300 rounded-lg p-2 text-sm">
-                <input type="text" placeholder="Описание" value="${text}" class="card-text-val w-2/3 border border-slate-300 rounded-lg p-2 text-sm">
-                <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 p-2 font-bold text-lg">&times;</button>
-            `;
-            container.appendChild(div);
-        }
-
-        // Загрузка конфига из GitHub API
-        async function fetchCurrentConfig() {
-            const token = document.getElementById("gh-token").value.trim();
-            const rawRepo = document.getElementById("gh-repo").value;
-            const repo = cleanRepoPath(rawRepo);
-
-            if (!token) {
-                showMessage("Пожалуйста, введите GitHub Personal Access Token (PAT)", "bg-amber-100 text-amber-800 border border-amber-300");
-                return;
-            }
-
-            showMessage("Загрузка данных из GitHub...", "bg-blue-100 text-blue-800 border border-blue-300");
-
-            try {
-                const fileUrl = `https://api.github.com/repos/${repo}/contents/${CONFIG_PATH}`;
-                const res = await fetch(fileUrl, {
-                    headers: { "Authorization": `token ${token}` }
-                });
-
-                if (!res.ok) {
-                    if (res.status === 404) throw new Error("Файл site-config.json не найден в репозитории.");
-                    if (res.status === 401) throw new Error("Неверный токен доступа (PAT).");
-                    throw new Error(`Ошибка GitHub API: ${res.statusText}`);
-                }
-
-                const fileData = await res.json();
-                currentSha = fileData.sha;
-
-                // Декодируем UTF-8 из Base64
-                const jsonText = new TextDecoder().decode(
-                    Uint8Array.from(atob(fileData.content.replace(/\n/g, "")), c => c.charCodeAt(0))
-                );
-                const data = JSON.parse(jsonText);
-
-                // Сохраняем учётку в localStorage
-                localStorage.setItem("gh_pat_token", token);
-                localStorage.setItem("gh_repo_path", rawRepo);
-
-                // Заполняем поля
-                const color = data.primary_color || "#0284c7";
-                document.getElementById("primary-color-picker").value = color;
-                document.getElementById("primary-color-hex").value = color;
-
-                document.getElementById("welcome-title").value = data.welcome?.title || "";
-                document.getElementById("welcome-subtitle").value = data.welcome?.subtitle || "";
-                document.getElementById("logo-url").value = data.logo_url || "";
-                document.getElementById("logo-fallback").value = data.logo_fallback_text || "A";
-
-                document.getElementById("cards-container").innerHTML = "";
-                if (data.about?.cards) {
-                    data.about.cards.forEach(c => addCard(c.title, c.text));
-                }
-
-                document.getElementById("calc-title").value = data.calculator?.title || "Стоимость обучения";
-                document.getElementById("price-ind-40").value = data.calculator?.price_individual_40 || 600;
-                document.getElementById("price-pair-40").value = data.calculator?.price_pair_40 || 450;
-                document.getElementById("price-group-40").value = data.calculator?.price_group_40 || 350;
-                document.getElementById("price-ind-60").value = data.calculator?.price_individual_60 || 900;
-                document.getElementById("price-pair-60").value = data.calculator?.price_pair_60 || 700;
-                document.getElementById("price-group-60").value = data.calculator?.price_group_60 || 500;
-
-                document.getElementById("contact-phone").value = data.contacts?.phone || "";
-                document.getElementById("contact-address").value = data.contacts?.address || "";
-
-                // Открываем форму и кнопку сохранения
-                document.getElementById("editor-form").classList.remove("hidden");
-                document.getElementById("save-btn").classList.remove("hidden");
-                
-                showMessage("Конфигурация успешно загружена! Теперь можно редактировать.", "bg-emerald-100 text-emerald-800 border border-emerald-300");
-
-            } catch (err) {
-                showMessage("Ошибка загрузки: " + err.message, "bg-red-100 text-red-800 border border-red-300");
-            }
-        }
-
-        // Сборка объекта JSON
-        function buildConfigObject() {
-            const cards = [];
-            document.querySelectorAll(".card-row").forEach(row => {
-                cards.push({
-                    title: row.querySelector(".card-title-val").value,
-                    text: row.querySelector(".card-text-val").value
-                });
-            });
-
-            return {
-                primary_color: document.getElementById("primary-color-picker").value,
-                site_title: document.getElementById("welcome-title").value + " - Школа английского языка",
-                logo_url: document.getElementById("logo-url").value,
-                logo_fallback_text: document.getElementById("logo-fallback").value,
-                welcome: {
-                    title: document.getElementById("welcome-title").value,
-                    subtitle: document.getElementById("welcome-subtitle").value
+    return {
+        site_title: getValue('admin-site-title'),
+        primary_color: getValue('admin-primary-color'),
+        logo_url: getValue('admin-logo-url'),
+        logo_fallback_text: getValue('admin-logo-fallback'),
+        welcome: {
+            title: getValue('admin-welcome-title'),
+            subtitle: getValue('admin-welcome-subtitle')
+        },
+        about: {
+            cards: cardsArray
+        },
+        calculator: {
+            title: getValue('admin-calc-title'),
+            prices: {
+                group: {
+                    "1": Number(getValue('price-group-1')) || 0,
+                    "2": Number(getValue('price-group-2')) || 0
                 },
-                about: { cards },
-                calculator: {
-                    title: document.getElementById("calc-title").value,
-                    price_individual_40: parseInt(document.getElementById("price-ind-40").value) || 0,
-                    price_pair_40: parseInt(document.getElementById("price-pair-40").value) || 0,
-                    price_group_40: parseInt(document.getElementById("price-group-40").value) || 0,
-                    price_individual_60: parseInt(document.getElementById("price-ind-60").value) || 0,
-                    price_pair_60: parseInt(document.getElementById("price-pair-60").value) || 0,
-                    price_group_60: parseInt(document.getElementById("price-group-60").value) || 0
+                ind: {
+                    "1_40": Number(getValue('price-ind-1-40')) || 0,
+                    "1_60": Number(getValue('price-ind-1-60')) || 0,
+                    "2_40": Number(getValue('price-ind-2-40')) || 0,
+                    "2_60": Number(getValue('price-ind-2-60')) || 0
                 },
-                contacts: {
-                    phone: document.getElementById("contact-phone").value,
-                    address: document.getElementById("contact-address").value
+                single: {
+                    "40": Number(getValue('price-single-40')) || 0,
+                    "60": Number(getValue('price-single-60')) || 0
                 }
-            };
-        }
-
-        // Сохранение изменений в GitHub
-        async function saveConfigToGitHub() {
-            const token = document.getElementById("gh-token").value.trim();
-            const rawRepo = document.getElementById("gh-repo").value;
-            const repo = cleanRepoPath(rawRepo);
-            const saveBtn = document.getElementById("save-btn");
-
-            if (!token) {
-                showMessage("Укажите GitHub PAT!", "bg-red-100 text-red-800 border border-red-300");
-                return;
             }
-
-            saveBtn.disabled = true;
-            saveBtn.classList.add("opacity-50");
-            showMessage("Публикация изменений в GitHub...", "bg-blue-100 text-blue-800 border border-blue-300");
-
-            try {
-                const configObject = buildConfigObject();
-                const jsonContent = JSON.stringify(configObject, null, 2);
-                
-                // Кодируем UTF-8 в Base64
-                const bytes = new TextEncoder().encode(jsonContent);
-                const binString = String.fromCharCode(...bytes);
-                const base64Content = btoa(binString);
-
-                const fileUrl = `https://api.github.com/repos/${repo}/contents/${CONFIG_PATH}`;
-                
-                const putBody = {
-                    message: "Update site-config.json via Admin Panel",
-                    content: base64Content,
-                    branch: "main"
-                };
-                if (currentSha) putBody.sha = currentSha;
-
-                const putRes = await fetch(fileUrl, {
-                    method: "PUT",
-                    headers: {
-                        "Authorization": `token ${token}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(putBody)
-                });
-
-                if (!putRes.ok) {
-                    const errData = await putRes.json();
-                    throw new Error(errData.message || "Ошибка PUT-запроса");
-                }
-
-                const resData = await putRes.json();
-                currentSha = resData.content.sha; // Обновляем sha на будущий commit
-
-                showMessage("Успешно опубликовано! Изменения подтянутся на сайт в течение минуты.", "bg-emerald-100 text-emerald-800 border border-emerald-300");
-
-            } catch (err) {
-                showMessage("Ошибка сохранения: " + err.message, "bg-red-100 text-red-800 border border-red-300");
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.classList.remove("opacity-50");
-            }
+        },
+        contacts: {
+            phone: getValue('admin-contact-phone'),
+            address: getValue('admin-contact-address')
         }
+    };
+}
 
-        function showMessage(text, classes) {
-            const msgBox = document.getElementById("status-message");
-            msgBox.className = `p-4 rounded-xl text-sm font-medium ${classes}`;
-            msgBox.innerText = text;
-            msgBox.classList.remove("hidden");
+function handleFormSubmit(event) {
+    event.preventDefault();
+    const newConfig = collectFormData();
+    const saveBtn = document.getElementById('save-btn');
+
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerText = 'Сохранение...';
+    }
+
+    fetch(SAVE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newConfig)
+    })
+    .then(res => res.json())
+    .then(result => {
+        if (result.success) {
+            alert('Конфигурация успешно сохранена!');
+        } else {
+            throw new Error(result.message || 'Не удалось сохранить файл');
         }
+    })
+    .catch(err => {
+        console.error('Ошибка сохранения:', err);
+        alert('Ошибка при сохранении: ' + err.message);
+    })
+    .finally(() => {
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerText = 'Сохранить изменения';
+        }
+    });
+}
+
+/* Вспомогательные функции */
+function getValue(id) {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+}
+
+function setValue(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.value = val !== undefined ? val : '';
+}
+
+function escapeHtml(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
     </script>
 </body>
 </html>
